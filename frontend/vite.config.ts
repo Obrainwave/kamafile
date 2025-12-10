@@ -13,4 +13,17 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Separate vendor chunks
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'mui-vendor': ['@mui/material', '@mui/icons-material', '@emotion/react', '@emotion/styled'],
+          'utils-vendor': ['axios'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 600, // Increase limit slightly since we're splitting
+  },
 })

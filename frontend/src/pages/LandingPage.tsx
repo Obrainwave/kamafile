@@ -61,8 +61,9 @@ export default function LandingPage() {
               </Typography>
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                 <Button
-                  component={RouterLink}
-                  to="/signup"
+                  href="https://wa.me/234XXXXXXXXXX"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   variant="contained"
                   size="large"
                   startIcon={<PersonAddIcon />}
@@ -74,7 +75,7 @@ export default function LandingPage() {
                     '&:hover': { bgcolor: 'secondary.dark' },
                   }}
                 >
-                  Get Started
+                  Start on WhatsApp
                 </Button>
                 <Button
                   variant="outlined"
@@ -104,8 +105,8 @@ export default function LandingPage() {
             >
               <Box
                 component="img"
-                src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop&q=80"
-                alt="Secure document vault and tax management"
+                src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop&q=80"
+                alt="Modern financial dashboard and analytics"
                 sx={{
                   width: '100%',
                   height: 'auto',
@@ -401,8 +402,9 @@ export default function LandingPage() {
           </Typography>
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center" sx={{ mb: 3 }}>
             <Button
-              component={RouterLink}
-              to="/signup"
+              href="https://wa.me/234XXXXXXXXXX"
+              target="_blank"
+              rel="noopener noreferrer"
               variant="contained"
               size="large"
               startIcon={<PersonAddIcon />}
@@ -414,7 +416,7 @@ export default function LandingPage() {
                 '&:hover': { bgcolor: 'secondary.dark' },
               }}
             >
-              Get Started Free
+              Start on WhatsApp
             </Button>
             <Button
               component={RouterLink}

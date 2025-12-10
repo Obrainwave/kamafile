@@ -124,7 +124,7 @@ export default function Header() {
                   color: 'primary.main',
                   px: 2,
                   py: 0.75,
-                  '&:hover': { borderColor: 'primary.dark', bgcolor: 'primary.light' },
+                  '&:hover': { borderColor: 'primary.dark', bgcolor: 'primary.light', color: 'white' },
                 }}
               >
                 Sign In
