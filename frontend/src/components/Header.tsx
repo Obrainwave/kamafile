@@ -3,7 +3,6 @@ import { Link as RouterLink } from 'react-router-dom'
 import {
   AppBar,
   Toolbar,
-  Typography,
   Box,
   Button,
   Stack,
@@ -21,6 +20,7 @@ import {
   PersonAdd as PersonAddIcon,
   Login as LoginIcon,
 } from '@mui/icons-material'
+import hBlackLogo from '../assets/images/h-black-logo.jpeg'
 
 const navLinks = [
   { label: 'Home', href: '/' },
@@ -45,19 +45,27 @@ export default function Header() {
     <>
       <AppBar position="sticky" elevation={0} sx={{ bgcolor: 'background.paper', color: 'text.primary' }}>
         <Toolbar sx={{ justifyContent: 'space-between', py: 1 }}>
-          <Typography
-            variant="h5"
+          <Box
             component={RouterLink}
             to="/"
             sx={{
-              fontWeight: 700,
-              color: 'primary.main',
+              display: 'flex',
+              alignItems: 'center',
               textDecoration: 'none',
               '&:hover': { opacity: 0.8 },
             }}
           >
-            KAMAFILE
-          </Typography>
+            <Box
+              component="img"
+              src={hBlackLogo}
+              alt="Kamafile Logo"
+              sx={{
+                height: { xs: 48, md: 56 },
+                width: 'auto',
+                objectFit: 'contain',
+              }}
+            />
+          </Box>
 
           {/* Desktop Navigation */}
           <Box
@@ -213,9 +221,16 @@ export default function Header() {
         }}
       >
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: 2, mb: 2 }}>
-          <Typography variant="h6" sx={{ fontWeight: 700, color: 'primary.main' }}>
-            KAMAFILE
-          </Typography>
+          <Box
+            component="img"
+            src={hBlackLogo}
+            alt="Kamafile Logo"
+            sx={{
+              height: 48,
+              width: 'auto',
+              objectFit: 'contain',
+            }}
+          />
           <IconButton onClick={handleDrawerToggle}>
             <CloseIcon />
           </IconButton>

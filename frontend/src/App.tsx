@@ -1,4 +1,4 @@
-import { Suspense, lazy } from 'react'
+import { Suspense, lazy, useEffect, useState } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { CssBaseline, ThemeProvider, CircularProgress, Box } from '@mui/material'
 import { theme } from './theme'
@@ -24,6 +24,28 @@ const PageLoader = () => (
   </Box>
 )
 
+// Lazy load ChatBot only after initial page load
+function LazyChatBot() {
+  const [shouldLoad, setShouldLoad] = useState(false)
+
+  useEffect(() => {
+    // Load ChatBot after a delay to prioritize main content
+    const timer = setTimeout(() => {
+      setShouldLoad(true)
+    }, 2000) // Load after 2 seconds
+
+    return () => clearTimeout(timer)
+  }, [])
+
+  if (!shouldLoad) return null
+
+  return (
+    <Suspense fallback={null}>
+      <ChatBot />
+    </Suspense>
+  )
+}
+
 function App() {
   return (
     <ThemeProvider theme={theme}>
@@ -36,7 +58,7 @@ function App() {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/about" element={<About />} />
           </Routes>
-          <ChatBot />
+          <LazyChatBot />
         </Suspense>
       </Router>
     </ThemeProvider>

@@ -11,21 +11,24 @@ import {
   IconButton,
 } from '@mui/material'
 import {
-  Description as DocumentIcon,
-  CalendarToday as CalendarIcon,
-  AccountBalance as TaxIcon,
-  Category as CategoryIcon,
-  Groups as ClinicIcon,
   Lock as LockIcon,
   VerifiedUser as ShieldIcon,
   CheckCircle as CheckIcon,
   PersonAdd as PersonAddIcon,
-  Login as LoginIcon,
   LinkedIn as LinkedInIcon,
   Instagram as InstagramIcon,
   X as XIcon,
+  Lightbulb as LightbulbIcon,
+  FolderOpen as FolderIcon,
+  Assignment as AssignmentIcon,
+  TrendingUp as TrendingUpIcon,
+  HelpOutline as HelpIcon,
+  Search as SearchIcon,
+  Build as BuildIcon,
+  BusinessCenter as BusinessIcon,
 } from '@mui/icons-material'
 import Header from '../components/Header'
+import hBlackLogo from '../assets/images/h-black-logo.jpeg'
 
 export default function LandingPage() {
   return (
@@ -53,46 +56,18 @@ export default function LandingPage() {
           >
             <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 58.33%' } }}>
               <Typography variant="h1" component="h1" gutterBottom sx={{ mb: 3 }}>
-                Nigeria's Digital Tax Assistant
+                Helping Nigerians Understand and Navigate Tax
+                <br />
+                <Typography component="span" variant="h1" sx={{ color: 'primary.main' }}>
+                  Starting with What Matters Most
+                </Typography>
               </Typography>
-              <Typography variant="h5" color="text.secondary" sx={{ mb: 4, fontWeight: 400 }}>
-                Simple. Private. Always-available tax guidance and document storage
-                for individuals, freelancers and micro-businesses.
+              <Typography variant="h5" color="text.secondary" sx={{ mb: 3, fontWeight: 400 }}>
+                Clear tax guidance, document organisation, and compliance preparation for individuals, freelancers, and micro-businesses — starting simple, growing with you.
               </Typography>
-              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                <Button
-                  href="https://wa.me/234XXXXXXXXXX"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  variant="contained"
-                  size="large"
-                  startIcon={<PersonAddIcon />}
-                  sx={{
-                    bgcolor: 'secondary.main',
-                    px: 4,
-                    py: 1.5,
-                    fontSize: '1.1rem',
-                    '&:hover': { bgcolor: 'secondary.dark' },
-                  }}
-                >
-                  Start on WhatsApp
-                </Button>
-                <Button
-                  variant="outlined"
-                  size="large"
-                  href="#features"
-                  sx={{
-                    borderColor: 'primary.main',
-                    color: 'primary.main',
-                    px: 4,
-                    py: 1.5,
-                    fontSize: '1.1rem',
-                    '&:hover': { borderColor: 'primary.dark', bgcolor: 'primary.light', color: 'white' },
-                  }}
-                >
-                  Explore Features
-                </Button>
-              </Stack>
+              <Typography variant="body1" sx={{ mb: 4, fontStyle: 'italic', color: 'text.secondary' }}>
+                Kamafile helps you understand what applies to you, what to keep, and what to do next — without the confusion.
+              </Typography>
             </Box>
             <Box
               sx={{
@@ -107,6 +82,8 @@ export default function LandingPage() {
                 component="img"
                 src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop&q=80"
                 alt="Modern financial dashboard and analytics"
+                loading="lazy"
+                decoding="async"
                 sx={{
                   width: '100%',
                   height: 'auto',
@@ -121,84 +98,238 @@ export default function LandingPage() {
         </Container>
       </Box>
 
-      {/* SECTION 2: Problem Explanation */}
-      <Box id="about" sx={{ py: 10, bgcolor: 'background.paper', scrollMarginTop: '80px' }}>
+      {/* SECTION 2: Primary Entry Points */}
+      <Box sx={{ py: 8, bgcolor: 'background.paper' }}>
+        <Container maxWidth="md">
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center" sx={{ mb: 2 }}>
+            <Button
+              component={RouterLink}
+              to="/signup"
+              variant="contained"
+              size="large"
+              startIcon={<PersonAddIcon />}
+              sx={{
+                bgcolor: 'secondary.main',
+                px: 4,
+                py: 1.5,
+                fontSize: '1.1rem',
+                flex: { xs: '1 1 100%', sm: '1 1 50%' },
+                '&:hover': { bgcolor: 'secondary.dark' },
+              }}
+            >
+              Get Started (Web)
+            </Button>
+            <Button
+              href="https://wa.me/234XXXXXXXXXX"
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="contained"
+              size="large"
+              startIcon={<PersonAddIcon />}
+              sx={{
+                bgcolor: 'primary.main',
+                px: 4,
+                py: 1.5,
+                fontSize: '1.1rem',
+                flex: { xs: '1 1 100%', sm: '1 1 50%' },
+                '&:hover': { bgcolor: 'primary.dark' },
+              }}
+            >
+              Get Started (WhatsApp)
+            </Button>
+          </Stack>
+          <Typography variant="body2" align="center" color="text.secondary">
+            Choose how you want to start. You can switch anytime.
+          </Typography>
+        </Container>
+      </Box>
+
+      {/* SECTION 3: The Problem */}
+      <Box id="about" sx={{ py: 10, bgcolor: 'background.default', scrollMarginTop: '80px' }}>
         <Container maxWidth="lg">
-          <Typography variant="h2" component="h2" align="center" gutterBottom sx={{ mb: 6 }}>
-            Why Nigerians Struggle With Tax
+          <Typography variant="h2" component="h2" align="center" gutterBottom sx={{ mb: 2 }}>
+            The Problem
+          </Typography>
+          <Typography variant="h6" align="center" color="text.secondary" sx={{ mb: 8, maxWidth: 600, mx: 'auto' }}>
+            Many people struggle with taxes because they lack clarity and guidance
           </Typography>
           <Box
             sx={{
               display: 'flex',
               flexDirection: { xs: 'column', md: 'row' },
+              flexWrap: 'wrap',
               gap: 4,
+              mb: 6,
             }}
           >
             {[
-              { text: 'Tax rules are confusing and unclear' },
-              { text: 'Documents get lost or scattered' },
-              { text: 'Filing and deadlines create anxiety' },
+              {
+                icon: <HelpIcon />,
+                title: 'What taxes apply to them',
+                description: 'Uncertainty about which tax obligations are relevant to their specific situation',
+                color: 'error.main',
+              },
+              {
+                icon: <SearchIcon />,
+                title: 'Where to start',
+                description: 'Overwhelmed by the complexity and unsure of the first steps to take',
+                color: 'warning.main',
+              },
+              {
+                icon: <BuildIcon />,
+                title: 'How to prepare properly',
+                description: 'Lack of knowledge on proper documentation and filing requirements',
+                color: 'error.main',
+              },
             ].map((item, index) => (
-              <Box key={index} sx={{ flex: { xs: '1 1 100%', md: '1 1 33.33%' } }}>
-                <Card>
-                  <CardContent sx={{ p: 4, textAlign: 'center' }}>
-                    <Typography variant="h6" sx={{ mb: 2 }}>
-                      {item.text}
+              <Box
+                key={index}
+                sx={{
+                  flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 16px)', md: '1 1 calc(33.33% - 22px)' },
+                  minWidth: { xs: '100%', sm: '280px' },
+                }}
+              >
+                <Card
+                  sx={{
+                    height: '100%',
+                    transition: 'transform 0.2s, box-shadow 0.2s',
+                    borderLeft: `4px solid ${item.color}`,
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      boxShadow: 4,
+                    },
+                  }}
+                >
+                  <CardContent sx={{ p: 4, minHeight: 200 }}>
+                    <Box
+                      sx={{
+                        color: item.color,
+                        mb: 2,
+                        display: 'flex',
+                        justifyContent: 'flex-start',
+                        '& svg': { fontSize: 40 },
+                      }}
+                    >
+                      {item.icon}
+                    </Box>
+                    <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, mb: 2 }}>
+                      {item.title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {item.description}
                     </Typography>
                   </CardContent>
                 </Card>
               </Box>
             ))}
           </Box>
-          <Typography variant="body1" align="center" color="text.secondary" sx={{ mt: 4, maxWidth: 800, mx: 'auto' }}>
-            The 2026 reforms will increase complexity. Most people don't know what documents
-            to keep or how to stay compliant.
-          </Typography>
+          <Card
+            sx={{
+              bgcolor: 'background.paper',
+              border: '1px solid',
+              borderColor: 'divider',
+              maxWidth: 800,
+              mx: 'auto',
+            }}
+          >
+            <CardContent sx={{ p: 4, textAlign: 'center' }}>
+              <Box
+                sx={{
+                  color: 'text.secondary',
+                  mb: 1,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  '& svg': { fontSize: 32 },
+                }}
+              >
+                <BusinessIcon />
+              </Box>
+              <Typography variant="h6" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                Most existing tools are built for accountants — not real people.
+              </Typography>
+            </CardContent>
+          </Card>
         </Container>
       </Box>
 
-      {/* SECTION 3: What Kamafile Does */}
-      <Box id="features" sx={{ py: 10, bgcolor: 'background.default', scrollMarginTop: '80px' }}>
+      {/* SECTION 4: The Solution */}
+      <Box id="features" sx={{ py: 10, bgcolor: 'background.paper', scrollMarginTop: '80px' }}>
         <Container maxWidth="lg">
-          <Typography variant="h2" component="h2" align="center" gutterBottom sx={{ mb: 8 }}>
-            What Kamafile Helps You Do
+          <Typography variant="h2" component="h2" align="center" gutterBottom sx={{ mb: 2 }}>
+            The Solution
+          </Typography>
+          <Typography variant="h6" align="center" color="text.secondary" sx={{ mb: 8, maxWidth: 600, mx: 'auto' }}>
+            Kamafile helps you navigate taxes with clarity and confidence
           </Typography>
           <Box
             sx={{
               display: 'flex',
-              flexDirection: 'row',
+              flexDirection: { xs: 'column', md: 'row' },
               flexWrap: 'wrap',
               gap: 4,
             }}
           >
             {[
-              { icon: <TaxIcon />, title: 'Personalized Tax Guidance', color: 'primary.main' },
-              { icon: <CategoryIcon />, title: 'Multi-income Categorization', color: 'secondary.main' },
-              { icon: <DocumentIcon />, title: 'Secure Document Vault', color: 'primary.main' },
-              { icon: <CalendarIcon />, title: 'Deadline Reminders', color: 'secondary.main' },
-              { icon: <DocumentIcon />, title: 'OCR / Document Interpretation', color: 'primary.main' },
-              { icon: <ClinicIcon />, title: 'Virtual Tax Clinics', subtitle: 'Coming soon', color: 'secondary.main' },
-            ].map((feature, index) => (
-              <Box key={index} sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 16px)', md: '1 1 calc(33.33% - 22px)' }, minWidth: { xs: '100%', sm: '280px' } }}>
-                <Card>
-                  <CardContent sx={{ p: 4, textAlign: 'center', minHeight: 200 }}>
+              {
+                icon: <LightbulbIcon />,
+                title: 'Understand relevant taxes',
+                description: 'Get clear guidance on what taxes apply to your situation',
+                color: 'primary.main',
+              },
+              {
+                icon: <FolderIcon />,
+                title: 'Organise what matters',
+                description: 'Keep track of important documents and records in one secure place',
+                color: 'secondary.main',
+              },
+              {
+                icon: <AssignmentIcon />,
+                title: 'Prepare before filing',
+                description: 'Get everything ready and organized before tax season',
+                color: 'primary.main',
+              },
+              {
+                icon: <TrendingUpIcon />,
+                title: 'Take the right next step',
+                description: 'Receive personalized guidance on what to do next with confidence',
+                color: 'secondary.main',
+              },
+            ].map((item, index) => (
+              <Box
+                key={index}
+                sx={{
+                  flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 16px)', md: '1 1 calc(25% - 24px)' },
+                  minWidth: { xs: '100%', sm: '280px' },
+                }}
+              >
+                <Card
+                  sx={{
+                    height: '100%',
+                    transition: 'transform 0.2s, box-shadow 0.2s',
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      boxShadow: 4,
+                    },
+                  }}
+                >
+                  <CardContent sx={{ p: 4, textAlign: 'center', minHeight: 220 }}>
                     <Box
                       sx={{
-                        color: feature.color,
+                        color: item.color,
                         mb: 2,
+                        display: 'flex',
+                        justifyContent: 'center',
                         '& svg': { fontSize: 48 },
                       }}
                     >
-                      {feature.icon}
+                      {item.icon}
                     </Box>
-                    <Typography variant="h6" gutterBottom>
-                      {feature.title}
+                    <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, mb: 2 }}>
+                      {item.title}
                     </Typography>
-                    {feature.subtitle && (
-                      <Typography variant="body2" color="text.secondary">
-                        {feature.subtitle}
-                      </Typography>
-                    )}
+                    <Typography variant="body2" color="text.secondary">
+                      {item.description}
+                    </Typography>
                   </CardContent>
                 </Card>
               </Box>
@@ -207,11 +338,11 @@ export default function LandingPage() {
         </Container>
       </Box>
 
-      {/* SECTION 4: Who It's For */}
-      <Box sx={{ py: 10, bgcolor: 'background.paper' }}>
+      {/* SECTION 5: Capabilities (Beta) */}
+      <Box sx={{ py: 10, bgcolor: 'background.default' }}>
         <Container maxWidth="lg">
           <Typography variant="h2" component="h2" align="center" gutterBottom sx={{ mb: 8 }}>
-            Who We Help
+            What you can do with Kamafile (Beta)
           </Typography>
           <Box
             sx={{
@@ -222,10 +353,52 @@ export default function LandingPage() {
             }}
           >
             {[
-              { title: 'Employees', desc: 'PAYE, PIT basics' },
-              { title: 'Freelancers', desc: 'VAT, WHT logic' },
-              { title: 'Micro-Business Owners', desc: 'Receipts, VAT' },
-              { title: 'SMEs', desc: 'Overview, summaries, routing' },
+              'Understand what taxes apply to you',
+              'Organise income types and obligations',
+              'Know what documents to keep — and why',
+              'Prepare for filing and compliance',
+              'Get reminders and next-step guidance',
+            ].map((capability, index) => (
+              <Box key={index} sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 16px)', md: '1 1 calc(33.33% - 22px)' }, minWidth: { xs: '100%', sm: '280px' } }}>
+                <Card>
+                  <CardContent sx={{ p: 4, minHeight: 120 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+                      <CheckIcon sx={{ color: 'primary.main', mt: 0.5 }} />
+                      <Typography variant="body1">{capability}</Typography>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Box>
+            ))}
+          </Box>
+          <Typography variant="body2" align="center" color="text.secondary" sx={{ mt: 4, fontStyle: 'italic' }}>
+            Capabilities expand in depth and automation as the platform evolves.
+          </Typography>
+        </Container>
+      </Box>
+
+      {/* SECTION 6: Who It's For */}
+      <Box sx={{ py: 10, bgcolor: 'background.paper' }}>
+        <Container maxWidth="lg">
+          <Typography variant="h2" component="h2" align="center" gutterBottom sx={{ mb: 4 }}>
+            Who Kamafile Is For
+          </Typography>
+          <Typography variant="body1" align="center" color="text.secondary" sx={{ mb: 6, maxWidth: 800, mx: 'auto' }}>
+            Built for people navigating Nigeria's tax system without teams or advisors:
+          </Typography>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              gap: 4,
+            }}
+          >
+            {[
+              { title: 'Employees', desc: 'PAYE and personal income basics' },
+              { title: 'Freelancers', desc: 'VAT, WHT, mixed income' },
+              { title: 'Micro-business owners', desc: 'Receipts, records, compliance prep' },
+              { title: 'Growing SMEs', desc: 'Summaries, visibility, routing' },
             ].map((user, index) => (
               <Box key={index} sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 16px)', md: '1 1 calc(25% - 24px)' }, minWidth: { xs: '100%', sm: '280px' } }}>
                 <Card>
@@ -244,7 +417,7 @@ export default function LandingPage() {
         </Container>
       </Box>
 
-      {/* SECTION 5: How It Works */}
+      {/* SECTION 7: How It Works (Summary) */}
       <Box id="how-it-works" sx={{ py: 10, bgcolor: 'background.default', scrollMarginTop: '80px' }}>
         <Container maxWidth="lg">
           <Typography variant="h2" component="h2" align="center" gutterBottom sx={{ mb: 8 }}>
@@ -260,10 +433,10 @@ export default function LandingPage() {
             }}
           >
             {[
-              { step: '1', title: 'Create an account' },
-              { step: '2', title: 'Answer a few questions' },
-              { step: '3', title: 'Get personalized guidance' },
-              { step: '4', title: 'Store your documents safely' },
+              { step: '1', title: 'Start on Web or WhatsApp' },
+              { step: '2', title: 'Answer a few guided questions' },
+              { step: '3', title: 'Get tailored guidance' },
+              { step: '4', title: 'Organise documents securely' },
               { step: '5', title: 'Receive reminders and next steps' },
             ].map((item, index) => (
               <Card key={index} sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)', md: '1 1 calc(20% - 24px)' }, maxWidth: { md: 220 } }}>
@@ -294,11 +467,11 @@ export default function LandingPage() {
         </Container>
       </Box>
 
-      {/* SECTION 6: Why Trust Kamafile */}
+      {/* SECTION 8: Trust & Safety */}
       <Box sx={{ py: 10, bgcolor: 'background.paper' }}>
         <Container maxWidth="lg">
           <Typography variant="h2" component="h2" align="center" gutterBottom sx={{ mb: 8 }}>
-            Private. Secure. NDPA-Compliant.
+            Private. Secure. Built on trust.
           </Typography>
           <Box
             sx={{
@@ -309,9 +482,9 @@ export default function LandingPage() {
             }}
           >
             {[
-              { icon: <LockIcon />, title: 'End-to-end encryption' },
+              { icon: <LockIcon />, title: 'Encrypted document storage' },
               { icon: <ShieldIcon />, title: 'PIN-protected access' },
-              { icon: <CheckIcon />, title: 'You control your data' },
+              { icon: <CheckIcon />, title: 'You stay in control of your data' },
             ].map((trust, index) => (
               <Box key={index} sx={{ flex: { xs: '1 1 100%', md: '1 1 33.33%' } }}>
                 <Card>
@@ -331,39 +504,14 @@ export default function LandingPage() {
               </Box>
             ))}
           </Box>
-          <Typography variant="body1" align="center" color="text.secondary" sx={{ maxWidth: 600, mx: 'auto' }}>
-            We never share your documents without permission.
-          </Typography>
         </Container>
       </Box>
 
-      {/* SECTION 7: UI Preview */}
+      {/* SECTION 9: Product Vision */}
       <Box sx={{ py: 10, bgcolor: 'background.default' }}>
         <Container maxWidth="lg">
-          <Typography variant="h2" component="h2" align="center" gutterBottom sx={{ mb: 6 }}>
-            A simple dashboard for complex tax situations
-          </Typography>
-          <Box
-            component="img"
-            src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&h=600&fit=crop&q=80"
-            alt="Dashboard preview showing analytics and data visualization"
-            sx={{
-              width: '100%',
-              height: 'auto',
-              minHeight: 400,
-              borderRadius: 4,
-              objectFit: 'cover',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-            }}
-          />
-        </Container>
-      </Box>
-
-      {/* SECTION 8: Education & Content */}
-      <Box id="resources" sx={{ py: 10, bgcolor: 'background.paper', scrollMarginTop: '80px' }}>
-        <Container maxWidth="lg">
           <Typography variant="h2" component="h2" align="center" gutterBottom sx={{ mb: 8 }}>
-            Tax Basics Made Simple
+            Where Kamafile is headed
           </Typography>
           <Box
             sx={{
@@ -372,29 +520,35 @@ export default function LandingPage() {
               gap: 4,
             }}
           >
-            {[
-              { title: 'What income is taxable in Nigeria?' },
-              { title: '2026 reforms explained' },
-              { title: 'What documents should I keep?' },
-            ].map((article, index) => (
-              <Box key={index} sx={{ flex: { xs: '1 1 100%', md: '1 1 33.33%' } }}>
-                <Card>
-                  <CardContent sx={{ p: 4, minHeight: 150 }}>
-                    <Typography variant="h6" gutterBottom>
-                      {article.title}
-                    </Typography>
-                    <Button variant="text" color="secondary" sx={{ mt: 2 }}>
-                      Read more →
-                    </Button>
-                  </CardContent>
-                </Card>
-              </Box>
-            ))}
+            <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 50%' } }}>
+              <Card>
+                <CardContent sx={{ p: 4, minHeight: 200 }}>
+                  <Typography variant="h5" gutterBottom sx={{ color: 'primary.main', mb: 2 }}>
+                    Today
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary">
+                    Tax guidance and preparation — clarity before filing.
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Box>
+            <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 50%' } }}>
+              <Card>
+                <CardContent sx={{ p: 4, minHeight: 200 }}>
+                  <Typography variant="h5" gutterBottom sx={{ color: 'secondary.main', mb: 2 }}>
+                    Next
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary">
+                    Deeper organisation, structured workflows, and smarter insights as the market and data ecosystem mature.
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Box>
           </Box>
         </Container>
       </Box>
 
-      {/* SECTION 9: Final CTA */}
+      {/* SECTION 10: Final CTA */}
       <Box id="pricing" sx={{ py: 10, bgcolor: 'primary.main', color: 'white', scrollMarginTop: '80px' }}>
         <Container maxWidth="md">
           <Typography variant="h2" component="h2" align="center" gutterBottom sx={{ mb: 4, color: 'white' }}>
@@ -402,9 +556,8 @@ export default function LandingPage() {
           </Typography>
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center" sx={{ mb: 3 }}>
             <Button
-              href="https://wa.me/234XXXXXXXXXX"
-              target="_blank"
-              rel="noopener noreferrer"
+              component={RouterLink}
+              to="/signup"
               variant="contained"
               size="large"
               startIcon={<PersonAddIcon />}
@@ -416,28 +569,29 @@ export default function LandingPage() {
                 '&:hover': { bgcolor: 'secondary.dark' },
               }}
             >
-              Start on WhatsApp
+              Get Started (Web)
             </Button>
             <Button
-              component={RouterLink}
-              to="/signin"
-              variant="outlined"
+              href="https://wa.me/234XXXXXXXXXX"
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="contained"
               size="large"
-              startIcon={<LoginIcon />}
+              startIcon={<PersonAddIcon />}
               sx={{
-                borderColor: 'white',
-                color: 'white',
+                bgcolor: 'white',
+                color: 'primary.main',
                 px: 4,
                 py: 1.5,
                 fontSize: '1.1rem',
-                '&:hover': { borderColor: 'white', bgcolor: 'rgba(255,255,255,0.1)' },
+                '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' },
               }}
             >
-              Sign In
+              Get Started (WhatsApp)
             </Button>
           </Stack>
           <Typography variant="body2" align="center" sx={{ color: 'rgba(255,255,255,0.8)' }}>
-            Free for early users. No downloads required.
+            Choose how you want to start. You can switch anytime.
           </Typography>
         </Container>
       </Box>
@@ -453,9 +607,17 @@ export default function LandingPage() {
             }}
           >
             <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 50%' } }}>
-              <Typography variant="h5" sx={{ fontWeight: 700, mb: 2, color: 'primary.main' }}>
-                KAMAFILE
-              </Typography>
+              <Box
+                component="img"
+                src={hBlackLogo}
+                alt="Kamafile Logo"
+                sx={{
+                  height: { xs: 48, md: 56 },
+                  width: 'auto',
+                  objectFit: 'contain',
+                  mb: 2,
+                }}
+              />
               <Typography variant="body2" color="text.secondary">
                 Nigeria's Digital Tax Assistant
               </Typography>
