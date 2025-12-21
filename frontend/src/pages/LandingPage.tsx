@@ -1,4 +1,4 @@
-import { Link as RouterLink } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 import {
   Container,
   Typography,
@@ -10,6 +10,11 @@ import {
   Link,
   IconButton,
 } from '@mui/material'
+import {
+  ArrowBackIos,
+  ArrowForwardIos,
+} from '@mui/icons-material'
+import { adminAPI, Banner } from '../services/adminAPI'
 import {
   Lock as LockIcon,
   VerifiedUser as ShieldIcon,
@@ -28,14 +33,96 @@ import {
   BusinessCenter as BusinessIcon,
 } from '@mui/icons-material'
 import Header from '../components/Header'
+import ChatWizard from '../components/ChatWizard'
 import hBlackLogo from '../assets/images/h-black-logo.jpeg'
 
 export default function LandingPage() {
+  const [banners, setBanners] = useState<Banner[]>([])
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const [loading, setLoading] = useState(true)
+  const [chatWizardOpen, setChatWizardOpen] = useState(false)
+
+  useEffect(() => {
+    loadBanners()
+  }, [])
+
+  useEffect(() => {
+    if (banners.length > 1) {
+      const interval = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % banners.length)
+      }, 5000) // Auto-advance every 5 seconds
+      return () => clearInterval(interval)
+    }
+  }, [banners.length])
+
+  const loadBanners = async () => {
+    try {
+      const data = await adminAPI.getPublicBanners()
+      setBanners(data)
+      if (data.length > 0) {
+        setCurrentSlide(0)
+      }
+    } catch (error) {
+      console.error('Failed to load banners:', error)
+      // Fallback to default banner if API fails
+      setBanners([{
+        id: 'default',
+        title: 'Helping Nigerians Understand and Navigate Tax',
+        description: 'Clear tax guidance, document organisation, and compliance preparation for individuals, freelancers, and micro-businesses — starting simple, growing with you.',
+        image_url: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop&q=80',
+        order: 0,
+        is_active: true,
+        created_at: new Date().toISOString(),
+      }])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handlePrevious = () => {
+    if (banners.length === 0) return
+    setCurrentSlide((prev) => (prev - 1 + banners.length) % banners.length)
+  }
+
+  const handleNext = () => {
+    if (banners.length === 0) return
+    setCurrentSlide((prev) => (prev + 1) % banners.length)
+  }
+
+  const handleSlideClick = (index: number) => {
+    if (banners.length === 0) return
+    setCurrentSlide(index)
+  }
+
+  if (loading) {
+    return (
+      <Box sx={{ flexGrow: 1 }}>
+        <Header />
+        <Box sx={{ minHeight: '90vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Typography>Loading...</Typography>
+        </Box>
+      </Box>
+    )
+  }
+
+  // Default banner if none exist
+  const defaultBanner: Banner = {
+    id: 'default',
+    title: 'Helping Nigerians Understand and Navigate Tax',
+    description: 'Clear tax guidance, document organisation, and compliance preparation for individuals, freelancers, and micro-businesses — starting simple, growing with you.',
+    image_url: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop&q=80',
+    order: 0,
+    is_active: true,
+    created_at: new Date().toISOString(),
+  }
+
+  const displayBanners = banners.length > 0 ? banners : [defaultBanner]
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Header />
 
-      {/* SECTION 1: Hero */}
+      {/* SECTION 1: Hero Banner Slider */}
       <Box
         sx={{
           minHeight: '90vh',
@@ -43,78 +130,162 @@ export default function LandingPage() {
           alignItems: 'center',
           bgcolor: 'background.default',
           py: 8,
+          position: 'relative',
+          overflow: 'hidden',
         }}
       >
-        <Container maxWidth="lg">
+        <Container maxWidth="lg" sx={{ position: 'relative', overflow: 'hidden' }}>
           <Box
             sx={{
-              display: 'flex',
-              flexDirection: { xs: 'column', md: 'row' },
-              gap: 4,
-              alignItems: 'center',
+              position: 'relative',
+              width: '100%',
+              overflow: 'hidden',
             }}
           >
-            <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 58.33%' } }}>
-              <Typography variant="h1" component="h1" gutterBottom sx={{ mb: 3 }}>
-                Helping Nigerians Understand and Navigate Tax
-                <br />
-                <Typography component="span" variant="h1" sx={{ color: 'primary.main' }}>
-                  Starting with What Matters Most
-                </Typography>
-              </Typography>
-              <Typography variant="h5" color="text.secondary" sx={{ mb: 3, fontWeight: 400 }}>
-                Clear tax guidance, document organisation, and compliance preparation for individuals, freelancers, and micro-businesses — starting simple, growing with you.
-              </Typography>
-              <Typography variant="body1" sx={{ mb: 4, fontStyle: 'italic', color: 'text.secondary' }}>
-                Kamafile helps you understand what applies to you, what to keep, and what to do next — without the confusion.
-              </Typography>
-            </Box>
+            {displayBanners.length > 1 && (
+              <>
+                <IconButton
+                  onClick={handlePrevious}
+                  sx={{
+                    position: 'absolute',
+                    left: { xs: 8, md: -60 },
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    bgcolor: 'background.paper',
+                    boxShadow: 2,
+                    zIndex: 3,
+                    '&:hover': {
+                      bgcolor: 'background.paper',
+                    },
+                  }}
+                >
+                  <ArrowBackIos />
+                </IconButton>
+                <IconButton
+                  onClick={handleNext}
+                  sx={{
+                    position: 'absolute',
+                    right: { xs: 8, md: -60 },
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    bgcolor: 'background.paper',
+                    boxShadow: 2,
+                    zIndex: 3,
+                    '&:hover': {
+                      bgcolor: 'background.paper',
+                    },
+                  }}
+                >
+                  <ArrowForwardIos />
+                </IconButton>
+              </>
+            )}
+
             <Box
               sx={{
-                flex: { xs: '1 1 100%', md: '1 1 41.67%' },
                 display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                minHeight: 300,
+                width: `${displayBanners.length * 100}%`,
+                transform: `translateX(-${currentSlide * (100 / displayBanners.length)}%)`,
+                transition: 'transform 0.6s ease-in-out',
               }}
             >
-              <Box
-                component="img"
-                src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop&q=80"
-                alt="Modern financial dashboard and analytics"
-                loading="lazy"
-                decoding="async"
-                sx={{
-                  width: '100%',
-                  height: 'auto',
-                  minHeight: 300,
-                  borderRadius: 4,
-                  objectFit: 'cover',
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-                }}
-              />
+              {displayBanners.map((banner, index) => (
+                <Box
+                  key={banner.id}
+                  sx={{
+                    width: `${100 / banners.length}%`,
+                    flexShrink: 0,
+                    display: 'flex',
+                    flexDirection: { xs: 'column', md: 'row' },
+                    gap: 4,
+                    alignItems: 'center',
+                    px: { xs: 0, md: 2 },
+                  }}
+                >
+                  <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 58.33%' } }}>
+                    <Typography variant="h1" component="h1" gutterBottom sx={{ mb: 3 }}>
+                      {banner.title}
+                    </Typography>
+                    {banner.description && (
+                      <Typography variant="h5" color="text.secondary" sx={{ mb: 3, fontWeight: 400 }}>
+                        {banner.description}
+                      </Typography>
+                    )}
+                  </Box>
+                  <Box
+                    sx={{
+                      flex: { xs: '1 1 100%', md: '1 1 41.67%' },
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      minHeight: 300,
+                    }}
+                  >
+                    <Box
+                      component="img"
+                      src={banner.image_url || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop&q=80'}
+                      alt={banner.title}
+                      loading={index === 0 ? 'eager' : 'lazy'}
+                      decoding="async"
+                      sx={{
+                        width: '100%',
+                        height: 'auto',
+                        minHeight: 300,
+                        borderRadius: 4,
+                        objectFit: 'cover',
+                        boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                      }}
+                    />
+                  </Box>
+                </Box>
+              ))}
             </Box>
           </Box>
+
+          {/* Slide Indicators */}
+          {displayBanners.length > 1 && (
+            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, mt: 4 }}>
+              {displayBanners.map((_, index) => (
+                <Box
+                  key={index}
+                  onClick={() => handleSlideClick(index)}
+                  sx={{
+                    width: 12,
+                    height: 12,
+                    borderRadius: '50%',
+                    bgcolor: index === currentSlide ? 'primary.main' : 'action.disabled',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.3s',
+                    '&:hover': {
+                      bgcolor: index === currentSlide ? 'primary.dark' : 'action.active',
+                    },
+                  }}
+                />
+              ))}
+            </Box>
+          )}
         </Container>
       </Box>
 
       {/* SECTION 2: Primary Entry Points */}
       <Box sx={{ py: 8, bgcolor: 'background.paper' }}>
         <Container maxWidth="md">
+          <Typography variant="h4" component="h2" align="center" gutterBottom sx={{ mb: 4, fontWeight: 600 }}>
+            Try Kamafile Now
+          </Typography>
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center" sx={{ mb: 2 }}>
             <Button
-              component={RouterLink}
-              to="/signup"
+              onClick={() => setChatWizardOpen(true)}
               variant="contained"
               size="large"
-              startIcon={<PersonAddIcon />}
+              startIcon={<HelpIcon />}
               sx={{
-                bgcolor: 'secondary.main',
+                bgcolor: 'primary.main',
                 px: 4,
                 py: 1.5,
                 fontSize: '1.1rem',
                 flex: { xs: '1 1 100%', sm: '1 1 50%' },
-                '&:hover': { bgcolor: 'secondary.dark' },
+                '&:hover': { bgcolor: 'primary.dark' },
               }}
             >
               Get Started (Web)
@@ -127,19 +298,19 @@ export default function LandingPage() {
               size="large"
               startIcon={<PersonAddIcon />}
               sx={{
-                bgcolor: 'primary.main',
+                bgcolor: 'secondary.main',
                 px: 4,
                 py: 1.5,
                 fontSize: '1.1rem',
                 flex: { xs: '1 1 100%', sm: '1 1 50%' },
-                '&:hover': { bgcolor: 'primary.dark' },
+                '&:hover': { bgcolor: 'secondary.dark' },
               }}
             >
               Get Started (WhatsApp)
             </Button>
           </Stack>
-          <Typography variant="body2" align="center" color="text.secondary">
-            Choose how you want to start. You can switch anytime.
+          <Typography variant="body2" align="center" color="text.secondary" sx={{ mt: 2 }}>
+            Start with a quick chat - no account needed. You can switch to WhatsApp anytime.
           </Typography>
         </Container>
       </Box>
@@ -556,25 +727,7 @@ export default function LandingPage() {
           </Typography>
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center" sx={{ mb: 3 }}>
             <Button
-              component={RouterLink}
-              to="/signup"
-              variant="contained"
-              size="large"
-              startIcon={<PersonAddIcon />}
-              sx={{
-                bgcolor: 'secondary.main',
-                px: 4,
-                py: 1.5,
-                fontSize: '1.1rem',
-                '&:hover': { bgcolor: 'secondary.dark' },
-              }}
-            >
-              Get Started (Web)
-            </Button>
-            <Button
-              href="https://wa.me/234XXXXXXXXXX"
-              target="_blank"
-              rel="noopener noreferrer"
+              onClick={() => setChatWizardOpen(true)}
               variant="contained"
               size="large"
               startIcon={<PersonAddIcon />}
@@ -587,6 +740,23 @@ export default function LandingPage() {
                 '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' },
               }}
             >
+              Get Started (Web)
+            </Button>
+            <Button
+              href="https://wa.me/234XXXXXXXXXX"
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="contained"
+              size="large"
+              startIcon={<PersonAddIcon />}
+              sx={{
+                bgcolor: 'secondary.main',
+                px: 4,
+                py: 1.5,
+                fontSize: '1.1rem',
+                '&:hover': { bgcolor: 'secondary.dark' },
+              }}
+            >
               Get Started (WhatsApp)
             </Button>
           </Stack>
@@ -595,6 +765,9 @@ export default function LandingPage() {
           </Typography>
         </Container>
       </Box>
+
+      {/* Chat Wizard Modal */}
+      <ChatWizard open={chatWizardOpen} onClose={() => setChatWizardOpen(false)} />
 
       {/* FOOTER */}
       <Box component="footer" id="contact" sx={{ py: 6, bgcolor: 'background.paper', borderTop: '1px solid', borderColor: 'divider', scrollMarginTop: '80px' }}>

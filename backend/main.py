@@ -7,9 +7,32 @@ from database import init_db, engine
 from redis_client import check_redis_connection, close_redis
 from sqlalchemy import text
 from routers import auth
+from routers.admin import users, dashboard, banners
+from routers import onboarding, whatsapp
 # Import models to ensure tables are created
-from models import User  # noqa: F401
+from models import User, AdminLog, Banner, ConversationSession, UserProfile, ConversationMessage  # noqa: F401
 import traceback
+import logging
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+# Try multiple paths to handle both local and Docker environments
+load_dotenv()  # Current directory
+load_dotenv('.env')  # Explicit .env in current directory
+load_dotenv('/app/.env')  # Docker container path
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+
+# Suppress Uvicorn warnings for invalid HTTP requests (common with Twilio)
+# But keep INFO level for our application logs
+logging.getLogger("uvicorn.error").setLevel(logging.ERROR)
+logging.getLogger("uvicorn.access").setLevel(logging.WARNING)
+logging.getLogger("h11").setLevel(logging.ERROR)
 
 
 @asynccontextmanager
@@ -28,6 +51,49 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan
 )
+
+# Add request logging middleware to debug webhook issues
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    """Log all incoming requests for debugging"""
+    import logging
+    logger = logging.getLogger(__name__)
+    
+    # Log incoming request (don't access headers/body in a way that breaks parsing)
+    try:
+        path = str(request.url.path)
+        method = request.method
+        client = request.client.host if request.client else 'unknown'
+        logger.info(f"📥 INCOMING REQUEST: {method} {path} from {client}")
+    except Exception:
+        pass  # Don't fail on logging
+    
+    # Process request
+    try:
+        response = await call_next(request)
+        # Log response
+        try:
+            status = response.status_code
+            logger.info(f"📤 RESPONSE: {status} for {method} {path}")
+        except Exception:
+            pass
+        return response
+    except Exception as e:
+        logger.error(f"❌ ERROR in request handler: {e}", exc_info=True)
+        # Return a valid HTTP response even on error
+        try:
+            return JSONResponse(
+                status_code=500,
+                content={"detail": "Internal server error"}
+            )
+        except Exception:
+            # Last resort - return minimal valid response
+            from fastapi.responses import Response
+            return Response(
+                content='{"error": "Internal server error"}',
+                status_code=500,
+                media_type="application/json"
+            )
 
 # Configure CORS - must be added before routes
 # Temporarily allow all origins to debug CORS issue
@@ -103,3 +169,8 @@ async def test_endpoint():
 
 # Include routers
 app.include_router(auth.router)
+app.include_router(users.router)
+app.include_router(dashboard.router)
+app.include_router(banners.router)
+app.include_router(onboarding.router)
+app.include_router(whatsapp.router)

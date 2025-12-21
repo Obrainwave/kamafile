@@ -1,7 +1,9 @@
 from datetime import datetime, timedelta
 from typing import Optional
+from uuid import UUID
 from jose import JWTError, jwt
-from passlib.context import CryptContext
+import bcrypt
+import hashlib
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -15,40 +17,45 @@ SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-change-in-production-min-3
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30 * 24 * 60  # 30 days
 
-# Password hashing
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 # OAuth2 scheme
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/login")
+
+
+def get_password_hash(password: str) -> str:
+    """Hash a password using SHA-256 → bcrypt
+    
+    This approach:
+    - Supports unlimited password length
+    - Is secure and industry-standard
+    - Used by banks and government systems
+    - SHA-256 produces 32 bytes (well under bcrypt's 72-byte limit)
+    - Uses hexdigest to avoid null-byte issues in some environments
+    """
+    # Pre-hash with SHA-256 to handle any password length
+    # Using hexdigest format is recommended to avoid null-byte issues
+    prehashed = hashlib.sha256(password.encode("utf-8")).hexdigest().encode("utf-8")
+    
+    # Generate salt and hash with bcrypt
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(prehashed, salt)
+    
+    # Return as string for database storage
+    return hashed.decode('utf-8')
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verify a password against its hash
     
-    Truncates password to 72 bytes before verification to match how we hash.
+    Uses SHA-256 pre-hashing to support unlimited password length.
     """
-    # Truncate password to 72 bytes to match how we hash
-    password_bytes = plain_password.encode('utf-8')
-    if len(password_bytes) > 72:
-        password_bytes = password_bytes[:72]
-    
-    # Verify with truncated password
-    return pwd_context.verify(password_bytes.decode('utf-8', errors='ignore'), hashed_password)
-
-
-def get_password_hash(password: str) -> str:
-    """Hash a password
-    
-    Note: bcrypt has a 72-byte limit. We truncate passwords to 72 bytes
-    before hashing to avoid this limitation.
-    """
-    # Truncate password to 72 bytes to avoid bcrypt's limit
-    password_bytes = password.encode('utf-8')
-    if len(password_bytes) > 72:
-        password_bytes = password_bytes[:72]
-    
-    # Hash the (possibly truncated) password
-    return pwd_context.hash(password_bytes.decode('utf-8', errors='ignore'))
+    try:
+        # Pre-hash with SHA-256 to match how we hash
+        prehashed = hashlib.sha256(plain_password.encode("utf-8")).hexdigest().encode("utf-8")
+        
+        # bcrypt.checkpw handles the salt extraction from the hashed_password string
+        return bcrypt.checkpw(prehashed, hashed_password.encode('utf-8'))
+    except (ValueError, AttributeError, TypeError):
+        return False
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
@@ -81,7 +88,13 @@ async def get_current_user(
     except JWTError:
         raise credentials_exception
     
-    result = await db.execute(select(User).where(User.id == user_id))
+    try:
+        # Convert string UUID to UUID object
+        user_uuid = UUID(user_id)
+    except (ValueError, TypeError):
+        raise credentials_exception
+    
+    result = await db.execute(select(User).where(User.id == user_uuid))
     user = result.scalar_one_or_none()
     if user is None:
         raise credentials_exception

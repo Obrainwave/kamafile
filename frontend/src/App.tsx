@@ -8,7 +8,12 @@ const LandingPage = lazy(() => import('./pages/LandingPage'))
 const SignIn = lazy(() => import('./pages/SignIn'))
 const SignUp = lazy(() => import('./pages/SignUp'))
 const About = lazy(() => import('./pages/About'))
+const Profile = lazy(() => import('./pages/Profile'))
 const ChatBot = lazy(() => import('./components/ChatBot'))
+const AdminLayout = lazy(() => import('./components/admin/AdminLayout'))
+const AdminDashboard = lazy(() => import('./pages/admin/Dashboard'))
+const AdminUsers = lazy(() => import('./pages/admin/Users'))
+const AdminBanners = lazy(() => import('./pages/admin/Banners'))
 
 // Loading component
 const PageLoader = () => (
@@ -57,6 +62,12 @@ function App() {
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/about" element={<About />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="users" element={<AdminUsers />} />
+              <Route path="content" element={<AdminBanners />} />
+            </Route>
           </Routes>
           <LazyChatBot />
         </Suspense>

@@ -9,6 +9,8 @@ import {
   Fade,
   Slide,
   Divider,
+  Button,
+  CircularProgress,
 } from '@mui/material'
 import {
   Send as SendIcon,
@@ -17,25 +19,24 @@ import {
   SmartToy as BotIcon,
   Person as PersonIcon,
 } from '@mui/icons-material'
+import { onboardingAPI, QuickReply } from '../services/onboardingAPI'
 
 interface Message {
   id: string
   text: string
   sender: 'user' | 'bot'
   timestamp: Date
-}
-
-const initialBotMessage: Message = {
-  id: '1',
-  text: "Hello! I'm your Kamafile tax assistant. How can I help you today?",
-  sender: 'bot',
-  timestamp: new Date(),
+  quickReplies?: QuickReply[]
 }
 
 export default function ChatBot() {
   const [open, setOpen] = useState(false)
-  const [messages, setMessages] = useState<Message[]>([initialBotMessage])
+  const [messages, setMessages] = useState<Message[]>([])
   const [inputValue, setInputValue] = useState('')
+  const [sessionId, setSessionId] = useState<string | null>(null)
+  const [currentStep, setCurrentStep] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isOnboarding, setIsOnboarding] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const scrollToBottom = () => {
@@ -46,8 +47,126 @@ export default function ChatBot() {
     scrollToBottom()
   }, [messages])
 
-  const handleSend = () => {
+  // Generate a unique user identifier for web (using localStorage)
+  const getUserIdentifier = (): string => {
+    let identifier = localStorage.getItem('kamafile_user_id')
+    if (!identifier) {
+      identifier = `web_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      localStorage.setItem('kamafile_user_id', identifier)
+    }
+    return identifier
+  }
+
+  // Start onboarding when chat opens
+  useEffect(() => {
+    if (open && !sessionId && messages.length === 0) {
+      startOnboarding()
+    }
+  }, [open])
+
+  // Listen for custom event to open chat from other components
+  useEffect(() => {
+    const handleOpenChat = () => {
+      setOpen(true)
+    }
+
+    window.addEventListener('openChatWidget', handleOpenChat)
+    return () => {
+      window.removeEventListener('openChatWidget', handleOpenChat)
+    }
+  }, [])
+
+  const startOnboarding = async () => {
+    setIsLoading(true)
+    setIsOnboarding(true)
+    try {
+      const userIdentifier = getUserIdentifier()
+      const response = await onboardingAPI.startOnboarding({
+        channel: 'web',
+        user_identifier: userIdentifier,
+      })
+
+      setSessionId(response.session_id)
+      setCurrentStep(response.step || null)
+
+      const botMessage: Message = {
+        id: Date.now().toString(),
+        text: response.message,
+        sender: 'bot',
+        timestamp: new Date(),
+        quickReplies: response.quick_replies || undefined,
+      }
+
+      setMessages([botMessage])
+    } catch (error) {
+      console.error('Failed to start onboarding:', error)
+      const errorMessage: Message = {
+        id: Date.now().toString(),
+        text: "Sorry, I'm having trouble starting. Please try again.",
+        sender: 'bot',
+        timestamp: new Date(),
+      }
+      setMessages([errorMessage])
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleQuickReply = async (payload: string, title: string) => {
+    if (!sessionId) return
+
+    // Add user message
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      text: title,
+      sender: 'user',
+      timestamp: new Date(),
+    }
+
+    setMessages((prev) => [...prev, userMessage])
+    setIsLoading(true)
+
+    try {
+      const response = await onboardingAPI.processStep({
+        session_id: sessionId,
+        step: currentStep || '',
+        response: payload,
+      })
+
+      setCurrentStep(response.step || null)
+      setIsOnboarding(!response.completed && response.status === 'onboarding')
+
+      const botMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: response.message,
+        sender: 'bot',
+        timestamp: new Date(),
+        quickReplies: response.quick_replies || undefined,
+      }
+
+      setMessages((prev) => [...prev, botMessage])
+    } catch (error) {
+      console.error('Failed to process step:', error)
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: "Sorry, I'm having trouble processing that. Please try again.",
+        sender: 'bot',
+        timestamp: new Date(),
+      }
+      setMessages((prev) => [...prev, errorMessage])
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleSend = async () => {
     if (!inputValue.trim()) return
+
+    if (!sessionId) {
+      // If no session, start onboarding
+      await startOnboarding()
+      return
+    }
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -57,18 +176,42 @@ export default function ChatBot() {
     }
 
     setMessages((prev) => [...prev, userMessage])
+    const userInput = inputValue
     setInputValue('')
+    setIsLoading(true)
 
-    // Simulate bot response (replace with actual API call)
-    setTimeout(() => {
-      const botResponse: Message = {
+    try {
+      // Use currentStep if available, otherwise use empty string for active status
+      const response = await onboardingAPI.processStep({
+        session_id: sessionId,
+        step: currentStep || '',
+        response: userInput,
+      })
+
+      setCurrentStep(response.step || null)
+      setIsOnboarding(!response.completed && response.status === 'onboarding')
+
+      const botMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: "I'm here to help with your tax questions. This is a demo response. In production, this will connect to our AI assistant powered by DeepSeek.",
+        text: response.message,
+        sender: 'bot',
+        timestamp: new Date(),
+        quickReplies: response.quick_replies || undefined,
+      }
+
+      setMessages((prev) => [...prev, botMessage])
+    } catch (error) {
+      console.error('Failed to process message:', error)
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: "Sorry, I'm having trouble processing that. Please try again.",
         sender: 'bot',
         timestamp: new Date(),
       }
-      setMessages((prev) => [...prev, botResponse])
-    }, 1000)
+      setMessages((prev) => [...prev, errorMessage])
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -164,7 +307,7 @@ export default function ChatBot() {
                   Tax Assistant
                 </Typography>
                 <Typography variant="caption" sx={{ opacity: 0.9, fontSize: '0.75rem' }}>
-                  Online
+                  {isOnboarding ? 'Onboarding...' : 'Online'}
                 </Typography>
               </Box>
             </Box>
@@ -192,6 +335,12 @@ export default function ChatBot() {
               gap: 2,
             }}
           >
+            {messages.length === 0 && isLoading && (
+              <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
+                <CircularProgress size={24} />
+              </Box>
+            )}
+
             {messages.map((message) => (
               <Box
                 key={message.id}
@@ -231,10 +380,47 @@ export default function ChatBot() {
                       wordWrap: 'break-word',
                     }}
                   >
-                    <Typography variant="body2" sx={{ lineHeight: 1.5 }}>
+                    <Typography variant="body2" sx={{ lineHeight: 1.5, whiteSpace: 'pre-line' }}>
                       {message.text}
                     </Typography>
                   </Box>
+
+                  {/* Quick Reply Buttons */}
+                  {message.sender === 'bot' && message.quickReplies && message.quickReplies.length > 0 && (
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 1,
+                        mt: 0.5,
+                      }}
+                    >
+                      {message.quickReplies.map((reply) => (
+                        <Button
+                          key={reply.payload}
+                          variant="outlined"
+                          size="small"
+                          onClick={() => handleQuickReply(reply.payload, reply.title)}
+                          disabled={isLoading}
+                          sx={{
+                            textTransform: 'none',
+                            justifyContent: 'flex-start',
+                            textAlign: 'left',
+                            borderColor: 'primary.main',
+                            color: 'primary.main',
+                            '&:hover': {
+                              bgcolor: 'primary.light',
+                              color: 'white',
+                              borderColor: 'primary.light',
+                            },
+                          }}
+                        >
+                          {reply.title}
+                        </Button>
+                      ))}
+                    </Box>
+                  )}
+
                   <Typography
                     variant="caption"
                     sx={{
@@ -261,6 +447,31 @@ export default function ChatBot() {
                 )}
               </Box>
             ))}
+
+            {isLoading && messages.length > 0 && (
+              <Box sx={{ display: 'flex', justifyContent: 'flex-start', gap: 1 }}>
+                <Avatar
+                  sx={{
+                    bgcolor: 'secondary.main',
+                    width: 32,
+                    height: 32,
+                  }}
+                >
+                  <BotIcon sx={{ fontSize: 18 }} />
+                </Avatar>
+                <Box
+                  sx={{
+                    bgcolor: 'background.paper',
+                    p: 1.5,
+                    borderRadius: 2,
+                    boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
+                  }}
+                >
+                  <CircularProgress size={16} />
+                </Box>
+              </Box>
+            )}
+
             <div ref={messagesEndRef} />
           </Box>
 
@@ -286,6 +497,7 @@ export default function ChatBot() {
               onKeyPress={handleKeyPress}
               variant="outlined"
               size="small"
+              disabled={isLoading}
               sx={{
                 '& .MuiOutlinedInput-root': {
                   borderRadius: 2,
@@ -295,7 +507,7 @@ export default function ChatBot() {
             />
             <IconButton
               onClick={handleSend}
-              disabled={!inputValue.trim()}
+              disabled={!inputValue.trim() || isLoading}
               sx={{
                 bgcolor: 'secondary.main',
                 color: 'white',

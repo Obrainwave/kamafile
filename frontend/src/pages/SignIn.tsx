@@ -62,6 +62,9 @@ export default function SignIn() {
       localStorage.setItem('access_token', response.access_token)
       localStorage.setItem('user', JSON.stringify(response.user))
 
+      // Dispatch custom event to notify Header of authentication change
+      window.dispatchEvent(new CustomEvent('auth-change'))
+
       // Navigate to home or dashboard
       navigate('/')
     } catch (err: any) {

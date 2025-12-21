@@ -121,6 +121,13 @@ async def login(login_data: LoginRequest, db: AsyncSession = Depends(get_db)):
             detail="User account is inactive"
         )
     
+    # Update last login and login count
+    from datetime import datetime
+    user.last_login = datetime.utcnow()
+    user.login_count = (user.login_count or 0) + 1
+    await db.commit()
+    await db.refresh(user)
+    
     # Create access token
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
@@ -138,6 +145,9 @@ async def login(login_data: LoginRequest, db: AsyncSession = Depends(get_db)):
             user_type=user.user_type,
             is_active=user.is_active,
             is_verified=user.is_verified,
+            role=user.role,
+            last_login=user.last_login,
+            login_count=user.login_count,
             created_at=user.created_at
         )
     )
@@ -156,5 +166,8 @@ async def get_current_user_info(
         user_type=current_user.user_type,
         is_active=current_user.is_active,
         is_verified=current_user.is_verified,
+        role=current_user.role,
+        last_login=current_user.last_login,
+        login_count=current_user.login_count,
         created_at=current_user.created_at
     )

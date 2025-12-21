@@ -109,6 +109,26 @@ See `.env.example` for all available environment variables. Key variables:
 - `DATABASE_URL` - Full database connection URL
 - `REDIS_URL` - Redis connection URL
 
+## Creating an Admin User
+
+After deployment, you need to create an admin user to access the admin dashboard.
+
+**Quick Start:**
+```bash
+# For Docker
+docker exec -it kamafile_backend python scripts/create_admin.py
+
+# For Local
+cd backend && python scripts/create_admin.py
+```
+
+**Default Admin Credentials:**
+- Email: `super@kamafile.com`
+- Password: `123456`
+- ⚠️ **Change this password immediately after first login!**
+
+For detailed instructions, custom credentials, and troubleshooting, see **[CREATE_ADMIN.md](./CREATE_ADMIN.md)**
+
 ## Project Structure
 
 ```
@@ -119,5 +139,8 @@ backend/
 ├── Dockerfile           # Docker image definition
 ├── docker-compose.yml   # Docker Compose configuration
 ├── requirements.txt     # Python dependencies
+├── scripts/             # Utility scripts
+│   └── create_admin.py  # Admin user creation script
+├── CREATE_ADMIN.md      # Admin creation guide
 └── .env.example         # Environment variables template
 ```
