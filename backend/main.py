@@ -96,11 +96,15 @@ async def log_requests(request: Request, call_next):
             )
 
 # Configure CORS - must be added before routes
-# Temporarily allow all origins to debug CORS issue
-# TODO: Restrict to specific origins in production
+# Allow origins from environment variable or default to localhost for development
+allowed_origins = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://localhost:8000").split(",")
+# Also allow production domain
+if "https://dev.kamafile.com" not in allowed_origins:
+    allowed_origins.append("https://dev.kamafile.com")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=r"http://localhost:\d+|http://127\.0\.0\.1:\d+",
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -127,7 +131,7 @@ async def global_exception_handler(request: Request, exc: Exception):
     )
 
 
-@app.get("/")
+@app.get("/api")
 async def root():
     return JSONResponse({"message": "Welcome to Kamafile API", "status": "running"})
 
@@ -167,7 +171,7 @@ async def test_endpoint():
     return JSONResponse({"message": "API is working correctly"})
 
 
-# Include routers
+# Include routers - they already have /api prefix in their router definitions
 app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(dashboard.router)
