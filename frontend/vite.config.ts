@@ -14,12 +14,9 @@ export default defineConfig({
     },
   },
   build: {
+    outDir: 'build',
     // Enable minification (esbuild is faster and default)
     minify: 'esbuild',
-    // Remove console.log in production
-    esbuild: {
-      drop: ['console', 'debugger'],
-    },
     // Optimize chunk splitting
     rollupOptions: {
       output: {
@@ -43,6 +40,9 @@ export default defineConfig({
         chunkFileNames: 'js/[name]-[hash].js',
         entryFileNames: 'js/[name]-[hash].js',
         assetFileNames: (assetInfo) => {
+          if (!assetInfo.name) {
+            return `assets/[name]-[hash][extname]`
+          }
           const info = assetInfo.name.split('.')
           const ext = info[info.length - 1]
           if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(ext)) {
@@ -61,6 +61,10 @@ export default defineConfig({
     sourcemap: false,
     // Optimize asset inlining threshold
     assetsInlineLimit: 4096, // 4kb
+  },
+  // Remove console.log in production
+  esbuild: {
+    drop: ['console', 'debugger'],
   },
   // Optimize dependencies pre-bundling
   optimizeDeps: {
