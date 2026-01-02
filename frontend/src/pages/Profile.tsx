@@ -1,18 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  Container,
-  Box,
-  Typography,
-  Paper,
-  Avatar,
-  Grid,
-  Button,
-  Divider,
-} from '@mui/material'
-import { AccountCircle, Email, Phone, CalendarToday } from '@mui/icons-material'
+import { Mail, Phone, Calendar, UserCircle } from 'lucide-react'
 import Header from '../components/Header'
 import { User, authAPI } from '../services/api'
+import Container from '../components/ui/Container'
+import Card from '../components/ui/Card'
+import Button from '../components/ui/Button'
+import Spinner from '../components/ui/Spinner'
 
 export default function Profile() {
   const [user, setUser] = useState<User | null>(null)
@@ -45,9 +39,9 @@ export default function Profile() {
     return (
       <>
         <Header />
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
-          <Typography>Loading...</Typography>
-        </Box>
+        <div className="flex justify-center items-center min-h-[50vh]">
+          <Spinner size="lg" />
+        </div>
       </>
     )
   }
@@ -68,110 +62,96 @@ export default function Profile() {
     }
   }
 
+  const getInitials = () => {
+    return user.full_name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase() || 'U'
+  }
+
   return (
     <>
       <Header />
-      <Container maxWidth="md" sx={{ py: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom fontWeight="bold">
-          Profile
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
+      <Container maxWidth="md" className="py-8">
+        <h1 className="text-4xl font-bold mb-2">Profile</h1>
+        <p className="text-gray-600 mb-8">
           View and manage your account information
-        </Typography>
+        </p>
 
-        <Paper elevation={2} sx={{ p: 4 }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 4 }}>
-            <Avatar
-              sx={{
-                width: 120,
-                height: 120,
-                bgcolor: 'primary.main',
-                fontSize: '3rem',
-                mb: 2,
-              }}
-            >
-              {user.full_name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase()}
-            </Avatar>
-            <Typography variant="h5" component="h2" fontWeight="bold">
+        <Card className="p-8">
+          <div className="flex flex-col items-center mb-8">
+            <div className="w-30 h-30 rounded-full bg-primary text-white flex items-center justify-center text-5xl font-medium mb-4">
+              {getInitials()}
+            </div>
+            <h2 className="text-2xl font-bold mb-2">
               {user.full_name}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
+            </h2>
+            <p className="text-gray-600">
               {user.user_type}
-            </Typography>
-          </Box>
+            </p>
+          </div>
 
-          <Divider sx={{ my: 3 }} />
+          <div className="border-t border-gray-200 my-6"></div>
 
-          <Grid container spacing={3}>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Email color="primary" />
-                <Box>
-                  <Typography variant="caption" color="text.secondary">
-                    Email
-                  </Typography>
-                  <Typography variant="body1" fontWeight="medium">
-                    {user.email}
-                  </Typography>
-                </Box>
-              </Box>
-            </Grid>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="flex items-center gap-4">
+              <Mail className="w-6 h-6 text-primary" />
+              <div>
+                <p className="text-xs text-gray-600 mb-1">
+                  Email
+                </p>
+                <p className="font-medium">
+                  {user.email}
+                </p>
+              </div>
+            </div>
 
             {user.phone_number && (
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                  <Phone color="primary" />
-                  <Box>
-                    <Typography variant="caption" color="text.secondary">
-                      Phone Number
-                    </Typography>
-                    <Typography variant="body1" fontWeight="medium">
-                      {user.phone_number}
-                    </Typography>
-                  </Box>
-                </Box>
-              </Grid>
+              <div className="flex items-center gap-4">
+                <Phone className="w-6 h-6 text-primary" />
+                <div>
+                  <p className="text-xs text-gray-600 mb-1">
+                    Phone Number
+                  </p>
+                  <p className="font-medium">
+                    {user.phone_number}
+                  </p>
+                </div>
+              </div>
             )}
 
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <CalendarToday color="primary" />
-                <Box>
-                  <Typography variant="caption" color="text.secondary">
-                    Member Since
-                  </Typography>
-                  <Typography variant="body1" fontWeight="medium">
-                    {formatDate(user.created_at)}
-                  </Typography>
-                </Box>
-              </Box>
-            </Grid>
+            <div className="flex items-center gap-4">
+              <Calendar className="w-6 h-6 text-primary" />
+              <div>
+                <p className="text-xs text-gray-600 mb-1">
+                  Member Since
+                </p>
+                <p className="font-medium">
+                  {formatDate(user.created_at)}
+                </p>
+              </div>
+            </div>
 
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <AccountCircle color="primary" />
-                <Box>
-                  <Typography variant="caption" color="text.secondary">
-                    Account Status
-                  </Typography>
-                  <Typography variant="body1" fontWeight="medium">
-                    {user.is_active ? 'Active' : 'Inactive'}
-                    {user.is_verified && ' • Verified'}
-                  </Typography>
-                </Box>
-              </Box>
-            </Grid>
-          </Grid>
+            <div className="flex items-center gap-4">
+              <UserCircle className="w-6 h-6 text-primary" />
+              <div>
+                <p className="text-xs text-gray-600 mb-1">
+                  Account Status
+                </p>
+                <p className="font-medium">
+                  {user.is_active ? 'Active' : 'Inactive'}
+                  {user.is_verified && ' • Verified'}
+                </p>
+              </div>
+            </div>
+          </div>
 
-          <Box sx={{ mt: 4, display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-            <Button variant="outlined" onClick={() => navigate('/')}>
+          <div className="mt-8 flex gap-4 justify-end">
+            <Button variant="outline" onClick={() => navigate('/')}>
               Back to Home
             </Button>
-            <Button variant="contained" disabled>
+            <Button variant="primary" disabled>
               Edit Profile
             </Button>
-          </Box>
-        </Paper>
+          </div>
+        </Card>
       </Container>
     </>
   )

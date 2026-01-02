@@ -1,40 +1,31 @@
 import { useState, useEffect } from 'react'
 import {
-  Container,
-  Typography,
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Stack,
-  Link,
-  IconButton,
-} from '@mui/material'
-import {
-  ArrowBackIos,
-  ArrowForwardIos,
-} from '@mui/icons-material'
+  ChevronLeft,
+  ChevronRight,
+  Lock,
+  ShieldCheck,
+  CheckCircle,
+  UserPlus,
+  Linkedin,
+  Instagram,
+  Twitter,
+  Lightbulb,
+  FolderOpen,
+  FileText,
+  TrendingUp,
+  HelpCircle,
+  Search,
+  Wrench,
+  Building2,
+} from 'lucide-react'
 import { adminAPI, Banner } from '../services/adminAPI'
-import {
-  Lock as LockIcon,
-  VerifiedUser as ShieldIcon,
-  CheckCircle as CheckIcon,
-  PersonAdd as PersonAddIcon,
-  LinkedIn as LinkedInIcon,
-  Instagram as InstagramIcon,
-  X as XIcon,
-  Lightbulb as LightbulbIcon,
-  FolderOpen as FolderIcon,
-  Assignment as AssignmentIcon,
-  TrendingUp as TrendingUpIcon,
-  HelpOutline as HelpIcon,
-  Search as SearchIcon,
-  Build as BuildIcon,
-  BusinessCenter as BusinessIcon,
-} from '@mui/icons-material'
 import Header from '../components/Header'
 import ChatWizard from '../components/ChatWizard'
 import hBlackLogo from '../assets/images/h-black-logo.jpeg'
+import Button from '../components/ui/Button'
+import Card from '../components/ui/Card'
+import Container from '../components/ui/Container'
+import Spinner from '../components/ui/Spinner'
 
 export default function LandingPage() {
   const [banners, setBanners] = useState<Banner[]>([])
@@ -96,12 +87,12 @@ export default function LandingPage() {
 
   if (loading) {
     return (
-      <Box sx={{ flexGrow: 1 }}>
+      <div className="flex-grow">
         <Header />
-        <Box sx={{ minHeight: '90vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Typography>Loading...</Typography>
-        </Box>
-      </Box>
+        <div className="min-h-[90vh] flex items-center justify-center">
+          <Spinner size="lg" />
+        </div>
+      </div>
     )
   }
 
@@ -119,410 +110,232 @@ export default function LandingPage() {
   const displayBanners = banners.length > 0 ? banners : [defaultBanner]
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <div className="flex-grow">
       <Header />
 
       {/* SECTION 1: Hero Banner Slider */}
-      <Box
-        sx={{
-          minHeight: '90vh',
-          display: 'flex',
-          alignItems: 'center',
-          bgcolor: 'background.default',
-          py: 8,
-          position: 'relative',
-          overflow: 'hidden',
-        }}
-      >
-        <Container maxWidth="lg" sx={{ position: 'relative', overflow: 'hidden' }}>
-          <Box
-            sx={{
-              position: 'relative',
-              width: '100%',
-              overflow: 'hidden',
-            }}
-          >
+      <div className="min-h-[90vh] flex items-center bg-gray-50 py-16 relative overflow-hidden">
+        <Container maxWidth="lg" className="relative overflow-hidden">
+          <div className="relative w-full overflow-hidden">
             {displayBanners.length > 1 && (
               <>
-                <IconButton
+                <button
                   onClick={handlePrevious}
-                  sx={{
-                    position: 'absolute',
-                    left: { xs: 8, md: -60 },
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    bgcolor: 'background.paper',
-                    boxShadow: 2,
-                    zIndex: 3,
-                    '&:hover': {
-                      bgcolor: 'background.paper',
-                    },
-                  }}
+                  className="absolute left-2 md:-left-16 top-1/2 -translate-y-1/2 bg-white shadow-lg z-10 p-2 rounded-full hover:bg-gray-50 transition hidden md:flex items-center justify-center"
                 >
-                  <ArrowBackIos />
-                </IconButton>
-                <IconButton
+                  <ChevronLeft className="w-6 h-6 text-gray-700" />
+                </button>
+                <button
                   onClick={handleNext}
-                  sx={{
-                    position: 'absolute',
-                    right: { xs: 8, md: -60 },
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    bgcolor: 'background.paper',
-                    boxShadow: 2,
-                    zIndex: 3,
-                    '&:hover': {
-                      bgcolor: 'background.paper',
-                    },
-                  }}
+                  className="absolute right-2 md:-right-16 top-1/2 -translate-y-1/2 bg-white shadow-lg z-10 p-2 rounded-full hover:bg-gray-50 transition hidden md:flex items-center justify-center"
                 >
-                  <ArrowForwardIos />
-                </IconButton>
+                  <ChevronRight className="w-6 h-6 text-gray-700" />
+                </button>
               </>
             )}
 
-            <Box
-              sx={{
-                display: 'flex',
-                width: `${displayBanners.length * 100}%`,
-                transform: `translateX(-${currentSlide * (100 / displayBanners.length)}%)`,
-                transition: 'transform 0.6s ease-in-out',
-              }}
+            <div
+              className="flex transition-transform duration-600 ease-in-out"
+              style={{ width: `${displayBanners.length * 100}%`, transform: `translateX(-${currentSlide * (100 / displayBanners.length)}%)` }}
             >
               {displayBanners.map((banner, index) => (
-                <Box
+                <div
                   key={banner.id}
-                  sx={{
-                    width: `${100 / banners.length}%`,
-                    flexShrink: 0,
-                    display: 'flex',
-                    flexDirection: { xs: 'column', md: 'row' },
-                    gap: 4,
-                    alignItems: 'center',
-                    px: { xs: 0, md: 2 },
-                  }}
+                  className="flex flex-col md:flex-row gap-8 items-center px-0 md:px-4"
+                  style={{ width: `${100 / displayBanners.length}%`, flexShrink: 0 }}
                 >
-                  <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 58.33%' } }}>
-                    <Typography variant="h1" component="h1" gutterBottom sx={{ mb: 3 }}>
-                      {banner.title}
-                    </Typography>
+                  <div className="flex-1 md:flex-[58.33%]">
+                    <h1 className="text-4xl md:text-6xl font-bold mb-6">{banner.title}</h1>
                     {banner.description && (
-                      <Typography variant="h5" color="text.secondary" sx={{ mb: 3, fontWeight: 400 }}>
+                      <h2 className="text-xl md:text-2xl text-gray-600 mb-6 font-normal">
                         {banner.description}
-                      </Typography>
+                      </h2>
                     )}
-                  </Box>
-                  <Box
-                    sx={{
-                      flex: { xs: '1 1 100%', md: '1 1 41.67%' },
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      minHeight: 300,
-                    }}
-                  >
-                    <Box
-                      component="img"
+                  </div>
+                  <div className="flex-1 md:flex-[41.67%] flex justify-center items-center min-h-[300px]">
+                    <img
                       src={banner.image_url || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop&q=80'}
                       alt={banner.title}
                       loading={index === 0 ? 'eager' : 'lazy'}
                       decoding="async"
-                      sx={{
-                        width: '100%',
-                        height: 'auto',
-                        minHeight: 300,
-                        borderRadius: 4,
-                        objectFit: 'cover',
-                        boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-                      }}
+                      className="w-full h-auto min-h-[300px] rounded-2xl object-cover shadow-lg"
                     />
-                  </Box>
-                </Box>
+                  </div>
+                </div>
               ))}
-            </Box>
-          </Box>
+            </div>
+          </div>
 
           {/* Slide Indicators */}
           {displayBanners.length > 1 && (
-            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, mt: 4 }}>
+            <div className="flex justify-center gap-2 mt-8">
               {displayBanners.map((_, index) => (
-                <Box
+                <button
                   key={index}
                   onClick={() => handleSlideClick(index)}
-                  sx={{
-                    width: 12,
-                    height: 12,
-                    borderRadius: '50%',
-                    bgcolor: index === currentSlide ? 'primary.main' : 'action.disabled',
-                    cursor: 'pointer',
-                    transition: 'background-color 0.3s',
-                    '&:hover': {
-                      bgcolor: index === currentSlide ? 'primary.dark' : 'action.active',
-                    },
-                  }}
+                  className={`w-3 h-3 rounded-full transition-colors ${
+                    index === currentSlide ? 'bg-primary' : 'bg-gray-300'
+                  } hover:bg-primary-dark`}
                 />
               ))}
-            </Box>
+            </div>
           )}
         </Container>
-      </Box>
+      </div>
 
       {/* SECTION 2: Primary Entry Points */}
-      <Box sx={{ py: 8, bgcolor: 'background.paper' }}>
+      <div className="py-16 bg-white">
         <Container maxWidth="md">
-          <Typography variant="h4" component="h2" align="center" gutterBottom sx={{ mb: 4, fontWeight: 600 }}>
-            Try Kamafile Now
-          </Typography>
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center" sx={{ mb: 2 }}>
+          <h2 className="text-3xl md:text-4xl font-semibold text-center mb-8">Try Kamafile Now</h2>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-4">
             <Button
               onClick={() => setChatWizardOpen(true)}
-              variant="contained"
-              size="large"
-              startIcon={<HelpIcon />}
-              sx={{
-                bgcolor: 'primary.main',
-                px: 4,
-                py: 1.5,
-                fontSize: '1.1rem',
-                flex: { xs: '1 1 100%', sm: '1 1 50%' },
-                '&:hover': { bgcolor: 'primary.dark' },
-              }}
+              variant="primary"
+              size="lg"
+              className="flex items-center justify-center gap-2 flex-1 sm:flex-[50%]"
             >
+              <HelpCircle className="w-5 h-5" />
               Get Started (Web)
             </Button>
-            <Button
+            <a
               href="https://wa.me/234XXXXXXXXXX"
               target="_blank"
               rel="noopener noreferrer"
-              variant="contained"
-              size="large"
-              startIcon={<PersonAddIcon />}
-              sx={{
-                bgcolor: 'secondary.main',
-                px: 4,
-                py: 1.5,
-                fontSize: '1.1rem',
-                flex: { xs: '1 1 100%', sm: '1 1 50%' },
-                '&:hover': { bgcolor: 'secondary.dark' },
+              className="px-8 py-4 text-lg font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all inline-flex items-center justify-center gap-2 flex-1 sm:flex-[50%]"
+              style={{
+                backgroundColor: '#4caf50',
+                color: '#ffffff',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#388e3c'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#4caf50'
               }}
             >
+              <UserPlus className="w-5 h-5" />
               Get Started (WhatsApp)
-            </Button>
-          </Stack>
-          <Typography variant="body2" align="center" color="text.secondary" sx={{ mt: 2 }}>
+            </a>
+          </div>
+          <p className="text-sm text-gray-600 text-center mt-4">
             Start with a quick chat - no account needed. You can switch to WhatsApp anytime.
-          </Typography>
+          </p>
         </Container>
-      </Box>
+      </div>
 
       {/* SECTION 3: The Problem */}
-      <Box id="about" sx={{ py: 10, bgcolor: 'background.default', scrollMarginTop: '80px' }}>
+      <div id="about" className="py-20 bg-gray-50 scroll-mt-20">
         <Container maxWidth="lg">
-          <Typography variant="h2" component="h2" align="center" gutterBottom sx={{ mb: 2 }}>
-            The Problem
-          </Typography>
-          <Typography variant="h6" align="center" color="text.secondary" sx={{ mb: 8, maxWidth: 600, mx: 'auto' }}>
+          <h2 className="text-3xl md:text-4xl font-semibold text-center mb-4">The Problem</h2>
+          <h3 className="text-xl text-gray-600 text-center mb-12 max-w-2xl mx-auto">
             Many people struggle with taxes because they lack clarity and guidance
-          </Typography>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: { xs: 'column', md: 'row' },
-              flexWrap: 'wrap',
-              gap: 4,
-              mb: 6,
-            }}
-          >
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
             {[
               {
-                icon: <HelpIcon />,
+                icon: HelpCircle,
                 title: 'What taxes apply to them',
                 description: 'Uncertainty about which tax obligations are relevant to their specific situation',
-                color: 'error.main',
+                color: 'border-l-red-500',
               },
               {
-                icon: <SearchIcon />,
+                icon: Search,
                 title: 'Where to start',
                 description: 'Overwhelmed by the complexity and unsure of the first steps to take',
-                color: 'warning.main',
+                color: 'border-l-yellow-500',
               },
               {
-                icon: <BuildIcon />,
+                icon: Wrench,
                 title: 'How to prepare properly',
                 description: 'Lack of knowledge on proper documentation and filing requirements',
-                color: 'error.main',
+                color: 'border-l-red-500',
               },
-            ].map((item, index) => (
-              <Box
-                key={index}
-                sx={{
-                  flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 16px)', md: '1 1 calc(33.33% - 22px)' },
-                  minWidth: { xs: '100%', sm: '280px' },
-                }}
-              >
-                <Card
-                  sx={{
-                    height: '100%',
-                    transition: 'transform 0.2s, box-shadow 0.2s',
-                    borderLeft: `4px solid ${item.color}`,
-                    '&:hover': {
-                      transform: 'translateY(-4px)',
-                      boxShadow: 4,
-                    },
-                  }}
-                >
-                  <CardContent sx={{ p: 4, minHeight: 200 }}>
-                    <Box
-                      sx={{
-                        color: item.color,
-                        mb: 2,
-                        display: 'flex',
-                        justifyContent: 'flex-start',
-                        '& svg': { fontSize: 40 },
-                      }}
-                    >
-                      {item.icon}
-                    </Box>
-                    <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, mb: 2 }}>
-                      {item.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {item.description}
-                    </Typography>
-                  </CardContent>
+            ].map((item, index) => {
+              const IconComponent = item.icon
+              return (
+                <Card key={index} className={`${item.color} border-l-4 h-full hover:-translate-y-1 transition-transform`}>
+                  <div className="p-8 min-h-[200px]">
+                    <div className="text-red-500 mb-4">
+                      <IconComponent className="w-10 h-10" />
+                    </div>
+                    <h3 className="text-xl font-semibold mb-4">{item.title}</h3>
+                    <p className="text-gray-600 text-sm">{item.description}</p>
+                  </div>
                 </Card>
-              </Box>
-            ))}
-          </Box>
-          <Card
-            sx={{
-              bgcolor: 'background.paper',
-              border: '1px solid',
-              borderColor: 'divider',
-              maxWidth: 800,
-              mx: 'auto',
-            }}
-          >
-            <CardContent sx={{ p: 4, textAlign: 'center' }}>
-              <Box
-                sx={{
-                  color: 'text.secondary',
-                  mb: 1,
-                  display: 'flex',
-                  justifyContent: 'center',
-                  '& svg': { fontSize: 32 },
-                }}
-              >
-                <BusinessIcon />
-              </Box>
-              <Typography variant="h6" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+              )
+            })}
+          </div>
+          <Card className="max-w-2xl mx-auto border border-gray-200">
+            <div className="p-8 text-center">
+              <div className="text-gray-600 mb-2 flex justify-center">
+                <Building2 className="w-8 h-8" />
+              </div>
+              <p className="text-lg text-gray-600 italic">
                 Most existing tools are built for accountants — not real people.
-              </Typography>
-            </CardContent>
+              </p>
+            </div>
           </Card>
         </Container>
-      </Box>
+      </div>
 
       {/* SECTION 4: The Solution */}
-      <Box id="features" sx={{ py: 10, bgcolor: 'background.paper', scrollMarginTop: '80px' }}>
+      <div id="features" className="py-20 bg-white scroll-mt-20">
         <Container maxWidth="lg">
-          <Typography variant="h2" component="h2" align="center" gutterBottom sx={{ mb: 2 }}>
-            The Solution
-          </Typography>
-          <Typography variant="h6" align="center" color="text.secondary" sx={{ mb: 8, maxWidth: 600, mx: 'auto' }}>
+          <h2 className="text-3xl md:text-4xl font-semibold text-center mb-4">The Solution</h2>
+          <h3 className="text-xl text-gray-600 text-center mb-12 max-w-2xl mx-auto">
             Kamafile helps you navigate taxes with clarity and confidence
-          </Typography>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: { xs: 'column', md: 'row' },
-              flexWrap: 'wrap',
-              gap: 4,
-            }}
-          >
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             {[
               {
-                icon: <LightbulbIcon />,
+                icon: Lightbulb,
                 title: 'Understand relevant taxes',
                 description: 'Get clear guidance on what taxes apply to your situation',
-                color: 'primary.main',
+                color: 'text-primary',
               },
               {
-                icon: <FolderIcon />,
+                icon: FolderOpen,
                 title: 'Organise what matters',
                 description: 'Keep track of important documents and records in one secure place',
-                color: 'secondary.main',
+                color: 'text-secondary',
               },
               {
-                icon: <AssignmentIcon />,
+                icon: FileText,
                 title: 'Prepare before filing',
                 description: 'Get everything ready and organized before tax season',
-                color: 'primary.main',
+                color: 'text-primary',
               },
               {
-                icon: <TrendingUpIcon />,
+                icon: TrendingUp,
                 title: 'Take the right next step',
                 description: 'Receive personalized guidance on what to do next with confidence',
-                color: 'secondary.main',
+                color: 'text-secondary',
               },
-            ].map((item, index) => (
-              <Box
-                key={index}
-                sx={{
-                  flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 16px)', md: '1 1 calc(25% - 24px)' },
-                  minWidth: { xs: '100%', sm: '280px' },
-                }}
-              >
-                <Card
-                  sx={{
-                    height: '100%',
-                    transition: 'transform 0.2s, box-shadow 0.2s',
-                    '&:hover': {
-                      transform: 'translateY(-4px)',
-                      boxShadow: 4,
-                    },
-                  }}
-                >
-                  <CardContent sx={{ p: 4, textAlign: 'center', minHeight: 220 }}>
-                    <Box
-                      sx={{
-                        color: item.color,
-                        mb: 2,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        '& svg': { fontSize: 48 },
-                      }}
-                    >
-                      {item.icon}
-                    </Box>
-                    <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, mb: 2 }}>
-                      {item.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {item.description}
-                    </Typography>
-                  </CardContent>
+            ].map((item, index) => {
+              const IconComponent = item.icon
+              return (
+                <Card key={index} hover className="h-full">
+                  <div className="p-8 text-center min-h-[220px]">
+                    <div className={`${item.color} mb-4 flex justify-center`}>
+                      <IconComponent className="w-12 h-12" />
+                    </div>
+                    <h3 className="text-xl font-semibold mb-4">{item.title}</h3>
+                    <p className="text-gray-600 text-sm">{item.description}</p>
+                  </div>
                 </Card>
-              </Box>
-            ))}
-          </Box>
+              )
+            })}
+          </div>
         </Container>
-      </Box>
+      </div>
 
       {/* SECTION 5: Capabilities (Beta) */}
-      <Box sx={{ py: 10, bgcolor: 'background.default' }}>
+      <div className="py-20 bg-gray-50">
         <Container maxWidth="lg">
-          <Typography variant="h2" component="h2" align="center" gutterBottom sx={{ mb: 8 }}>
+          <h2 className="text-3xl md:text-4xl font-semibold text-center mb-12">
             What you can do with Kamafile (Beta)
-          </Typography>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              gap: 4,
-            }}
-          >
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {[
               'Understand what taxes apply to you',
               'Organise income types and obligations',
@@ -530,79 +343,52 @@ export default function LandingPage() {
               'Prepare for filing and compliance',
               'Get reminders and next-step guidance',
             ].map((capability, index) => (
-              <Box key={index} sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 16px)', md: '1 1 calc(33.33% - 22px)' }, minWidth: { xs: '100%', sm: '280px' } }}>
-                <Card>
-                  <CardContent sx={{ p: 4, minHeight: 120 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-                      <CheckIcon sx={{ color: 'primary.main', mt: 0.5 }} />
-                      <Typography variant="body1">{capability}</Typography>
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Box>
+              <Card key={index} className="min-h-[120px]">
+                <div className="p-8">
+                  <div className="flex items-start gap-4">
+                    <CheckCircle className="w-6 h-6 text-primary mt-0.5 flex-shrink-0" />
+                    <p className="text-gray-900">{capability}</p>
+                  </div>
+                </div>
+              </Card>
             ))}
-          </Box>
-          <Typography variant="body2" align="center" color="text.secondary" sx={{ mt: 4, fontStyle: 'italic' }}>
+          </div>
+          <p className="text-sm text-gray-600 text-center mt-8 italic">
             Capabilities expand in depth and automation as the platform evolves.
-          </Typography>
+          </p>
         </Container>
-      </Box>
+      </div>
 
       {/* SECTION 6: Who It's For */}
-      <Box sx={{ py: 10, bgcolor: 'background.paper' }}>
+      <div className="py-20 bg-white">
         <Container maxWidth="lg">
-          <Typography variant="h2" component="h2" align="center" gutterBottom sx={{ mb: 4 }}>
-            Who Kamafile Is For
-          </Typography>
-          <Typography variant="body1" align="center" color="text.secondary" sx={{ mb: 6, maxWidth: 800, mx: 'auto' }}>
+          <h2 className="text-3xl md:text-4xl font-semibold text-center mb-6">Who Kamafile Is For</h2>
+          <p className="text-gray-600 text-center mb-12 max-w-3xl mx-auto">
             Built for people navigating Nigeria's tax system without teams or advisors:
-          </Typography>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              gap: 4,
-            }}
-          >
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             {[
               { title: 'Employees', desc: 'PAYE and personal income basics' },
               { title: 'Freelancers', desc: 'VAT, WHT, mixed income' },
               { title: 'Micro-business owners', desc: 'Receipts, records, compliance prep' },
               { title: 'Growing SMEs', desc: 'Summaries, visibility, routing' },
             ].map((user, index) => (
-              <Box key={index} sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 16px)', md: '1 1 calc(25% - 24px)' }, minWidth: { xs: '100%', sm: '280px' } }}>
-                <Card>
-                  <CardContent sx={{ p: 4, textAlign: 'center', minHeight: 150 }}>
-                    <Typography variant="h6" gutterBottom>
-                      {user.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {user.desc}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Box>
+              <Card key={index} className="min-h-[150px]">
+                <div className="p-8 text-center">
+                  <h3 className="text-xl font-semibold mb-2">{user.title}</h3>
+                  <p className="text-gray-600 text-sm">{user.desc}</p>
+                </div>
+              </Card>
             ))}
-          </Box>
+          </div>
         </Container>
-      </Box>
+      </div>
 
       {/* SECTION 7: How It Works (Summary) */}
-      <Box id="how-it-works" sx={{ py: 10, bgcolor: 'background.default', scrollMarginTop: '80px' }}>
+      <div id="how-it-works" className="py-20 bg-gray-50 scroll-mt-20">
         <Container maxWidth="lg">
-          <Typography variant="h2" component="h2" align="center" gutterBottom sx={{ mb: 8 }}>
-            How It Works
-          </Typography>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: { xs: 'column', sm: 'row' },
-              flexWrap: 'wrap',
-              gap: 3,
-              justifyContent: 'center',
-            }}
-          >
+          <h2 className="text-3xl md:text-4xl font-semibold text-center mb-12">How It Works</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 justify-center">
             {[
               { step: '1', title: 'Start on Web or WhatsApp' },
               { step: '2', title: 'Answer a few guided questions' },
@@ -610,241 +396,176 @@ export default function LandingPage() {
               { step: '4', title: 'Organise documents securely' },
               { step: '5', title: 'Receive reminders and next steps' },
             ].map((item, index) => (
-              <Card key={index} sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)', md: '1 1 calc(20% - 24px)' }, maxWidth: { md: 220 } }}>
-                <CardContent sx={{ p: 4, textAlign: 'center', minHeight: 200 }}>
-                  <Box
-                    sx={{
-                      width: 60,
-                      height: 60,
-                      borderRadius: '50%',
-                      bgcolor: 'secondary.main',
-                      color: 'white',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      mx: 'auto',
-                      mb: 2,
-                      fontSize: '1.5rem',
-                      fontWeight: 700,
-                    }}
-                  >
+              <Card key={index} className="max-w-[220px] mx-auto">
+                <div className="p-8 text-center min-h-[200px]">
+                  <div className="w-15 h-15 rounded-full bg-secondary text-white flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
                     {item.step}
-                  </Box>
-                  <Typography variant="h6">{item.title}</Typography>
-                </CardContent>
+                  </div>
+                  <h3 className="text-xl font-semibold">{item.title}</h3>
+                </div>
               </Card>
             ))}
-          </Box>
+          </div>
         </Container>
-      </Box>
+      </div>
 
       {/* SECTION 8: Trust & Safety */}
-      <Box sx={{ py: 10, bgcolor: 'background.paper' }}>
+      <div className="py-20 bg-white">
         <Container maxWidth="lg">
-          <Typography variant="h2" component="h2" align="center" gutterBottom sx={{ mb: 8 }}>
+          <h2 className="text-3xl md:text-4xl font-semibold text-center mb-12">
             Private. Secure. Built on trust.
-          </Typography>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: { xs: 'column', md: 'row' },
-              gap: 4,
-              mb: 4,
-            }}
-          >
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {[
-              { icon: <LockIcon />, title: 'Encrypted document storage' },
-              { icon: <ShieldIcon />, title: 'PIN-protected access' },
-              { icon: <CheckIcon />, title: 'You stay in control of your data' },
-            ].map((trust, index) => (
-              <Box key={index} sx={{ flex: { xs: '1 1 100%', md: '1 1 33.33%' } }}>
-                <Card>
-                  <CardContent sx={{ p: 4, textAlign: 'center' }}>
-                    <Box
-                      sx={{
-                        color: 'secondary.main',
-                        mb: 2,
-                        '& svg': { fontSize: 48 },
-                      }}
-                    >
-                      {trust.icon}
-                    </Box>
-                    <Typography variant="h6">{trust.title}</Typography>
-                  </CardContent>
+              { icon: Lock, title: 'Encrypted document storage' },
+              { icon: ShieldCheck, title: 'PIN-protected access' },
+              { icon: CheckCircle, title: 'You stay in control of your data' },
+            ].map((trust, index) => {
+              const IconComponent = trust.icon
+              return (
+                <Card key={index}>
+                  <div className="p-8 text-center">
+                    <div className="text-secondary mb-4 flex justify-center">
+                      <IconComponent className="w-12 h-12" />
+                    </div>
+                    <h3 className="text-xl font-semibold">{trust.title}</h3>
+                  </div>
                 </Card>
-              </Box>
-            ))}
-          </Box>
+              )
+            })}
+          </div>
         </Container>
-      </Box>
+      </div>
 
       {/* SECTION 9: Product Vision */}
-      <Box sx={{ py: 10, bgcolor: 'background.default' }}>
+      <div className="py-20 bg-gray-50">
         <Container maxWidth="lg">
-          <Typography variant="h2" component="h2" align="center" gutterBottom sx={{ mb: 8 }}>
+          <h2 className="text-3xl md:text-4xl font-semibold text-center mb-12">
             Where Kamafile is headed
-          </Typography>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: { xs: 'column', md: 'row' },
-              gap: 4,
-            }}
-          >
-            <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 50%' } }}>
-              <Card>
-                <CardContent sx={{ p: 4, minHeight: 200 }}>
-                  <Typography variant="h5" gutterBottom sx={{ color: 'primary.main', mb: 2 }}>
-                    Today
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary">
-                    Tax guidance and preparation — clarity before filing.
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Box>
-            <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 50%' } }}>
-              <Card>
-                <CardContent sx={{ p: 4, minHeight: 200 }}>
-                  <Typography variant="h5" gutterBottom sx={{ color: 'secondary.main', mb: 2 }}>
-                    Next
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary">
-                    Deeper organisation, structured workflows, and smarter insights as the market and data ecosystem mature.
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Box>
-          </Box>
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card className="min-h-[200px]">
+              <div className="p-8">
+                <h3 className="text-2xl font-semibold text-primary mb-4">Today</h3>
+                <p className="text-gray-600">
+                  Tax guidance and preparation — clarity before filing.
+                </p>
+              </div>
+            </Card>
+            <Card className="min-h-[200px]">
+              <div className="p-8">
+                <h3 className="text-2xl font-semibold text-secondary mb-4">Next</h3>
+                <p className="text-gray-600">
+                  Deeper organisation, structured workflows, and smarter insights as the market and data ecosystem mature.
+                </p>
+              </div>
+            </Card>
+          </div>
         </Container>
-      </Box>
+      </div>
 
       {/* SECTION 10: Final CTA */}
-      <Box id="pricing" sx={{ py: 10, bgcolor: 'primary.main', color: 'white', scrollMarginTop: '80px' }}>
+      <div id="pricing" className="py-20 bg-primary text-white scroll-mt-20">
         <Container maxWidth="md">
-          <Typography variant="h2" component="h2" align="center" gutterBottom sx={{ mb: 4, color: 'white' }}>
+          <h2 className="text-3xl md:text-4xl font-semibold text-center mb-8 text-white">
             Ready to simplify your taxes?
-          </Typography>
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center" sx={{ mb: 3 }}>
+          </h2>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
             <Button
               onClick={() => setChatWizardOpen(true)}
-              variant="contained"
-              size="large"
-              startIcon={<PersonAddIcon />}
-              sx={{
-                bgcolor: 'white',
-                color: 'primary.main',
-                px: 4,
-                py: 1.5,
-                fontSize: '1.1rem',
-                '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' },
-              }}
+              variant="secondary"
+              size="lg"
+              className="flex items-center justify-center gap-2 bg-white text-primary hover:bg-gray-100"
             >
+              <UserPlus className="w-5 h-5" />
               Get Started (Web)
             </Button>
-            <Button
+            <a
               href="https://wa.me/234XXXXXXXXXX"
               target="_blank"
               rel="noopener noreferrer"
-              variant="contained"
-              size="large"
-              startIcon={<PersonAddIcon />}
-              sx={{
-                bgcolor: 'secondary.main',
-                px: 4,
-                py: 1.5,
-                fontSize: '1.1rem',
-                '&:hover': { bgcolor: 'secondary.dark' },
+              className="px-8 py-4 text-lg font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all inline-flex items-center justify-center gap-2"
+              style={{
+                backgroundColor: '#4caf50',
+                color: '#ffffff',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#388e3c'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#4caf50'
               }}
             >
+              <UserPlus className="w-5 h-5" />
               Get Started (WhatsApp)
-            </Button>
-          </Stack>
-          <Typography variant="body2" align="center" sx={{ color: 'rgba(255,255,255,0.8)' }}>
+            </a>
+          </div>
+          <p className="text-sm text-center text-white/80">
             Choose how you want to start. You can switch anytime.
-          </Typography>
+          </p>
         </Container>
-      </Box>
+      </div>
 
       {/* Chat Wizard Modal */}
       <ChatWizard open={chatWizardOpen} onClose={() => setChatWizardOpen(false)} />
 
       {/* FOOTER */}
-      <Box component="footer" id="contact" sx={{ py: 6, bgcolor: 'background.paper', borderTop: '1px solid', borderColor: 'divider', scrollMarginTop: '80px' }}>
+      <footer id="contact" className="py-12 bg-white border-t border-gray-200 scroll-mt-20">
         <Container maxWidth="lg">
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: { xs: 'column', md: 'row' },
-              gap: 4,
-            }}
-          >
-            <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 50%' } }}>
-              <Box
-                component="img"
+          <div className="flex flex-col md:flex-row gap-8">
+            <div className="flex-1 md:flex-[50%]">
+              <img
                 src={hBlackLogo}
                 alt="Kamafile Logo"
-                sx={{
-                  height: { xs: 48, md: 56 },
-                  width: 'auto',
-                  objectFit: 'contain',
-                  mb: 2,
-                }}
+                className="h-12 md:h-14 w-auto object-contain mb-4"
               />
-              <Typography variant="body2" color="text.secondary">
+              <p className="text-gray-600 text-sm">
                 Nigeria's Digital Tax Assistant
-              </Typography>
-            </Box>
-            <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 50%' } }}>
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  flexWrap: 'wrap',
-                  gap: 2,
-                }}
-              >
-                <Box sx={{ flex: { xs: '1 1 calc(50% - 8px)', sm: '1 1 calc(25% - 12px)' } }}>
-                  <Stack spacing={1}>
-                    <Link href="#" color="text.secondary" underline="hover">About</Link>
-                    <Link href="#" color="text.secondary" underline="hover">How It Works</Link>
-                  </Stack>
-                </Box>
-                <Box sx={{ flex: { xs: '1 1 calc(50% - 8px)', sm: '1 1 calc(25% - 12px)' } }}>
-                  <Stack spacing={1}>
-                    <Link href="#" color="text.secondary" underline="hover">Pricing</Link>
-                    <Link href="#" color="text.secondary" underline="hover">Resources</Link>
-                  </Stack>
-                </Box>
-                <Box sx={{ flex: { xs: '1 1 calc(50% - 8px)', sm: '1 1 calc(25% - 12px)' } }}>
-                  <Stack spacing={1}>
-                    <Link href="#" color="text.secondary" underline="hover">Privacy</Link>
-                    <Link href="#" color="text.secondary" underline="hover">Contact</Link>
-                  </Stack>
-                </Box>
-                <Box sx={{ flex: { xs: '1 1 calc(50% - 8px)', sm: '1 1 calc(25% - 12px)' } }}>
-                  <Stack direction="row" spacing={2}>
-                    <IconButton size="small" href="#" target="_blank">
-                      <LinkedInIcon />
-                    </IconButton>
-                    <IconButton size="small" href="#" target="_blank">
-                      <InstagramIcon />
-                    </IconButton>
-                    <IconButton size="small" href="#" target="_blank">
-                      <XIcon />
-                    </IconButton>
-                  </Stack>
-                </Box>
-              </Box>
-            </Box>
-          </Box>
-          <Box sx={{ mt: 4, pt: 4, borderTop: '1px solid', borderColor: 'divider' }}>
-            <Typography variant="body2" color="text.secondary" align="center">
+              </p>
+            </div>
+            <div className="flex-1 md:flex-[50%]">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div>
+                  <div className="flex flex-col gap-2">
+                    <a href="#" className="text-gray-600 hover:text-primary text-sm">About</a>
+                    <a href="#" className="text-gray-600 hover:text-primary text-sm">How It Works</a>
+                  </div>
+                </div>
+                <div>
+                  <div className="flex flex-col gap-2">
+                    <a href="#" className="text-gray-600 hover:text-primary text-sm">Pricing</a>
+                    <a href="#" className="text-gray-600 hover:text-primary text-sm">Resources</a>
+                  </div>
+                </div>
+                <div>
+                  <div className="flex flex-col gap-2">
+                    <a href="#" className="text-gray-600 hover:text-primary text-sm">Privacy</a>
+                    <a href="#" className="text-gray-600 hover:text-primary text-sm">Contact</a>
+                  </div>
+                </div>
+                <div>
+                  <div className="flex gap-3">
+                    <a href="#" target="_blank" className="p-2 text-gray-600 hover:text-primary">
+                      <Linkedin className="w-5 h-5" />
+                    </a>
+                    <a href="#" target="_blank" className="p-2 text-gray-600 hover:text-primary">
+                      <Instagram className="w-5 h-5" />
+                    </a>
+                    <a href="#" target="_blank" className="p-2 text-gray-600 hover:text-primary">
+                      <Twitter className="w-5 h-5" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="mt-8 pt-8 border-t border-gray-200">
+            <p className="text-gray-600 text-sm text-center">
               © {new Date().getFullYear()} Kamafile. All rights reserved.
-            </Typography>
-          </Box>
+            </p>
+          </div>
         </Container>
-      </Box>
-    </Box>
+      </footer>
+    </div>
   )
 }

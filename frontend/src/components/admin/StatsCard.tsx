@@ -1,5 +1,5 @@
-import { Box, Paper, Typography } from '@mui/material'
 import { ReactNode } from 'react'
+import Card from '../ui/Card'
 
 interface StatsCardProps {
   title: string
@@ -8,38 +8,27 @@ interface StatsCardProps {
   color?: 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning'
 }
 
+const colorClasses = {
+  primary: 'text-primary',
+  secondary: 'text-secondary',
+  success: 'text-green-600',
+  error: 'text-red-600',
+  info: 'text-blue-600',
+  warning: 'text-yellow-600',
+}
+
 export default function StatsCard({ title, value, icon, color = 'primary' }: StatsCardProps) {
   return (
-    <Paper
-      sx={{
-        p: 3,
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
-        transition: 'transform 0.2s, box-shadow 0.2s',
-        '&:hover': {
-          transform: 'translateY(-4px)',
-          boxShadow: 4,
-        },
-      }}
-    >
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-        <Typography variant="h6" color="text.secondary" fontWeight="medium">
-          {title}
-        </Typography>
-        <Box
-          sx={{
-            color: `${color}.main`,
-            display: 'flex',
-            alignItems: 'center',
-          }}
-        >
+    <Card hover className="p-6 flex flex-col h-full">
+      <div className="flex justify-between items-start mb-4">
+        <h6 className="text-gray-600 font-medium">{title}</h6>
+        <div className={colorClasses[color]}>
           {icon}
-        </Box>
-      </Box>
-      <Typography variant="h3" component="div" fontWeight="bold" color={`${color}.main`}>
+        </div>
+      </div>
+      <div className={`text-4xl font-bold ${colorClasses[color]}`}>
         {typeof value === 'number' ? value.toLocaleString() : value}
-      </Typography>
-    </Paper>
+      </div>
+    </Card>
   )
 }

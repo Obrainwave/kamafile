@@ -1,7 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from fastapi.exceptions import RequestValidationError
 from contextlib import asynccontextmanager
 from database import init_db, engine
 from redis_client import check_redis_connection, close_redis
@@ -97,18 +96,38 @@ async def log_requests(request: Request, call_next):
 
 # Configure CORS - must be added before routes
 # Allow origins from environment variable or default to localhost for development
-allowed_origins = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://localhost:8000").split(",")
+allowed_origins_str = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://localhost:8000")
+allowed_origins = [origin.strip() for origin in allowed_origins_str.split(",")]
 # Also allow production domain
 if "https://dev.kamafile.com" not in allowed_origins:
     allowed_origins.append("https://dev.kamafile.com")
+
+# Add explicit OPTIONS handler for preflight requests
+@app.options("/{full_path:path}")
+async def options_handler(request: Request):
+    """Handle OPTIONS preflight requests explicitly"""
+    origin = request.headers.get("origin")
+    if origin in allowed_origins or "*" in allowed_origins:
+        return JSONResponse(
+            content={},
+            headers={
+                "Access-Control-Allow-Origin": origin or "*",
+                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS, PATCH",
+                "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
+                "Access-Control-Allow-Credentials": "true",
+                "Access-Control-Max-Age": "3600",
+            }
+        )
+    return JSONResponse(content={}, status_code=403)
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    allow_headers=["Content-Type", "Authorization", "X-Requested-With", "*"],
     expose_headers=["*"],
+    max_age=3600,
 )
 
 # Add exception handler to ensure CORS headers are added even on errors

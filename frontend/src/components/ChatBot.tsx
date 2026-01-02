@@ -1,25 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
-import {
-  Box,
-  Paper,
-  TextField,
-  IconButton,
-  Typography,
-  Avatar,
-  Fade,
-  Slide,
-  Divider,
-  Button,
-  CircularProgress,
-} from '@mui/material'
-import {
-  Send as SendIcon,
-  Close as CloseIcon,
-  Chat as ChatIcon,
-  SmartToy as BotIcon,
-  Person as PersonIcon,
-} from '@mui/icons-material'
+import { Send, X, MessageCircle, Bot, User } from 'lucide-react'
 import { onboardingAPI, QuickReply } from '../services/onboardingAPI'
+import Spinner from './ui/Spinner'
+import Button from './ui/Button'
 
 interface Message {
   id: string
@@ -231,302 +214,169 @@ export default function ChatBot() {
   return (
     <>
       {/* Floating Chat Button */}
-      <Fade in={!open}>
-        <Box
-          sx={{
-            position: 'fixed',
-            bottom: 24,
-            right: 24,
-            zIndex: 1400,
-            display: open ? 'none' : 'block',
+      {!open && (
+        <button
+          onClick={() => setOpen(true)}
+          className="fixed bottom-6 right-6 z-50 w-16 h-16 text-white rounded-full shadow-lg hover:scale-105 transition-all flex items-center justify-center"
+          style={{ backgroundColor: '#4caf50' }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#388e3c'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = '#4caf50'
           }}
         >
-          <IconButton
-            onClick={() => setOpen(true)}
-            sx={{
-              bgcolor: 'secondary.main',
-              color: 'white',
-              width: 64,
-              height: 64,
-              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-              '&:hover': {
-                bgcolor: 'secondary.dark',
-                transform: 'scale(1.05)',
-              },
-              transition: 'all 0.2s',
-            }}
-          >
-            <ChatIcon sx={{ fontSize: 28 }} />
-          </IconButton>
-        </Box>
-      </Fade>
+          <MessageCircle className="w-7 h-7" />
+        </button>
+      )}
 
       {/* Chat Window */}
-      <Slide direction="up" in={open} mountOnEnter unmountOnExit>
-        <Paper
-          elevation={8}
-          sx={{
-            position: 'fixed',
-            bottom: 24,
-            right: 24,
-            width: { xs: 'calc(100vw - 48px)', sm: 400 },
-            maxWidth: 400,
-            height: 600,
-            maxHeight: { xs: 'calc(100vh - 48px)', sm: 600 },
-            display: 'flex',
-            flexDirection: 'column',
-            zIndex: 1400,
-            borderRadius: 3,
-            overflow: 'hidden',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
-          }}
-        >
+      {open && (
+        <div className="fixed bottom-6 right-6 z-50 w-full sm:w-96 max-w-[calc(100vw-3rem)] h-[600px] max-h-[calc(100vh-3rem)] flex flex-col bg-white rounded-xl shadow-2xl overflow-hidden">
           {/* Header */}
-          <Box
-            sx={{
-              bgcolor: 'primary.main',
-              color: 'white',
-              p: 2,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-              <Avatar
-                sx={{
-                  bgcolor: 'secondary.main',
-                  width: 40,
-                  height: 40,
-                }}
+          <div className="text-white p-4 flex items-center justify-between" style={{ backgroundColor: '#1a2332' }}>
+            <div className="flex items-center gap-3">
+              <div 
+                className="w-10 h-10 rounded-full flex items-center justify-center"
+                style={{ backgroundColor: '#4caf50' }}
               >
-                <BotIcon />
-              </Avatar>
-              <Box>
-                <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                  Tax Assistant
-                </Typography>
-                <Typography variant="caption" sx={{ opacity: 0.9, fontSize: '0.75rem' }}>
+                <Bot className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h3 className="font-semibold">Tax Assistant</h3>
+                <p className="text-xs opacity-90">
                   {isOnboarding ? 'Onboarding...' : 'Online'}
-                </Typography>
-              </Box>
-            </Box>
-            <IconButton
+                </p>
+              </div>
+            </div>
+            <button
               onClick={() => setOpen(false)}
-              size="small"
-              sx={{
-                color: 'white',
-                '&:hover': { bgcolor: 'rgba(255,255,255,0.1)' },
-              }}
+              className="p-1 text-white hover:bg-white/10 rounded transition"
             >
-              <CloseIcon />
-            </IconButton>
-          </Box>
+              <X className="w-5 h-5" />
+            </button>
+          </div>
 
           {/* Messages Area */}
-          <Box
-            sx={{
-              flex: 1,
-              overflowY: 'auto',
-              p: 2,
-              bgcolor: 'background.default',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 2,
-            }}
-          >
+          <div className="flex-1 overflow-y-auto p-4 bg-gray-50 flex flex-col gap-4">
             {messages.length === 0 && isLoading && (
-              <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
-                <CircularProgress size={24} />
-              </Box>
+              <div className="flex justify-center p-4">
+                <Spinner size="md" />
+              </div>
             )}
 
             {messages.map((message) => (
-              <Box
+              <div
                 key={message.id}
-                sx={{
-                  display: 'flex',
-                  justifyContent: message.sender === 'user' ? 'flex-end' : 'flex-start',
-                  gap: 1,
-                }}
+                className={`flex gap-2 ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 {message.sender === 'bot' && (
-                  <Avatar
-                    sx={{
-                      bgcolor: 'secondary.main',
-                      width: 32,
-                      height: 32,
-                      order: 0,
-                    }}
+                  <div 
+                    className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                    style={{ backgroundColor: '#4caf50' }}
                   >
-                    <BotIcon sx={{ fontSize: 18 }} />
-                  </Avatar>
+                    <Bot className="w-4 h-4 text-white" />
+                  </div>
                 )}
-                <Box
-                  sx={{
-                    maxWidth: '75%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 0.5,
-                  }}
-                >
-                  <Box
-                    sx={{
-                      bgcolor: message.sender === 'user' ? 'primary.main' : 'background.paper',
-                      color: message.sender === 'user' ? 'white' : 'text.primary',
-                      p: 1.5,
-                      borderRadius: 2,
-                      boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
-                      wordWrap: 'break-word',
-                    }}
+                <div className="max-w-[75%] flex flex-col gap-1">
+                  <div
+                    className={`p-3 rounded-lg shadow-sm ${
+                      message.sender === 'user'
+                        ? 'text-white'
+                        : 'bg-white text-gray-900'
+                    }`}
+                    style={message.sender === 'user' ? { backgroundColor: '#1a2332' } : {}}
                   >
-                    <Typography variant="body2" sx={{ lineHeight: 1.5, whiteSpace: 'pre-line' }}>
-                      {message.text}
-                    </Typography>
-                  </Box>
+                    <p className="text-sm leading-relaxed whitespace-pre-line">{message.text}</p>
+                  </div>
 
                   {/* Quick Reply Buttons */}
                   {message.sender === 'bot' && message.quickReplies && message.quickReplies.length > 0 && (
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: 1,
-                        mt: 0.5,
-                      }}
-                    >
+                    <div className="flex flex-col gap-2 mt-1">
                       {message.quickReplies.map((reply) => (
                         <Button
                           key={reply.payload}
-                          variant="outlined"
-                          size="small"
+                          variant="outline"
+                          size="sm"
                           onClick={() => handleQuickReply(reply.payload, reply.title)}
                           disabled={isLoading}
-                          sx={{
-                            textTransform: 'none',
-                            justifyContent: 'flex-start',
-                            textAlign: 'left',
-                            borderColor: 'primary.main',
-                            color: 'primary.main',
-                            '&:hover': {
-                              bgcolor: 'primary.light',
-                              color: 'white',
-                              borderColor: 'primary.light',
-                            },
-                          }}
+                          className="text-left justify-start"
                         >
                           {reply.title}
                         </Button>
                       ))}
-                    </Box>
+                    </div>
                   )}
 
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      color: 'text.secondary',
-                      fontSize: '0.7rem',
-                      px: 1,
-                      alignSelf: message.sender === 'user' ? 'flex-end' : 'flex-start',
-                    }}
-                  >
+                  <p className={`text-xs text-gray-500 px-1 ${
+                    message.sender === 'user' ? 'text-right' : 'text-left'
+                  }`}>
                     {formatTime(message.timestamp)}
-                  </Typography>
-                </Box>
+                  </p>
+                </div>
                 {message.sender === 'user' && (
-                  <Avatar
-                    sx={{
-                      bgcolor: 'primary.light',
-                      width: 32,
-                      height: 32,
-                      order: 1,
-                    }}
+                  <div 
+                    className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                    style={{ backgroundColor: '#2d3a4f' }}
                   >
-                    <PersonIcon sx={{ fontSize: 18, color: 'white' }} />
-                  </Avatar>
+                    <User className="w-4 h-4 text-white" />
+                  </div>
                 )}
-              </Box>
+              </div>
             ))}
 
             {isLoading && messages.length > 0 && (
-              <Box sx={{ display: 'flex', justifyContent: 'flex-start', gap: 1 }}>
-                <Avatar
-                  sx={{
-                    bgcolor: 'secondary.main',
-                    width: 32,
-                    height: 32,
-                  }}
+              <div className="flex justify-start gap-2">
+                <div 
+                  className="w-8 h-8 rounded-full flex items-center justify-center"
+                  style={{ backgroundColor: '#4caf50' }}
                 >
-                  <BotIcon sx={{ fontSize: 18 }} />
-                </Avatar>
-                <Box
-                  sx={{
-                    bgcolor: 'background.paper',
-                    p: 1.5,
-                    borderRadius: 2,
-                    boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
-                  }}
-                >
-                  <CircularProgress size={16} />
-                </Box>
-              </Box>
+                  <Bot className="w-4 h-4 text-white" />
+                </div>
+                <div className="bg-white p-3 rounded-lg shadow-sm">
+                  <Spinner size="sm" />
+                </div>
+              </div>
             )}
 
             <div ref={messagesEndRef} />
-          </Box>
+          </div>
 
-          <Divider />
+          <div className="border-t border-gray-200"></div>
 
           {/* Input Area */}
-          <Box
-            sx={{
-              p: 2,
-              bgcolor: 'background.paper',
-              display: 'flex',
-              gap: 1,
-              alignItems: 'flex-end',
-            }}
-          >
-            <TextField
-              fullWidth
-              multiline
-              maxRows={4}
+          <div className="p-4 bg-white flex gap-2 items-end">
+            <textarea
               placeholder="Type your message..."
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyPress={handleKeyPress}
-              variant="outlined"
-              size="small"
               disabled={isLoading}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: 2,
-                  bgcolor: 'background.default',
-                },
-              }}
+              rows={1}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none resize-none bg-gray-50 disabled:opacity-50"
+              style={{ maxHeight: '100px', minHeight: '40px' }}
             />
-            <IconButton
+            <button
               onClick={handleSend}
               disabled={!inputValue.trim() || isLoading}
-              sx={{
-                bgcolor: 'secondary.main',
-                color: 'white',
-                width: 40,
-                height: 40,
-                '&:hover': {
-                  bgcolor: 'secondary.dark',
-                },
-                '&:disabled': {
-                  bgcolor: 'action.disabledBackground',
-                  color: 'action.disabled',
-                },
+              className="w-10 h-10 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center justify-center flex-shrink-0"
+              style={{ backgroundColor: '#4caf50' }}
+              onMouseEnter={(e) => {
+                if (!e.currentTarget.disabled) {
+                  e.currentTarget.style.backgroundColor = '#388e3c'
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!e.currentTarget.disabled) {
+                  e.currentTarget.style.backgroundColor = '#4caf50'
+                }
               }}
             >
-              <SendIcon />
-            </IconButton>
-          </Box>
-        </Paper>
-      </Slide>
+              <Send className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+      )}
     </>
   )
 }

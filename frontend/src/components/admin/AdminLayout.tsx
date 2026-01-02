@@ -1,61 +1,37 @@
 import { useState } from 'react'
 import { Outlet, useNavigate, useLocation } from 'react-router-dom'
 import {
-  Box,
-  Drawer,
-  Toolbar,
-  List,
-  Typography,
-  Divider,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  CssBaseline,
-  CircularProgress,
-  AppBar,
-  IconButton,
-  Avatar,
-  Menu,
-  MenuItem,
-} from '@mui/material'
-import {
-  Dashboard,
-  People,
-  Analytics,
-  Description,
+  LayoutDashboard,
+  Users,
+  BarChart3,
+  FileText,
+  Bot,
   Settings,
-  SmartToy,
-  Logout,
-  AccountCircle,
-} from '@mui/icons-material'
+  LogOut,
+  UserCircle,
+  Menu,
+  X,
+} from 'lucide-react'
 import { useAdmin } from '../../hooks/useAdmin'
 import { authAPI } from '../../services/api'
-
-const drawerWidth = 240
+import Spinner from '../ui/Spinner'
+import Dropdown from '../ui/Dropdown'
+import DropdownItem from '../ui/DropdownItem'
 
 const menuItems = [
-  { text: 'Dashboard', icon: <Dashboard />, path: '/admin' },
-  { text: 'Users', icon: <People />, path: '/admin/users' },
-  { text: 'Analytics', icon: <Analytics />, path: '/admin/analytics' },
-  { text: 'Content', icon: <Description />, path: '/admin/content' },
-  { text: 'RAG Management', icon: <SmartToy />, path: '/admin/rag' },
-  { text: 'Settings', icon: <Settings />, path: '/admin/settings' },
+  { text: 'Dashboard', icon: LayoutDashboard, path: '/admin' },
+  { text: 'Users', icon: Users, path: '/admin/users' },
+  { text: 'Analytics', icon: BarChart3, path: '/admin/analytics' },
+  { text: 'Content', icon: FileText, path: '/admin/content' },
+  { text: 'RAG Management', icon: Bot, path: '/admin/rag' },
+  { text: 'Settings', icon: Settings, path: '/admin/settings' },
 ]
 
 export default function AdminLayout() {
   const navigate = useNavigate()
   const location = useLocation()
   const { loading, isAdmin, user } = useAdmin()
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget)
-  }
-
-  const handleMenuClose = () => {
-    setAnchorEl(null)
-  }
+  const [mobileOpen, setMobileOpen] = useState(false)
 
   const handleLogout = async () => {
     try {
@@ -64,14 +40,13 @@ export default function AdminLayout() {
     } catch (error) {
       console.error('Logout error:', error)
     }
-    handleMenuClose()
   }
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-        <CircularProgress />
-      </Box>
+      <div className="flex justify-center items-center min-h-screen">
+        <Spinner size="lg" />
+      </div>
     )
   }
 
@@ -79,126 +54,125 @@ export default function AdminLayout() {
     return null // useAdmin hook will handle redirect
   }
 
+  const getInitials = () => {
+    return user?.full_name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'A'
+  }
+
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-      <CssBaseline />
-      <AppBar
-        position="fixed"
-        sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` },
-          zIndex: (theme) => theme.zIndex.drawer + 1,
-          bgcolor: 'background.paper',
-          color: 'text.primary',
-          boxShadow: 1,
-        }}
-      >
-        <Toolbar sx={{ justifyContent: 'space-between' }}>
-          <Typography variant="h6" noWrap component="div" fontWeight="bold">
-            Admin Dashboard
-          </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Typography variant="body2" sx={{ display: { xs: 'none', sm: 'block' } }}>
-              {user?.full_name || user?.email}
-            </Typography>
-            <IconButton
-              size="large"
-              edge="end"
-              onClick={handleMenuOpen}
-              color="inherit"
-            >
-              <Avatar sx={{ width: 32, height: 32, bgcolor: 'secondary.main' }}>
-                {user?.full_name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'A'}
-              </Avatar>
-            </IconButton>
-            <Menu
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={handleMenuClose}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'right',
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-            >
-              <MenuItem onClick={() => { navigate('/'); handleMenuClose(); }}>
-                <AccountCircle sx={{ mr: 1 }} />
-                Go to Site
-              </MenuItem>
-              <Divider />
-              <MenuItem onClick={handleLogout}>
-                <Logout sx={{ mr: 1 }} />
-                Logout
-              </MenuItem>
-            </Menu>
-          </Box>
-        </Toolbar>
-      </AppBar>
-      <Drawer
-        variant="permanent"
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          '& .MuiDrawer-paper': {
-            width: drawerWidth,
-            boxSizing: 'border-box',
-            bgcolor: 'primary.dark',
-            color: 'primary.contrastText',
-          },
-        }}
-      >
-        <Toolbar>
-          <Typography variant="h6" noWrap component="div" fontWeight="bold" color="inherit">
-            Admin Panel
-          </Typography>
-        </Toolbar>
-        <Divider sx={{ bgcolor: 'rgba(255, 255, 255, 0.12)' }} />
-        <List>
+    <div className="flex min-h-screen">
+      {/* Sidebar */}
+      <aside className="hidden md:block fixed left-0 top-0 h-full w-60 bg-primary-dark text-white z-30">
+        <div className="h-16 flex items-center px-6 border-b border-white/10">
+          <h2 className="text-lg font-bold">Admin Panel</h2>
+        </div>
+        <nav className="py-4">
           {menuItems.map((item) => {
+            const IconComponent = item.icon
             const isActive = location.pathname === item.path || 
                            (item.path !== '/admin' && location.pathname.startsWith(item.path))
             return (
-              <ListItem key={item.text} disablePadding>
-                <ListItemButton 
-                  onClick={() => navigate(item.path)}
-                  selected={isActive}
-                  sx={{
-                    color: 'primary.contrastText',
-                    '&:hover': {
-                      bgcolor: 'rgba(255, 255, 255, 0.08)',
-                    },
-                    '&.Mui-selected': {
-                      bgcolor: 'primary.main',
-                      color: 'primary.contrastText',
-                      '&:hover': {
-                        bgcolor: 'primary.main',
-                      },
-                    },
-                  }}
-                >
-                  <ListItemIcon sx={{ color: isActive ? 'primary.contrastText' : 'primary.contrastText', opacity: isActive ? 1 : 0.7 }}>
-                    {item.icon}
-                  </ListItemIcon>
-                  <ListItemText primary={item.text} />
-                </ListItemButton>
-              </ListItem>
+              <button
+                key={item.text}
+                onClick={() => navigate(item.path)}
+                className={`w-full flex items-center gap-3 px-6 py-3 text-left transition ${
+                  isActive
+                    ? 'bg-primary text-white'
+                    : 'text-white/70 hover:bg-white/10 hover:text-white'
+                }`}
+              >
+                <IconComponent className="w-5 h-5" />
+                <span>{item.text}</span>
+              </button>
             )
           })}
-        </List>
-      </Drawer>
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: 3,
-          mt: 8,
-        }}
-      >
-        <Outlet />
-      </Box>
-    </Box>
+        </nav>
+      </aside>
+
+      {/* Mobile Sidebar */}
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setMobileOpen(false)}></div>
+          <div className="fixed left-0 top-0 h-full w-60 bg-primary-dark text-white">
+            <div className="h-16 flex items-center justify-between px-6 border-b border-white/10">
+              <h2 className="text-lg font-bold">Admin Panel</h2>
+              <button onClick={() => setMobileOpen(false)} className="text-white">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            <nav className="py-4">
+              {menuItems.map((item) => {
+                const IconComponent = item.icon
+                const isActive = location.pathname === item.path || 
+                               (item.path !== '/admin' && location.pathname.startsWith(item.path))
+                return (
+                  <button
+                    key={item.text}
+                    onClick={() => {
+                      navigate(item.path)
+                      setMobileOpen(false)
+                    }}
+                    className={`w-full flex items-center gap-3 px-6 py-3 text-left transition ${
+                      isActive
+                        ? 'bg-primary text-white'
+                        : 'text-white/70 hover:bg-white/10 hover:text-white'
+                    }`}
+                  >
+                    <IconComponent className="w-5 h-5" />
+                    <span>{item.text}</span>
+                  </button>
+                )
+              })}
+            </nav>
+          </div>
+        </div>
+      )}
+
+      {/* Main Content */}
+      <div className="flex-1 md:ml-60">
+        {/* Top Bar */}
+        <header className="sticky top-0 z-20 bg-white border-b border-gray-200 shadow-sm">
+          <div className="h-16 flex items-center justify-between px-4 md:px-6">
+            <button
+              onClick={() => setMobileOpen(true)}
+              className="md:hidden p-2 text-gray-700"
+            >
+              <Menu className="w-6 h-6" />
+            </button>
+            <h1 className="text-xl font-bold text-gray-900">Admin Dashboard</h1>
+            <div className="flex items-center gap-4">
+              <span className="hidden sm:block text-sm text-gray-600">
+                {user?.full_name || user?.email}
+              </span>
+              <Dropdown
+                trigger={
+                  <div className="w-8 h-8 rounded-full bg-secondary text-white flex items-center justify-center text-sm font-medium cursor-pointer hover:opacity-80 transition">
+                    {getInitials()}
+                  </div>
+                }
+              >
+                <DropdownItem to="/" onClick={() => {}}>
+                  <div className="flex items-center gap-3">
+                    <UserCircle className="w-4 h-4" />
+                    Go to Site
+                  </div>
+                </DropdownItem>
+                <div className="border-t border-gray-200 my-1"></div>
+                <DropdownItem onClick={handleLogout}>
+                  <div className="flex items-center gap-3">
+                    <LogOut className="w-4 h-4" />
+                    Logout
+                  </div>
+                </DropdownItem>
+              </Dropdown>
+            </div>
+          </div>
+        </header>
+
+        {/* Page Content */}
+        <main className="p-4 md:p-6">
+          <Outlet />
+        </main>
+      </div>
+    </div>
   )
 }

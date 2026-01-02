@@ -1,26 +1,14 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import {
-  Container,
-  Box,
-  Card,
-  CardContent,
-  TextField,
-  Button,
-  Typography,
-  Stack,
-  IconButton,
-  InputAdornment,
-  Alert,
-  CircularProgress,
-} from '@mui/material'
-import {
-  Visibility,
-  VisibilityOff,
-  Lock as LockIcon,
-} from '@mui/icons-material'
+import { Eye, EyeOff, Lock } from 'lucide-react'
 import Header from '../components/Header'
 import { authAPI } from '../services/api'
+import Button from '../components/ui/Button'
+import Input from '../components/ui/Input'
+import Card from '../components/ui/Card'
+import Alert from '../components/ui/Alert'
+import Spinner from '../components/ui/Spinner'
+import Container from '../components/ui/Container'
 
 export default function SignIn() {
   const navigate = useNavigate()
@@ -95,156 +83,95 @@ export default function SignIn() {
   }
 
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        bgcolor: 'background.default',
-      }}
-    >
+    <div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
-      <Box
-        sx={{
-          flex: 1,
-          display: 'flex',
-          alignItems: 'center',
-          py: 4,
-        }}
-      >
+      <div className="flex-1 flex items-center py-16">
         <Container maxWidth="sm">
-
-        <Card elevation={3}>
-          <CardContent sx={{ p: 4 }}>
-            <Box sx={{ textAlign: 'center', mb: 4 }}>
-              <Box
-                sx={{
-                  width: 64,
-                  height: 64,
-                  borderRadius: '50%',
-                  bgcolor: 'primary.main',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  mx: 'auto',
-                  mb: 2,
-                }}
-              >
-                <LockIcon sx={{ fontSize: 32, color: 'white' }} />
-              </Box>
-              <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: 700 }}>
-                Sign In
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Welcome back to Kamafile
-              </Typography>
-            </Box>
+          <Card className="p-8">
+            <div className="text-center mb-8">
+              <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center mx-auto mb-4">
+                <Lock className="w-8 h-8 text-white" />
+              </div>
+              <h1 className="text-4xl font-bold mb-2">Sign In</h1>
+              <p className="text-gray-600">Welcome back to Kamafile</p>
+            </div>
 
             {error && (
-              <Alert severity="error" sx={{ mb: 3 }}>
-                {error}
-              </Alert>
+              <div className="mb-6">
+                <Alert severity="error">{error}</Alert>
+              </div>
             )}
 
-            <Box component="form" onSubmit={handleSubmit}>
-              <Stack spacing={3}>
-                <TextField
-                  fullWidth
-                  label="Email address"
-                  name="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  autoComplete="email"
-                  autoFocus
-                />
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <Input
+                label="Email address"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                autoComplete="email"
+                autoFocus
+              />
 
-                <TextField
-                  fullWidth
-                  label="Password"
-                  name="password"
-                  type={showPassword ? 'text' : 'password'}
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                  autoComplete="current-password"
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          onClick={() => setShowPassword(!showPassword)}
-                          edge="end"
-                        >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  <Link
-                    to="/forgot-password"
-                    style={{
-                      textDecoration: 'none',
-                      color: 'inherit',
-                      fontSize: '0.875rem',
-                    }}
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                  Password
+                </label>
+                <div className="relative">
+                  <input
+                    id="password"
+                    name="password"
+                    type={showPassword ? 'text' : 'password'}
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                    autoComplete="current-password"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition pr-12"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                   >
-                    <Typography
-                      variant="body2"
-                      color="primary"
-                      sx={{ '&:hover': { textDecoration: 'underline' } }}
-                    >
-                      Forgot password?
-                    </Typography>
-                  </Link>
-                </Box>
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
+              </div>
 
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  size="large"
-                  disabled={loading}
-                  sx={{
-                    bgcolor: 'primary.main',
-                    py: 1.5,
-                    fontSize: '1rem',
-                    '&:hover': { bgcolor: 'primary.dark' },
-                  }}
+              <div className="flex justify-end">
+                <Link
+                  to="/forgot-password"
+                  className="text-sm text-primary hover:underline"
                 >
-                  {loading ? <CircularProgress size={24} color="inherit" /> : 'Sign In'}
-                </Button>
+                  Forgot password?
+                </Link>
+              </div>
 
-                <Box sx={{ textAlign: 'center', mt: 2 }}>
-                  <Typography variant="body2" color="text.secondary">
-                    Don't have an account?{' '}
-                    <Link
-                      to="/signup"
-                      style={{
-                        textDecoration: 'none',
-                        color: 'inherit',
-                      }}
-                    >
-                      <Typography
-                        component="span"
-                        variant="body2"
-                        color="primary"
-                        sx={{ fontWeight: 600, '&:hover': { textDecoration: 'underline' } }}
-                      >
-                        Sign up
-                      </Typography>
-                    </Link>
-                  </Typography>
-                </Box>
-              </Stack>
-            </Box>
-          </CardContent>
-        </Card>
+              <Button
+                type="submit"
+                fullWidth
+                size="lg"
+                disabled={loading}
+              >
+                {loading ? <Spinner size="sm" className="mx-auto" /> : 'Sign In'}
+              </Button>
+
+              <div className="text-center mt-4">
+                <p className="text-sm text-gray-600">
+                  Don't have an account?{' '}
+                  <Link
+                    to="/signup"
+                    className="font-semibold text-primary hover:underline"
+                  >
+                    Sign up
+                  </Link>
+                </p>
+              </div>
+            </form>
+          </Card>
         </Container>
-      </Box>
-    </Box>
+      </div>
+    </div>
   )
 }

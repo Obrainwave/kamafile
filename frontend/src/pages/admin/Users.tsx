@@ -1,42 +1,16 @@
 import { useState, useEffect } from 'react'
-import {
-  Container,
-  Typography,
-  Paper,
-  Box,
-  CircularProgress,
-  Alert,
-  TextField,
-  Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TablePagination,
-  Chip,
-  IconButton,
-  Menu,
-  MenuItem,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  FormControl,
-  InputLabel,
-  Select,
-  Switch,
-  FormControlLabel,
-} from '@mui/material'
-import {
-  MoreVert,
-  Edit,
-  Delete,
-  Search,
-} from '@mui/icons-material'
+import { MoreVertical, Edit, Trash2, Search } from 'lucide-react'
 import { adminAPI, UserListParams, UserUpdate } from '../../services/adminAPI'
 import { User } from '../../services/api'
+import Container from '../../components/ui/Container'
+import Card from '../../components/ui/Card'
+import Alert from '../../components/ui/Alert'
+import Spinner from '../../components/ui/Spinner'
+import Input from '../../components/ui/Input'
+import Button from '../../components/ui/Button'
+import Modal from '../../components/ui/Modal'
+import Dropdown from '../../components/ui/Dropdown'
+import DropdownItem from '../../components/ui/DropdownItem'
 
 export default function AdminUsers() {
   const [users, setUsers] = useState<User[]>([])
@@ -46,7 +20,6 @@ export default function AdminUsers() {
   const [rowsPerPage, setRowsPerPage] = useState(25)
   const [totalUsers, setTotalUsers] = useState(0)
   const [search, setSearch] = useState('')
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [editDialogOpen, setEditDialogOpen] = useState(false)
   const [editData, setEditData] = useState<UserUpdate>({})
@@ -77,13 +50,7 @@ export default function AdminUsers() {
     }
   }
 
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, user: User) => {
-    setAnchorEl(event.currentTarget)
-    setSelectedUser(user)
-  }
-
   const handleMenuClose = () => {
-    setAnchorEl(null)
     setSelectedUser(null)
   }
 
@@ -115,6 +82,7 @@ export default function AdminUsers() {
 
   const handleDelete = async () => {
     if (!selectedUser) return
+    if (!window.confirm('Are you sure you want to delete this user?')) return
     try {
       await adminAPI.deleteUser(selectedUser.id)
       handleMenuClose()
@@ -126,198 +94,236 @@ export default function AdminUsers() {
 
   return (
     <Container maxWidth="xl">
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Box>
-          <Typography variant="h4" component="h1" fontWeight="bold">
-            User Management
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Manage users and their permissions
-          </Typography>
-        </Box>
-      </Box>
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-4xl font-bold mb-2">User Management</h1>
+          <p className="text-gray-600">Manage users and their permissions</p>
+        </div>
+      </div>
 
       {error && (
-        <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError(null)}>
+        <Alert severity="error" className="mb-4" onClose={() => setError(null)}>
           {error}
         </Alert>
       )}
 
-      <Paper sx={{ p: 2, mb: 2 }}>
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          <TextField
-            fullWidth
-            placeholder="Search users by name, email, or phone..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            InputProps={{
-              startAdornment: <Search sx={{ mr: 1, color: 'text.secondary' }} />,
-            }}
-          />
-        </Box>
-      </Paper>
+      <Card className="p-4 mb-4">
+        <div className="flex gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search users by name, email, or phone..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+            />
+          </div>
+        </div>
+      </Card>
 
-      <TableContainer component={Paper}>
+      <Card className="overflow-hidden">
         {loading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-            <CircularProgress />
-          </Box>
+          <div className="flex justify-center p-8">
+            <Spinner size="lg" />
+          </div>
         ) : (
           <>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Email</TableCell>
-                  <TableCell>Phone</TableCell>
-                  <TableCell>Type</TableCell>
-                  <TableCell>Role</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell>Created</TableCell>
-                  <TableCell align="right">Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {users.map((user) => (
-                  <TableRow key={user.id} hover>
-                    <TableCell>{user.full_name}</TableCell>
-                    <TableCell>{user.email}</TableCell>
-                    <TableCell>{user.phone_number || '-'}</TableCell>
-                    <TableCell>
-                      <Chip label={user.user_type} size="small" variant="outlined" />
-                    </TableCell>
-                    <TableCell>
-                      <Chip 
-                        label={user.role || 'user'} 
-                        size="small" 
-                        color={user.role === 'admin' || user.role === 'super_admin' ? 'primary' : 'default'}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Box sx={{ display: 'flex', gap: 1 }}>
-                        <Chip
-                          label={user.is_active ? 'Active' : 'Inactive'}
-                          size="small"
-                          color={user.is_active ? 'success' : 'default'}
-                        />
-                        {user.is_verified && (
-                          <Chip label="Verified" size="small" color="info" />
-                        )}
-                      </Box>
-                    </TableCell>
-                    <TableCell>
-                      {new Date(user.created_at).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell align="right">
-                      <IconButton
-                        size="small"
-                        onClick={(e) => handleMenuOpen(e, user)}
-                      >
-                        <MoreVert />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            <TablePagination
-              component="div"
-              count={totalUsers}
-              page={page}
-              onPageChange={(_, newPage) => setPage(newPage)}
-              rowsPerPage={rowsPerPage}
-              onRowsPerPageChange={(e) => {
-                setRowsPerPage(parseInt(e.target.value, 10))
-                setPage(0)
-              }}
-            />
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {users.map((user) => (
+                    <tr key={user.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.full_name}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.phone_number || '-'}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="px-2 py-1 text-xs font-medium rounded border border-gray-300 text-gray-700">
+                          {user.user_type}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`px-2 py-1 text-xs font-medium rounded ${
+                          user.role === 'admin' || user.role === 'super_admin'
+                            ? 'bg-primary text-white'
+                            : 'bg-gray-100 text-gray-700'
+                        }`}>
+                          {user.role || 'user'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex gap-2">
+                          <span className={`px-2 py-1 text-xs font-medium rounded ${
+                            user.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
+                          }`}>
+                            {user.is_active ? 'Active' : 'Inactive'}
+                          </span>
+                          {user.is_verified && (
+                            <span className="px-2 py-1 text-xs font-medium rounded bg-blue-100 text-blue-700">
+                              Verified
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {new Date(user.created_at).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <Dropdown
+                          trigger={
+                            <button className="p-1 text-gray-400 hover:text-gray-600">
+                              <MoreVertical className="w-5 h-5" />
+                            </button>
+                          }
+                        >
+                          <DropdownItem onClick={handleEdit}>
+                            <div className="flex items-center gap-3">
+                              <Edit className="w-4 h-4" />
+                              Edit
+                            </div>
+                          </DropdownItem>
+                          <div className="border-t border-gray-200 my-1"></div>
+                          <DropdownItem onClick={handleDelete}>
+                            <div className="flex items-center gap-3 text-red-600">
+                              <Trash2 className="w-4 h-4" />
+                              Delete
+                            </div>
+                          </DropdownItem>
+                        </Dropdown>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+              <div className="text-sm text-gray-700">
+                Showing {page * rowsPerPage + 1} to {Math.min((page + 1) * rowsPerPage, totalUsers)} of {totalUsers} users
+              </div>
+              <div className="flex items-center gap-4">
+                <select
+                  value={rowsPerPage}
+                  onChange={(e) => {
+                    setRowsPerPage(parseInt(e.target.value, 10))
+                    setPage(0)
+                  }}
+                  className="px-3 py-1 border border-gray-300 rounded-lg text-sm"
+                >
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                </select>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPage(Math.max(0, page - 1))}
+                    disabled={page === 0}
+                  >
+                    Previous
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPage(page + 1)}
+                    disabled={(page + 1) * rowsPerPage >= totalUsers}
+                  >
+                    Next
+                  </Button>
+                </div>
+              </div>
+            </div>
           </>
         )}
-      </TableContainer>
+      </Card>
 
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleMenuClose}
+      <Modal
+        open={editDialogOpen}
+        onClose={() => setEditDialogOpen(false)}
+        title="Edit User"
+        size="md"
       >
-        <MenuItem onClick={handleEdit}>
-          <Edit sx={{ mr: 1 }} />
-          Edit
-        </MenuItem>
-        <MenuItem onClick={handleDelete}>
-          <Delete sx={{ mr: 1 }} />
-          Delete
-        </MenuItem>
-      </Menu>
-
-      <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>Edit User</DialogTitle>
-        <DialogContent>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
-            <TextField
-              label="Full Name"
-              fullWidth
-              value={editData.full_name || ''}
-              onChange={(e) => setEditData({ ...editData, full_name: e.target.value })}
-            />
-            <TextField
-              label="Phone Number"
-              fullWidth
-              value={editData.phone_number || ''}
-              onChange={(e) => setEditData({ ...editData, phone_number: e.target.value })}
-            />
-            <FormControl fullWidth>
-              <InputLabel>User Type</InputLabel>
-              <Select
-                value={editData.user_type || ''}
-                label="User Type"
-                onChange={(e) => setEditData({ ...editData, user_type: e.target.value })}
-              >
-                <MenuItem value="individual">Individual</MenuItem>
-                <MenuItem value="freelancer">Freelancer</MenuItem>
-                <MenuItem value="micro_business">Micro Business</MenuItem>
-                <MenuItem value="sme">SME</MenuItem>
-              </Select>
-            </FormControl>
-            <FormControl fullWidth>
-              <InputLabel>Role</InputLabel>
-              <Select
-                value={editData.role || 'user'}
-                label="Role"
-                onChange={(e) => setEditData({ ...editData, role: e.target.value })}
-              >
-                <MenuItem value="user">User</MenuItem>
-                <MenuItem value="support">Support</MenuItem>
-                <MenuItem value="moderator">Moderator</MenuItem>
-                <MenuItem value="admin">Admin</MenuItem>
-                <MenuItem value="super_admin">Super Admin</MenuItem>
-              </Select>
-            </FormControl>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={editData.is_active ?? true}
-                  onChange={(e) => setEditData({ ...editData, is_active: e.target.checked })}
-                />
-              }
-              label="Active"
-            />
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={editData.is_verified ?? false}
-                  onChange={(e) => setEditData({ ...editData, is_verified: e.target.checked })}
-                />
-              }
-              label="Verified"
-            />
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setEditDialogOpen(false)}>Cancel</Button>
-          <Button onClick={handleSave} variant="contained">Save</Button>
-        </DialogActions>
-      </Dialog>
+        <div className="space-y-4">
+          <Input
+            label="Full Name"
+            value={editData.full_name || ''}
+            onChange={(e) => setEditData({ ...editData, full_name: e.target.value })}
+          />
+          <Input
+            label="Phone Number"
+            value={editData.phone_number || ''}
+            onChange={(e) => setEditData({ ...editData, phone_number: e.target.value })}
+          />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">User Type</label>
+            <select
+              value={editData.user_type || ''}
+              onChange={(e) => setEditData({ ...editData, user_type: e.target.value })}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+            >
+              <option value="individual">Individual</option>
+              <option value="freelancer">Freelancer</option>
+              <option value="micro_business">Micro Business</option>
+              <option value="sme">SME</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
+            <select
+              value={editData.role || 'user'}
+              onChange={(e) => setEditData({ ...editData, role: e.target.value })}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+            >
+              <option value="user">User</option>
+              <option value="support">Support</option>
+              <option value="moderator">Moderator</option>
+              <option value="admin">Admin</option>
+              <option value="super_admin">Super Admin</option>
+            </select>
+          </div>
+          <div className="flex items-center gap-4">
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={editData.is_active ?? true}
+                onChange={(e) => setEditData({ ...editData, is_active: e.target.checked })}
+                className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+              />
+              <span className="text-sm text-gray-700">Active</span>
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={editData.is_verified ?? false}
+                onChange={(e) => setEditData({ ...editData, is_verified: e.target.checked })}
+                className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+              />
+              <span className="text-sm text-gray-700">Verified</span>
+            </label>
+          </div>
+          <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+            <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="primary" onClick={handleSave}>
+              Save
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </Container>
   )
 }

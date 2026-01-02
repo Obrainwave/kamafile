@@ -1,28 +1,14 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import {
-  Container,
-  Box,
-  Card,
-  CardContent,
-  TextField,
-  Button,
-  Typography,
-  Stack,
-  IconButton,
-  InputAdornment,
-  Alert,
-  Checkbox,
-  FormControlLabel,
-  CircularProgress,
-} from '@mui/material'
-import {
-  Visibility,
-  VisibilityOff,
-  PersonAdd as PersonAddIcon,
-} from '@mui/icons-material'
+import { Eye, EyeOff, UserPlus } from 'lucide-react'
 import Header from '../components/Header'
 import { authAPI } from '../services/api'
+import Button from '../components/ui/Button'
+import Input from '../components/ui/Input'
+import Card from '../components/ui/Card'
+import Alert from '../components/ui/Alert'
+import Spinner from '../components/ui/Spinner'
+import Container from '../components/ui/Container'
 
 export default function SignUp() {
   const navigate = useNavigate()
@@ -122,215 +108,145 @@ export default function SignUp() {
   }
 
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        bgcolor: 'background.default',
-      }}
-    >
+    <div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
-      <Box
-        sx={{
-          flex: 1,
-          display: 'flex',
-          alignItems: 'center',
-          py: 4,
-        }}
-      >
+      <div className="flex-1 flex items-center py-16">
         <Container maxWidth="sm">
-
-        <Card elevation={3}>
-          <CardContent sx={{ p: 4 }}>
-            <Box sx={{ textAlign: 'center', mb: 4 }}>
-              <Box
-                sx={{
-                  width: 64,
-                  height: 64,
-                  borderRadius: '50%',
-                  bgcolor: 'secondary.main',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  mx: 'auto',
-                  mb: 2,
-                }}
-              >
-                <PersonAddIcon sx={{ fontSize: 32, color: 'white' }} />
-              </Box>
-              <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: 700 }}>
-                Create Account
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Join Kamafile and simplify your taxes
-              </Typography>
-            </Box>
+          <Card className="p-8">
+            <div className="text-center mb-8">
+              <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mx-auto mb-4">
+                <UserPlus className="w-8 h-8 text-white" />
+              </div>
+              <h1 className="text-4xl font-bold mb-2">Create Account</h1>
+              <p className="text-gray-600">Join Kamafile and simplify your taxes</p>
+            </div>
 
             {error && (
-              <Alert severity="error" sx={{ mb: 3 }}>
-                {error}
-              </Alert>
+              <div className="mb-6">
+                <Alert severity="error">{error}</Alert>
+              </div>
             )}
 
-            <Box component="form" onSubmit={handleSubmit}>
-              <Stack spacing={3}>
-                <TextField
-                  fullWidth
-                  label="Full Name"
-                  name="fullName"
-                  type="text"
-                  value={formData.fullName}
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <Input
+                label="Full Name"
+                name="fullName"
+                type="text"
+                value={formData.fullName}
+                onChange={handleChange}
+                required
+                autoComplete="name"
+                autoFocus
+              />
+
+              <Input
+                label="Email address"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                autoComplete="email"
+              />
+
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                  Password
+                </label>
+                <div className="relative">
+                  <input
+                    id="password"
+                    name="password"
+                    type={showPassword ? 'text' : 'password'}
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                    autoComplete="new-password"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition pr-12"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  >
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
+                <p className="mt-1 text-sm text-gray-500">Must be at least 8 characters</p>
+              </div>
+
+              <div>
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                  Confirm Password
+                </label>
+                <div className="relative">
+                  <input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    required
+                    autoComplete="new-password"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition pr-12"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  >
+                    {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-start">
+                <input
+                  id="acceptTerms"
+                  name="acceptTerms"
+                  type="checkbox"
+                  checked={formData.acceptTerms}
                   onChange={handleChange}
                   required
-                  autoComplete="name"
-                  autoFocus
+                  className="mt-1 h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary"
                 />
+                <label htmlFor="acceptTerms" className="ml-3 text-sm text-gray-700">
+                  I agree to the{' '}
+                  <Link to="/terms" className="text-primary hover:underline">
+                    Terms and Conditions
+                  </Link>{' '}
+                  and{' '}
+                  <Link to="/privacy" className="text-primary hover:underline">
+                    Privacy Policy
+                  </Link>
+                </label>
+              </div>
 
-                <TextField
-                  fullWidth
-                  label="Email address"
-                  name="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  autoComplete="email"
-                />
+              <Button
+                type="submit"
+                fullWidth
+                variant="secondary"
+                size="lg"
+                disabled={loading}
+              >
+                {loading ? <Spinner size="sm" className="mx-auto" /> : 'Create Account'}
+              </Button>
 
-                <TextField
-                  fullWidth
-                  label="Password"
-                  name="password"
-                  type={showPassword ? 'text' : 'password'}
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                  autoComplete="new-password"
-                  helperText="Must be at least 8 characters"
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          onClick={() => setShowPassword(!showPassword)}
-                          edge="end"
-                        >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-
-                <TextField
-                  fullWidth
-                  label="Confirm Password"
-                  name="confirmPassword"
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  required
-                  autoComplete="new-password"
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                          edge="end"
-                        >
-                          {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      name="acceptTerms"
-                      checked={formData.acceptTerms}
-                      onChange={handleChange}
-                      required
-                    />
-                  }
-                  label={
-                    <Typography variant="body2">
-                      I agree to the{' '}
-                      <Link
-                        to="/terms"
-                        style={{ textDecoration: 'none', color: 'inherit' }}
-                      >
-                        <Typography
-                          component="span"
-                          variant="body2"
-                          color="primary"
-                          sx={{ '&:hover': { textDecoration: 'underline' } }}
-                        >
-                          Terms and Conditions
-                        </Typography>
-                      </Link>{' '}
-                      and{' '}
-                      <Link
-                        to="/privacy"
-                        style={{ textDecoration: 'none', color: 'inherit' }}
-                      >
-                        <Typography
-                          component="span"
-                          variant="body2"
-                          color="primary"
-                          sx={{ '&:hover': { textDecoration: 'underline' } }}
-                        >
-                          Privacy Policy
-                        </Typography>
-                      </Link>
-                    </Typography>
-                  }
-                />
-
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  size="large"
-                  disabled={loading}
-                  sx={{
-                    bgcolor: 'secondary.main',
-                    py: 1.5,
-                    fontSize: '1rem',
-                    '&:hover': { bgcolor: 'secondary.dark' },
-                  }}
-                >
-                  {loading ? <CircularProgress size={24} color="inherit" /> : 'Create Account'}
-                </Button>
-
-                <Box sx={{ textAlign: 'center', mt: 2 }}>
-                  <Typography variant="body2" color="text.secondary">
-                    Already have an account?{' '}
-                    <Link
-                      to="/signin"
-                      style={{
-                        textDecoration: 'none',
-                        color: 'inherit',
-                      }}
-                    >
-                      <Typography
-                        component="span"
-                        variant="body2"
-                        color="primary"
-                        sx={{ fontWeight: 600, '&:hover': { textDecoration: 'underline' } }}
-                      >
-                        Sign in
-                      </Typography>
-                    </Link>
-                  </Typography>
-                </Box>
-              </Stack>
-            </Box>
-          </CardContent>
-        </Card>
+              <div className="text-center mt-4">
+                <p className="text-sm text-gray-600">
+                  Already have an account?{' '}
+                  <Link
+                    to="/signin"
+                    className="font-semibold text-primary hover:underline"
+                  >
+                    Sign in
+                  </Link>
+                </p>
+              </div>
+            </form>
+          </Card>
         </Container>
-      </Box>
-    </Box>
+      </div>
+    </div>
   )
 }

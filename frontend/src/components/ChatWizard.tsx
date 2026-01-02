@@ -1,41 +1,27 @@
 import { useState, useRef, useEffect } from 'react'
 import {
-  Box,
-  TextField,
-  IconButton,
-  Typography,
-  Avatar,
-  Dialog,
-  DialogContent,
-  Button,
-  CircularProgress,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Chip,
-  Stack,
-} from '@mui/material'
-import {
-  Send as SendIcon,
-  Close as CloseIcon,
-  AttachFile as AttachFileIcon,
-  Mic as MicIcon,
-  SmartToy as BotIcon,
-  Person as PersonIcon,
-  HelpOutline as HelpIcon,
-  NotificationsNone as NotificationsIcon,
-  AccountCircle as AccountCircleIcon,
-  KeyboardArrowDown as ArrowDownIcon,
-  Description as DocumentIcon,
-  Search as SearchIcon,
-  HeadsetMic as HeadsetIcon,
-  Add as AddIcon,
-  CheckCircle as CheckCircleIcon,
-  ErrorOutline as ErrorIcon,
-} from '@mui/icons-material'
+  Send,
+  X,
+  Paperclip,
+  Mic,
+  Bot,
+  User,
+  HelpCircle,
+  Bell,
+  UserCircle,
+  ChevronDown,
+  FileText,
+  Search,
+  Headphones,
+  Plus,
+  CheckCircle,
+  AlertCircle,
+} from 'lucide-react'
 import { onboardingAPI, QuickReply } from '../services/onboardingAPI'
 import hBlackLogo from '../assets/images/h-black-logo.jpeg'
+import Spinner from './ui/Spinner'
+import Button from './ui/Button'
+import Modal from './ui/Modal'
 
 interface Message {
   id: string
@@ -235,416 +221,251 @@ export default function ChatWizard({ open, onClose }: { open: boolean; onClose: 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'uploaded':
-        return 'success'
+        return 'bg-green-100 text-green-700'
       case 'missing_info':
-        return 'error'
+        return 'bg-red-100 text-red-700'
       default:
-        return 'default'
+        return 'bg-gray-100 text-gray-700'
     }
   }
 
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'uploaded':
-        return <CheckCircleIcon sx={{ fontSize: 16, color: 'success.main' }} />
+        return <CheckCircle className="w-4 h-4 text-green-600" />
       case 'missing_info':
-        return <ErrorIcon sx={{ fontSize: 16, color: 'error.main' }} />
+        return <AlertCircle className="w-4 h-4 text-red-600" />
       default:
         return null
     }
   }
 
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      maxWidth="lg"
-      fullWidth
-      PaperProps={{
-        sx: {
-          height: '90vh',
-          maxHeight: '90vh',
-          borderRadius: 3,
-          overflow: 'hidden',
-        },
-      }}
-    >
-      <DialogContent sx={{ p: 0, height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Modal open={open} onClose={onClose} size="xl" className="!max-w-6xl h-[90vh]">
+      <div className="flex flex-col h-full">
         {/* Header */}
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            p: 2,
-            borderBottom: '1px solid',
-            borderColor: 'divider',
-          }}
-        >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-            <Box
-              component="img"
-              src={hBlackLogo}
-              alt="Kamafile"
-              sx={{ height: 32, width: 'auto' }}
-            />
-            <Typography variant="h6" sx={{ fontWeight: 600 }}>
-              Kamafile
-            </Typography>
-          </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <IconButton size="small">
-              <HelpIcon />
-            </IconButton>
-            <IconButton size="small">
-              <NotificationsIcon />
-            </IconButton>
-            <IconButton size="small">
-              <AccountCircleIcon />
-              <ArrowDownIcon sx={{ fontSize: 16 }} />
-            </IconButton>
-            <IconButton onClick={onClose} size="small">
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </Box>
+        <div className="flex items-center justify-between p-4 border-b border-gray-200">
+          <div className="flex items-center gap-3">
+            <img src={hBlackLogo} alt="Kamafile" className="h-8 w-auto" />
+            <h2 className="text-xl font-semibold">Kamafile</h2>
+          </div>
+          <div className="flex items-center gap-2">
+            <button className="p-2 text-gray-600 hover:text-gray-900">
+              <HelpCircle className="w-5 h-5" />
+            </button>
+            <button className="p-2 text-gray-600 hover:text-gray-900">
+              <Bell className="w-5 h-5" />
+            </button>
+            <button className="p-2 text-gray-600 hover:text-gray-900 flex items-center gap-1">
+              <UserCircle className="w-5 h-5" />
+              <ChevronDown className="w-4 h-4" />
+            </button>
+            <button onClick={onClose} className="p-2 text-gray-600 hover:text-gray-900">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
 
         {/* Main Content Area */}
-        <Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+        <div className="flex flex-1 overflow-hidden">
           {/* Left Panel: Chat */}
-          <Box
-            sx={{
-              flex: 1,
-              display: 'flex',
-              flexDirection: 'column',
-              bgcolor: 'background.default',
-              borderRight: '1px solid',
-              borderColor: 'divider',
-            }}
-          >
+          <div className="flex-1 flex flex-col bg-gray-50 border-r border-gray-200">
             {/* Messages Area */}
-            <Box
-              sx={{
-                flex: 1,
-                overflowY: 'auto',
-                p: 3,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 2,
-              }}
-            >
+            <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-4">
               {messages.length === 0 && isLoading && (
-                <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
-                  <CircularProgress size={24} />
-                </Box>
+                <div className="flex justify-center p-4">
+                  <Spinner size="md" />
+                </div>
               )}
 
               {messages.map((message) => (
-                <Box
+                <div
                   key={message.id}
-                  sx={{
-                    display: 'flex',
-                    justifyContent: message.sender === 'user' ? 'flex-end' : 'flex-start',
-                    gap: 1,
-                  }}
+                  className={`flex gap-2 ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   {message.sender === 'bot' && (
-                    <Avatar
-                      sx={{
-                        bgcolor: 'secondary.main',
-                        width: 32,
-                        height: 32,
-                      }}
+                    <div 
+                      className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                      style={{ backgroundColor: '#4caf50' }}
                     >
-                      <BotIcon sx={{ fontSize: 18 }} />
-                    </Avatar>
+                      <Bot className="w-4 h-4 text-white" />
+                    </div>
                   )}
-                  <Box
-                    sx={{
-                      maxWidth: '70%',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: 0.5,
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        bgcolor: message.sender === 'user' ? 'secondary.main' : 'background.paper',
-                        color: message.sender === 'user' ? 'white' : 'text.primary',
-                        p: 2,
-                        borderRadius: 2,
-                        boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
-                        wordWrap: 'break-word',
-                      }}
+                  <div className="max-w-[70%] flex flex-col gap-1">
+                    <div
+                      className={`p-4 rounded-lg shadow-sm ${
+                        message.sender === 'user'
+                          ? 'text-white'
+                          : 'bg-white text-gray-900'
+                      }`}
+                      style={message.sender === 'user' ? { backgroundColor: '#4caf50' } : {}}
                     >
-                      <Typography variant="body2" sx={{ lineHeight: 1.5, whiteSpace: 'pre-line' }}>
-                        {message.text}
-                      </Typography>
+                      <p className="text-sm leading-relaxed whitespace-pre-line">{message.text}</p>
                       {message.sender === 'user' && (
-                        <CheckCircleIcon sx={{ fontSize: 14, color: 'white', ml: 1, mt: 0.5 }} />
+                        <CheckCircle className="w-3.5 h-3.5 text-white ml-2 mt-1 inline-block" />
                       )}
-                    </Box>
+                    </div>
 
                     {/* Quick Reply Buttons */}
                     {message.sender === 'bot' && message.quickReplies && message.quickReplies.length > 0 && (
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          gap: 1,
-                          mt: 0.5,
-                        }}
-                      >
+                      <div className="flex flex-col gap-2 mt-1">
                         {message.quickReplies.map((reply) => (
                           <Button
                             key={reply.payload}
-                            variant="outlined"
-                            size="small"
+                            variant="outline"
+                            size="sm"
                             onClick={() => handleQuickReply(reply.payload, reply.title)}
                             disabled={isLoading}
-                            sx={{
-                              textTransform: 'none',
-                              justifyContent: 'flex-start',
-                              textAlign: 'left',
-                              borderColor: 'primary.main',
-                              color: 'primary.main',
-                              '&:hover': {
-                                bgcolor: 'primary.light',
-                                color: 'white',
-                                borderColor: 'primary.light',
-                              },
-                            }}
+                            className="text-left justify-start"
                           >
                             {reply.title}
                           </Button>
                         ))}
-                      </Box>
+                      </div>
                     )}
-                  </Box>
+                  </div>
                   {message.sender === 'user' && (
-                    <Avatar
-                      sx={{
-                        bgcolor: 'primary.light',
-                        width: 32,
-                        height: 32,
-                      }}
+                    <div 
+                      className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                      style={{ backgroundColor: '#2d3a4f' }}
                     >
-                      <PersonIcon sx={{ fontSize: 18, color: 'white' }} />
-                    </Avatar>
+                      <User className="w-4 h-4 text-white" />
+                    </div>
                   )}
-                </Box>
+                </div>
               ))}
 
               {isLoading && messages.length > 0 && (
-                <Box sx={{ display: 'flex', justifyContent: 'flex-start', gap: 1 }}>
-                  <Avatar
-                    sx={{
-                      bgcolor: 'secondary.main',
-                      width: 32,
-                      height: 32,
-                    }}
+                <div className="flex justify-start gap-2">
+                  <div 
+                    className="w-8 h-8 rounded-full flex items-center justify-center"
+                    style={{ backgroundColor: '#4caf50' }}
                   >
-                    <BotIcon sx={{ fontSize: 18 }} />
-                  </Avatar>
-                  <Box
-                    sx={{
-                      bgcolor: 'background.paper',
-                      p: 1.5,
-                      borderRadius: 2,
-                      boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
-                    }}
-                  >
-                    <CircularProgress size={16} />
-                  </Box>
-                </Box>
+                    <Bot className="w-4 h-4 text-white" />
+                  </div>
+                  <div className="bg-white p-3 rounded-lg shadow-sm">
+                    <Spinner size="sm" />
+                  </div>
+                </div>
               )}
 
               <div ref={messagesEndRef} />
-            </Box>
+            </div>
 
             {/* Input Area */}
-            <Box
-              sx={{
-                p: 2,
-                borderTop: '1px solid',
-                borderColor: 'divider',
-                bgcolor: 'background.paper',
-              }}
-            >
-              <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-end' }}>
-                <IconButton size="small" sx={{ color: 'text.secondary' }}>
-                  <AttachFileIcon />
-                </IconButton>
-                <TextField
-                  fullWidth
-                  multiline
-                  maxRows={4}
+            <div className="p-4 border-t border-gray-200 bg-white">
+              <div className="flex gap-2 items-end">
+                <button className="p-2 text-gray-600 hover:text-gray-900">
+                  <Paperclip className="w-5 h-5" />
+                </button>
+                <textarea
                   placeholder="Type a message..."
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  variant="outlined"
-                  size="small"
                   disabled={isLoading}
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      borderRadius: 2,
-                      bgcolor: 'background.default',
-                    },
-                  }}
+                  rows={1}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none resize-none bg-gray-50 disabled:opacity-50"
+                  style={{ maxHeight: '100px', minHeight: '40px' }}
                 />
-                <IconButton size="small" sx={{ color: 'text.secondary' }}>
-                  <MicIcon />
-                </IconButton>
-                <IconButton
+                <button className="p-2 text-gray-600 hover:text-gray-900">
+                  <Mic className="w-5 h-5" />
+                </button>
+                <button
                   onClick={handleSend}
                   disabled={!inputValue.trim() || isLoading}
-                  sx={{
-                    bgcolor: 'secondary.main',
-                    color: 'white',
-                    '&:hover': {
-                      bgcolor: 'secondary.dark',
-                    },
-                    '&:disabled': {
-                      bgcolor: 'action.disabledBackground',
-                      color: 'action.disabled',
-                    },
+                  className="w-10 h-10 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center justify-center"
+                  style={{ backgroundColor: '#4caf50' }}
+                  onMouseEnter={(e) => {
+                    if (!e.currentTarget.disabled) {
+                      e.currentTarget.style.backgroundColor = '#388e3c'
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!e.currentTarget.disabled) {
+                      e.currentTarget.style.backgroundColor = '#4caf50'
+                    }
                   }}
                 >
-                  <SendIcon />
-                </IconButton>
-              </Box>
-            </Box>
-          </Box>
+                  <Send className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          </div>
 
           {/* Right Panel: Sidebar */}
-          <Box
-            sx={{
-              width: 320,
-              bgcolor: 'background.default',
-              display: 'flex',
-              flexDirection: 'column',
-              p: 2,
-              gap: 3,
-              overflowY: 'auto',
-            }}
-          >
+          <div className="w-80 bg-gray-50 flex flex-col p-4 gap-6 overflow-y-auto">
             {/* Quick Actions */}
-            <Box>
-              <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1.5 }}>
-                Quick Actions
-              </Typography>
-              <Stack spacing={1}>
+            <div>
+              <h3 className="text-sm font-semibold mb-3">Quick Actions</h3>
+              <div className="space-y-2">
                 <Button
-                  variant="outlined"
+                  variant="outline"
                   fullWidth
-                  startIcon={<DocumentIcon />}
-                  sx={{
-                    justifyContent: 'flex-start',
-                    textTransform: 'none',
-                    borderColor: 'divider',
-                    color: 'text.primary',
-                  }}
+                  className="justify-start"
                 >
+                  <FileText className="w-4 h-4 mr-2" />
                   View Documents
                 </Button>
                 <Button
-                  variant="outlined"
+                  variant="outline"
                   fullWidth
-                  startIcon={<SearchIcon />}
-                  sx={{
-                    justifyContent: 'flex-start',
-                    textTransform: 'none',
-                    borderColor: 'divider',
-                    color: 'text.primary',
-                  }}
+                  className="justify-start"
                 >
+                  <Search className="w-4 h-4 mr-2" />
                   Check Readiness
                 </Button>
                 <Button
-                  variant="outlined"
+                  variant="outline"
                   fullWidth
-                  startIcon={<HeadsetIcon />}
-                  sx={{
-                    justifyContent: 'flex-start',
-                    textTransform: 'none',
-                    borderColor: 'divider',
-                    color: 'text.primary',
-                  }}
+                  className="justify-start"
                 >
+                  <Headphones className="w-4 h-4 mr-2" />
                   Get Expert Help
                 </Button>
-              </Stack>
-            </Box>
+              </div>
+            </div>
 
             {/* My Documents */}
-            <Box>
-              <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1.5 }}>
-                My Documents
-              </Typography>
-              <List sx={{ p: 0 }}>
+            <div>
+              <h3 className="text-sm font-semibold mb-3">My Documents</h3>
+              <div className="space-y-0">
                 {documents.map((doc) => (
-                  <ListItem
+                  <div
                     key={doc.id}
-                    sx={{
-                      px: 0,
-                      py: 1,
-                      borderBottom: '1px solid',
-                      borderColor: 'divider',
-                    }}
+                    className="py-3 border-b border-gray-200 flex items-start gap-3"
                   >
-                    <ListItemIcon sx={{ minWidth: 36 }}>
-                      <DocumentIcon sx={{ color: 'text.secondary', fontSize: 20 }} />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={
-                        <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                          {doc.name}
-                        </Typography>
-                      }
-                      secondary={
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.5 }}>
-                          {getStatusIcon(doc.status)}
-                          <Chip
-                            label={
-                              doc.status === 'uploaded'
-                                ? 'Uploaded'
-                                : doc.status === 'missing_info'
-                                ? 'Missing Info'
-                                : 'Processing'
-                            }
-                            size="small"
-                            color={getStatusColor(doc.status) as any}
-                            sx={{ height: 20, fontSize: '0.7rem' }}
-                          />
-                        </Box>
-                      }
-                    />
-                  </ListItem>
+                    <FileText className="w-5 h-5 text-gray-500 mt-0.5" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900">{doc.name}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        {getStatusIcon(doc.status)}
+                        <span className={`px-2 py-0.5 text-xs font-medium rounded ${getStatusColor(doc.status)}`}>
+                          {doc.status === 'uploaded'
+                            ? 'Uploaded'
+                            : doc.status === 'missing_info'
+                            ? 'Missing Info'
+                            : 'Processing'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 ))}
-              </List>
-            </Box>
+              </div>
+            </div>
 
             {/* Upload Files Button */}
             <Button
-              variant="contained"
+              variant="secondary"
               fullWidth
-              startIcon={<AddIcon />}
-              sx={{
-                bgcolor: 'secondary.main',
-                color: 'white',
-                textTransform: 'none',
-                py: 1.5,
-                '&:hover': {
-                  bgcolor: 'secondary.dark',
-                },
-              }}
+              className="flex items-center justify-center gap-2 py-3"
             >
+              <Plus className="w-4 h-4" />
               Upload Files
             </Button>
-          </Box>
-        </Box>
-      </DialogContent>
-    </Dialog>
+          </div>
+        </div>
+      </div>
+    </Modal>
   )
 }

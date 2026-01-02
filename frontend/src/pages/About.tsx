@@ -1,446 +1,252 @@
 import { Link as RouterLink } from 'react-router-dom'
 import {
-  Container,
-  Box,
-  Typography,
-  Button,
-  Card,
-  CardContent,
-  Stack,
-  Link,
-} from '@mui/material'
-import {
-  AccountBalance as TaxIcon,
-  Security as SecurityIcon,
-  People as PeopleIcon,
-  Lightbulb as InnovationIcon,
-  VerifiedUser as TrustIcon,
-  Speed as SpeedIcon,
-  Support as SupportIcon,
-} from '@mui/icons-material'
+  Building2,
+  Shield,
+  Users,
+  Lightbulb,
+  ShieldCheck,
+  Zap,
+  HeadphonesIcon,
+} from 'lucide-react'
 import Header from '../components/Header'
+import Button from '../components/ui/Button'
+import Card from '../components/ui/Card'
+import Container from '../components/ui/Container'
 
 export default function About() {
   const values = [
     {
-      icon: <SecurityIcon />,
+      icon: Shield,
       title: 'Privacy First',
       description: 'Your tax documents and information are encrypted and secure. We never share your data without permission.',
     },
     {
-      icon: <InnovationIcon />,
+      icon: Lightbulb,
       title: 'Innovation',
       description: 'Leveraging AI and modern technology to simplify complex tax processes for Nigerians.',
     },
     {
-      icon: <TrustIcon />,
+      icon: ShieldCheck,
       title: 'Trust & Compliance',
       description: 'NDPA-compliant and built with transparency. You control your data at all times.',
     },
     {
-      icon: <SpeedIcon />,
+      icon: Zap,
       title: 'Efficiency',
       description: 'Get instant answers to tax questions and automated reminders for important deadlines.',
     },
     {
-      icon: <SupportIcon />,
+      icon: HeadphonesIcon,
       title: 'Always Available',
       description: '24/7 access via WhatsApp and web platform. Get help when you need it, not just business hours.',
     },
     {
-      icon: <PeopleIcon />,
+      icon: Users,
       title: 'For Everyone',
       description: 'Designed for individuals, freelancers, micro-businesses, and SMEs across Nigeria.',
     },
   ]
 
   return (
-    <Box sx={{ flexGrow: 1, minHeight: '100vh', bgcolor: 'background.default' }}>
+    <div className="flex-grow min-h-screen bg-gray-50">
       <Header />
 
       {/* Hero Section */}
-      <Box
-        sx={{
-          bgcolor: 'primary.main',
-          color: 'white',
-          py: { xs: 8, md: 12 },
-          position: 'relative',
-          overflow: 'hidden',
-        }}
-      >
+      <div className="bg-primary text-white py-16 md:py-24 relative overflow-hidden">
         <Container maxWidth="lg">
-          <Box sx={{ textAlign: 'center', maxWidth: 800, mx: 'auto' }}>
-            <Typography
-              variant="h1"
-              component="h1"
-              gutterBottom
-              sx={{
-                fontSize: { xs: '2.5rem', md: '3.5rem' },
-                fontWeight: 700,
-                mb: 3,
-              }}
-            >
+          <div className="text-center max-w-3xl mx-auto">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6">
               About Kamafile
-            </Typography>
-            <Typography
-              variant="h5"
-              sx={{
-                fontWeight: 400,
-                opacity: 0.95,
-                lineHeight: 1.6,
-                mb: 4,
-              }}
-            >
+            </h1>
+            <h2 className="text-xl md:text-2xl font-normal opacity-95 leading-relaxed mb-6">
               Nigeria's Digital Tax Assistant
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{
-                fontSize: '1.1rem',
-                opacity: 0.9,
-                lineHeight: 1.8,
-                maxWidth: 600,
-                mx: 'auto',
-              }}
-            >
+            </h2>
+            <p className="text-lg md:text-xl opacity-90 leading-relaxed max-w-2xl mx-auto">
               We're on a mission to make tax compliance simple, accessible, and stress-free for every Nigerian.
-            </Typography>
-          </Box>
+            </p>
+          </div>
         </Container>
-      </Box>
+      </div>
 
       {/* Mission Section */}
-      <Box sx={{ py: { xs: 8, md: 10 }, bgcolor: 'background.paper' }}>
+      <div className="py-16 md:py-20 bg-white">
         <Container maxWidth="lg">
-          <Box sx={{ maxWidth: 900, mx: 'auto', textAlign: 'center' }}>
-            <Typography
-              variant="h2"
-              component="h2"
-              gutterBottom
-              sx={{ mb: 4, fontWeight: 600 }}
-            >
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-semibold mb-6">
               Our Mission
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{
-                fontSize: '1.125rem',
-                lineHeight: 1.8,
-                color: 'text.secondary',
-                mb: 4,
-              }}
-            >
+            </h2>
+            <p className="text-lg leading-relaxed text-gray-600 mb-4">
               Tax compliance in Nigeria is complex and overwhelming. With the 2026 tax reforms
               increasing complexity, millions of Nigerians struggle to understand their obligations,
               keep proper records, and meet deadlines.
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{
-                fontSize: '1.125rem',
-                lineHeight: 1.8,
-                color: 'text.secondary',
-              }}
-            >
+            </p>
+            <p className="text-lg leading-relaxed text-gray-600">
               Kamafile exists to change that. We provide personalized tax guidance, secure document
               storage, and automated reminders—all accessible via WhatsApp and web. Our AI-powered
               assistant helps you understand your tax situation, categorize your income, and stay
               compliant without the stress.
-            </Typography>
-          </Box>
+            </p>
+          </div>
         </Container>
-      </Box>
+      </div>
 
       {/* What We Do Section */}
-      <Box sx={{ py: { xs: 8, md: 10 }, bgcolor: 'background.default' }}>
+      <div className="py-16 md:py-20 bg-gray-50">
         <Container maxWidth="lg">
-          <Typography
-            variant="h2"
-            component="h2"
-            align="center"
-            gutterBottom
-            sx={{ mb: 8, fontWeight: 600 }}
-          >
+          <h2 className="text-3xl md:text-4xl font-semibold text-center mb-12">
             What We Do
-          </Typography>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              gap: 4,
-            }}
-          >
-            <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 16px)' } }}>
-              <Card sx={{ height: '100%' }}>
-                <CardContent sx={{ p: 4 }}>
-                  <Box
-                    sx={{
-                      width: 64,
-                      height: 64,
-                      borderRadius: '50%',
-                      bgcolor: 'primary.main',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      mb: 3,
-                    }}
-                  >
-                    <TaxIcon sx={{ fontSize: 32, color: 'white' }} />
-                  </Box>
-                  <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, mb: 2 }}>
-                    Personalized Tax Guidance
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.7 }}>
-                    Get answers to your tax questions tailored to your specific situation. Our AI
-                    assistant understands Nigerian tax laws and helps you navigate complexity.
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Box>
-            <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 16px)' } }}>
-              <Card sx={{ height: '100%' }}>
-                <CardContent sx={{ p: 4 }}>
-                  <Box
-                    sx={{
-                      width: 64,
-                      height: 64,
-                      borderRadius: '50%',
-                      bgcolor: 'secondary.main',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      mb: 3,
-                    }}
-                  >
-                    <SecurityIcon sx={{ fontSize: 32, color: 'white' }} />
-                  </Box>
-                  <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, mb: 2 }}>
-                    Secure Document Vault
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.7 }}>
-                    Store all your tax-related documents in one secure, encrypted location. Access
-                    them anytime, anywhere, with PIN protection and end-to-end encryption.
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Box>
-            <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 16px)' } }}>
-              <Card sx={{ height: '100%' }}>
-                <CardContent sx={{ p: 4 }}>
-                  <Box
-                    sx={{
-                      width: 64,
-                      height: 64,
-                      borderRadius: '50%',
-                      bgcolor: 'primary.main',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      mb: 3,
-                    }}
-                  >
-                    <SpeedIcon sx={{ fontSize: 32, color: 'white' }} />
-                  </Box>
-                  <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, mb: 2 }}>
-                    Automated Reminders
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.7 }}>
-                    Never miss a tax deadline again. We send you timely reminders for filing
-                    deadlines, payment dates, and important tax events.
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Box>
-            <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 16px)' } }}>
-              <Card sx={{ height: '100%' }}>
-                <CardContent sx={{ p: 4 }}>
-                  <Box
-                    sx={{
-                      width: 64,
-                      height: 64,
-                      borderRadius: '50%',
-                      bgcolor: 'secondary.main',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      mb: 3,
-                    }}
-                  >
-                    <PeopleIcon sx={{ fontSize: 32, color: 'white' }} />
-                  </Box>
-                  <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, mb: 2 }}>
-                    Multi-Income Support
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.7 }}>
-                    Whether you're an employee, freelancer, or business owner with multiple income
-                    streams, we help you categorize and manage everything in one place.
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Box>
-          </Box>
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card className="p-8 h-full">
+              <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center mb-6">
+                <Building2 className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-2xl font-semibold mb-4">
+                Personalized Tax Guidance
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Get answers to your tax questions tailored to your specific situation. Our AI
+                assistant understands Nigerian tax laws and helps you navigate complexity.
+              </p>
+            </Card>
+            <Card className="p-8 h-full">
+              <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-6">
+                <Shield className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-2xl font-semibold mb-4">
+                Secure Document Vault
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Store all your tax-related documents in one secure, encrypted location. Access
+                them anytime, anywhere, with PIN protection and end-to-end encryption.
+              </p>
+            </Card>
+            <Card className="p-8 h-full">
+              <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center mb-6">
+                <Zap className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-2xl font-semibold mb-4">
+                Automated Reminders
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Never miss a tax deadline again. We send you timely reminders for filing
+                deadlines, payment dates, and important tax events.
+              </p>
+            </Card>
+            <Card className="p-8 h-full">
+              <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-6">
+                <Users className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-2xl font-semibold mb-4">
+                Multi-Income Support
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Whether you're an employee, freelancer, or business owner with multiple income
+                streams, we help you categorize and manage everything in one place.
+              </p>
+            </Card>
+          </div>
         </Container>
-      </Box>
+      </div>
 
       {/* Values Section */}
-      <Box sx={{ py: { xs: 8, md: 10 }, bgcolor: 'background.paper' }}>
+      <div className="py-16 md:py-20 bg-white">
         <Container maxWidth="lg">
-          <Typography
-            variant="h2"
-            component="h2"
-            align="center"
-            gutterBottom
-            sx={{ mb: 8, fontWeight: 600 }}
-          >
+          <h2 className="text-3xl md:text-4xl font-semibold text-center mb-12">
             Our Values
-          </Typography>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              gap: 4,
-            }}
-          >
-            {values.map((value, index) => (
-              <Box key={index} sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 16px)', md: '1 1 calc(33.33% - 22px)' } }}>
-                <Card sx={{ height: '100%', textAlign: 'center' }}>
-                  <CardContent sx={{ p: 4 }}>
-                    <Box
-                      sx={{
-                        color: 'secondary.main',
-                        mb: 2,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        '& svg': { fontSize: 48 },
-                      }}
-                    >
-                      {value.icon}
-                    </Box>
-                    <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, mb: 2 }}>
-                      {value.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
-                      {value.description}
-                    </Typography>
-                  </CardContent>
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {values.map((value, index) => {
+              const IconComponent = value.icon
+              return (
+                <Card key={index} className="p-8 h-full text-center">
+                  <div className="text-secondary mb-4 flex justify-center">
+                    <IconComponent className="w-12 h-12" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-4">
+                    {value.title}
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed text-sm">
+                    {value.description}
+                  </p>
                 </Card>
-              </Box>
-            ))}
-          </Box>
+              )
+            })}
+          </div>
         </Container>
-      </Box>
+      </div>
 
       {/* CTA Section */}
-      <Box sx={{ py: { xs: 8, md: 10 }, bgcolor: 'primary.main', color: 'white' }}>
+      <div className="py-16 md:py-20 bg-primary text-white">
         <Container maxWidth="md">
-          <Box sx={{ textAlign: 'center' }}>
-            <Typography
-              variant="h2"
-              component="h2"
-              gutterBottom
-              sx={{ mb: 3, fontWeight: 600, color: 'white' }}
-            >
+          <div className="text-center">
+            <h2 className="text-3xl md:text-4xl font-semibold mb-6 text-white">
               Ready to Simplify Your Taxes?
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{
-                fontSize: '1.125rem',
-                mb: 4,
-                opacity: 0.95,
-                maxWidth: 600,
-                mx: 'auto',
-              }}
-            >
+            </h2>
+            <p className="text-lg md:text-xl mb-8 opacity-95 max-w-2xl mx-auto">
               Join thousands of Nigerians who are taking control of their tax compliance with
               Kamafile.
-            </Typography>
-            <Stack
-              direction={{ xs: 'column', sm: 'row' }}
-              spacing={2}
-              justifyContent="center"
-            >
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
                 component={RouterLink}
                 to="/signup"
-                variant="contained"
-                size="large"
-                sx={{
-                  bgcolor: 'secondary.main',
-                  px: 4,
-                  py: 1.5,
-                  fontSize: '1.1rem',
-                  '&:hover': { bgcolor: 'secondary.dark' },
-                }}
+                variant="secondary"
+                size="lg"
+                className="px-8 py-4 text-lg"
               >
                 Get Started Free
               </Button>
               <Button
                 component={RouterLink}
                 to="/signin"
-                variant="outlined"
-                size="large"
-                sx={{
-                  borderColor: 'white',
-                  color: 'white',
-                  px: 4,
-                  py: 1.5,
-                  fontSize: '1.1rem',
-                  '&:hover': { borderColor: 'white', bgcolor: 'rgba(255,255,255,0.1)' },
-                }}
+                variant="outline"
+                size="lg"
+                className="px-8 py-4 text-lg border-white text-white hover:bg-white hover:text-primary"
               >
                 Sign In
               </Button>
-            </Stack>
-          </Box>
+            </div>
+          </div>
         </Container>
-      </Box>
+      </div>
 
       {/* Footer */}
-      <Box component="footer" sx={{ py: 6, bgcolor: 'background.paper', borderTop: '1px solid', borderColor: 'divider' }}>
+      <footer className="py-12 bg-white border-t border-gray-200">
         <Container maxWidth="lg">
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: { xs: 'column', md: 'row' },
-              gap: 4,
-              justifyContent: 'space-between',
-            }}
-          >
-            <Box>
-              <Typography variant="h5" sx={{ fontWeight: 700, mb: 2, color: 'primary.main' }}>
+          <div className="flex flex-col md:flex-row gap-8 justify-between">
+            <div>
+              <h5 className="text-2xl font-bold mb-4 text-primary">
                 KAMAFILE
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
+              </h5>
+              <p className="text-gray-600 text-sm">
                 Nigeria's Digital Tax Assistant
-              </Typography>
-            </Box>
-            <Box>
-              <Stack spacing={1}>
-                <Link component={RouterLink} to="/" color="text.secondary" underline="hover">
+              </p>
+            </div>
+            <div>
+              <div className="flex flex-col gap-2">
+                <RouterLink to="/" className="text-gray-600 hover:text-primary text-sm">
                   Home
-                </Link>
-                <Link component={RouterLink} to="/about" color="text.secondary" underline="hover">
+                </RouterLink>
+                <RouterLink to="/about" className="text-gray-600 hover:text-primary text-sm">
                   About
-                </Link>
-                <Link href="#" color="text.secondary" underline="hover">
+                </RouterLink>
+                <a href="#" className="text-gray-600 hover:text-primary text-sm">
                   Privacy Policy
-                </Link>
-                <Link href="#" color="text.secondary" underline="hover">
+                </a>
+                <a href="#" className="text-gray-600 hover:text-primary text-sm">
                   Terms of Service
-                </Link>
-              </Stack>
-            </Box>
-          </Box>
-          <Box sx={{ mt: 4, pt: 4, borderTop: '1px solid', borderColor: 'divider' }}>
-            <Typography variant="body2" color="text.secondary" align="center">
+                </a>
+              </div>
+            </div>
+          </div>
+          <div className="mt-8 pt-8 border-t border-gray-200">
+            <p className="text-gray-600 text-sm text-center">
               © {new Date().getFullYear()} Kamafile. All rights reserved.
-            </Typography>
-          </Box>
+            </p>
+          </div>
         </Container>
-      </Box>
-    </Box>
+      </footer>
+    </div>
   )
 }

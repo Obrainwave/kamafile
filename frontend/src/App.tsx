@@ -1,7 +1,6 @@
 import { Suspense, lazy, useEffect, useState } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { CssBaseline, ThemeProvider, CircularProgress, Box } from '@mui/material'
-import { theme } from './theme'
+import Spinner from './components/ui/Spinner'
 
 // Lazy load pages for code splitting
 const LandingPage = lazy(() => import('./pages/LandingPage'))
@@ -17,16 +16,9 @@ const AdminBanners = lazy(() => import('./pages/admin/Banners'))
 
 // Loading component
 const PageLoader = () => (
-  <Box
-    sx={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      minHeight: '100vh',
-    }}
-  >
-    <CircularProgress />
-  </Box>
+  <div className="flex justify-center items-center min-h-screen">
+    <Spinner size="lg" />
+  </div>
 )
 
 // Lazy load ChatBot only after initial page load
@@ -53,26 +45,23 @@ function LazyChatBot() {
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Router>
-        <Suspense fallback={<PageLoader />}>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/signin" element={<SignIn />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<AdminDashboard />} />
-              <Route path="users" element={<AdminUsers />} />
-              <Route path="content" element={<AdminBanners />} />
-            </Route>
-          </Routes>
-          <LazyChatBot />
-        </Suspense>
-      </Router>
-    </ThemeProvider>
+    <Router>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="content" element={<AdminBanners />} />
+          </Route>
+        </Routes>
+        <LazyChatBot />
+      </Suspense>
+    </Router>
   )
 }
 
