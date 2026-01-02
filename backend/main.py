@@ -132,6 +132,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 
 @app.get("/api")
+@app.get("/api/")
 async def root():
     return JSONResponse({"message": "Welcome to Kamafile API", "status": "running"})
 
