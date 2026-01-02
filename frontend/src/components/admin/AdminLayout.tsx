@@ -61,7 +61,10 @@ export default function AdminLayout() {
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}
-      <aside className="hidden md:block fixed left-0 top-0 h-full w-60 bg-primary-dark text-white z-30">
+      <aside 
+        className="hidden md:block fixed left-0 top-0 h-full w-60 text-white z-30"
+        style={{ backgroundColor: '#0f1419' }}
+      >
         <div className="h-16 flex items-center px-6 border-b border-white/10">
           <h2 className="text-lg font-bold">Admin Panel</h2>
         </div>
@@ -76,9 +79,20 @@ export default function AdminLayout() {
                 onClick={() => navigate(item.path)}
                 className={`w-full flex items-center gap-3 px-6 py-3 text-left transition ${
                   isActive
-                    ? 'bg-primary text-white'
+                    ? 'text-white'
                     : 'text-white/70 hover:bg-white/10 hover:text-white'
                 }`}
+                style={isActive ? { backgroundColor: '#1a2332' } : {}}
+                onMouseEnter={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.backgroundColor = 'transparent'
+                  }
+                }}
               >
                 <IconComponent className="w-5 h-5" />
                 <span>{item.text}</span>
@@ -92,7 +106,10 @@ export default function AdminLayout() {
       {mobileOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
           <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setMobileOpen(false)}></div>
-          <div className="fixed left-0 top-0 h-full w-60 bg-primary-dark text-white">
+          <div 
+            className="fixed left-0 top-0 h-full w-60 text-white"
+            style={{ backgroundColor: '#0f1419' }}
+          >
             <div className="h-16 flex items-center justify-between px-6 border-b border-white/10">
               <h2 className="text-lg font-bold">Admin Panel</h2>
               <button onClick={() => setMobileOpen(false)} className="text-white">
@@ -113,9 +130,20 @@ export default function AdminLayout() {
                     }}
                     className={`w-full flex items-center gap-3 px-6 py-3 text-left transition ${
                       isActive
-                        ? 'bg-primary text-white'
+                        ? 'text-white'
                         : 'text-white/70 hover:bg-white/10 hover:text-white'
                     }`}
+                    style={isActive ? { backgroundColor: '#1a2332' } : {}}
+                    onMouseEnter={(e) => {
+                      if (!isActive) {
+                        e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isActive) {
+                        e.currentTarget.style.backgroundColor = 'transparent'
+                      }
+                    }}
                   >
                     <IconComponent className="w-5 h-5" />
                     <span>{item.text}</span>
@@ -145,7 +173,10 @@ export default function AdminLayout() {
               </span>
               <Dropdown
                 trigger={
-                  <div className="w-8 h-8 rounded-full bg-secondary text-white flex items-center justify-center text-sm font-medium cursor-pointer hover:opacity-80 transition">
+                  <div 
+                    className="w-8 h-8 rounded-full text-white flex items-center justify-center text-sm font-medium cursor-pointer hover:opacity-80 transition"
+                    style={{ backgroundColor: '#4caf50' }}
+                  >
                     {getInitials()}
                   </div>
                 }
