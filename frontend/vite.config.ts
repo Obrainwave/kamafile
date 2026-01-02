@@ -17,25 +17,9 @@ export default defineConfig({
     outDir: 'build',
     // Enable minification (esbuild is faster and default)
     minify: 'esbuild',
-    // Optimize chunk splitting
+    // Let Vite handle chunk splitting automatically to avoid circular dependency issues
     rollupOptions: {
       output: {
-        manualChunks: (id) => {
-          // Separate vendor chunks for better caching
-          if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
-              return 'react-vendor'
-            }
-            if (id.includes('@mui')) {
-              return 'mui-vendor'
-            }
-            if (id.includes('axios')) {
-              return 'utils-vendor'
-            }
-            // Other node_modules
-            return 'vendor'
-          }
-        },
         // Optimize chunk file names
         chunkFileNames: 'js/[name]-[hash].js',
         entryFileNames: 'js/[name]-[hash].js',
