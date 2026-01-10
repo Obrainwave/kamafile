@@ -52,7 +52,7 @@ export default function About() {
       <Header />
 
       {/* Hero Section */}
-      <div className="bg-primary text-white py-16 md:py-24 relative overflow-hidden">
+      <div className="text-white py-16 md:py-24 relative overflow-hidden" style={{ backgroundColor: '#1a2332' }}>
         <Container maxWidth="lg">
           <div className="text-center max-w-3xl mx-auto">
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
@@ -98,7 +98,10 @@ export default function About() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card className="p-8 h-full">
-              <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center mb-6">
+              <div 
+                className="w-16 h-16 rounded-full flex items-center justify-center mb-6"
+                style={{ backgroundColor: '#1a2332' }}
+              >
                 <Building2 className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-2xl font-semibold mb-4">
@@ -110,7 +113,10 @@ export default function About() {
               </p>
             </Card>
             <Card className="p-8 h-full">
-              <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-6">
+              <div 
+                className="w-16 h-16 rounded-full flex items-center justify-center mb-6"
+                style={{ backgroundColor: '#4caf50' }}
+              >
                 <Shield className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-2xl font-semibold mb-4">
@@ -122,7 +128,10 @@ export default function About() {
               </p>
             </Card>
             <Card className="p-8 h-full">
-              <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center mb-6">
+              <div 
+                className="w-16 h-16 rounded-full flex items-center justify-center mb-6"
+                style={{ backgroundColor: '#1a2332' }}
+              >
                 <Zap className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-2xl font-semibold mb-4">
@@ -134,7 +143,10 @@ export default function About() {
               </p>
             </Card>
             <Card className="p-8 h-full">
-              <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-6">
+              <div 
+                className="w-16 h-16 rounded-full flex items-center justify-center mb-6"
+                style={{ backgroundColor: '#4caf50' }}
+              >
                 <Users className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-2xl font-semibold mb-4">
@@ -160,7 +172,7 @@ export default function About() {
               const IconComponent = value.icon
               return (
                 <Card key={index} className="p-8 h-full text-center">
-                  <div className="text-secondary mb-4 flex justify-center">
+                  <div className="mb-4 flex justify-center" style={{ color: '#4caf50' }}>
                     <IconComponent className="w-12 h-12" />
                   </div>
                   <h3 className="text-xl font-semibold mb-4">
@@ -177,7 +189,7 @@ export default function About() {
       </div>
 
       {/* CTA Section */}
-      <div className="py-16 md:py-20 bg-primary text-white">
+      <div className="py-16 md:py-20 text-white" style={{ backgroundColor: '#1a2332' }}>
         <Container maxWidth="md">
           <div className="text-center">
             <h2 className="text-3xl md:text-4xl font-semibold mb-6 text-white">
@@ -197,15 +209,25 @@ export default function About() {
               >
                 Get Started Free
               </Button>
-              <Button
-                component={RouterLink}
+              <RouterLink
                 to="/signin"
-                variant="outline"
-                size="lg"
-                className="px-8 py-4 text-lg border-white text-white hover:bg-white hover:text-primary"
+                className="px-8 py-4 text-lg font-medium rounded-lg border-2 focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all inline-flex items-center justify-center"
+                style={{
+                  borderColor: '#ffffff',
+                  color: '#ffffff',
+                  backgroundColor: 'transparent',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#ffffff'
+                  e.currentTarget.style.color = '#1a2332'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent'
+                  e.currentTarget.style.color = '#ffffff'
+                }}
               >
                 Sign In
-              </Button>
+              </RouterLink>
             </div>
           </div>
         </Container>
@@ -216,7 +238,7 @@ export default function About() {
         <Container maxWidth="lg">
           <div className="flex flex-col md:flex-row gap-8 justify-between">
             <div>
-              <h5 className="text-2xl font-bold mb-4 text-primary">
+              <h5 className="text-2xl font-bold mb-4" style={{ color: '#1a2332' }}>
                 KAMAFILE
               </h5>
               <p className="text-gray-600 text-sm">
@@ -225,16 +247,37 @@ export default function About() {
             </div>
             <div>
               <div className="flex flex-col gap-2">
-                <RouterLink to="/" className="text-gray-600 hover:text-primary text-sm">
+                <RouterLink 
+                  to="/" 
+                  className="text-gray-600 text-sm transition"
+                  style={{ '--hover-color': '#1a2332' } as React.CSSProperties}
+                  onMouseEnter={(e) => { e.currentTarget.style.color = '#1a2332' }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = '#6b7280' }}
+                >
                   Home
                 </RouterLink>
-                <RouterLink to="/about" className="text-gray-600 hover:text-primary text-sm">
+                <RouterLink 
+                  to="/about" 
+                  className="text-gray-600 text-sm transition"
+                  onMouseEnter={(e) => { e.currentTarget.style.color = '#1a2332' }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = '#6b7280' }}
+                >
                   About
                 </RouterLink>
-                <a href="#" className="text-gray-600 hover:text-primary text-sm">
+                <a 
+                  href="#" 
+                  className="text-gray-600 text-sm transition"
+                  onMouseEnter={(e) => { e.currentTarget.style.color = '#1a2332' }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = '#6b7280' }}
+                >
                   Privacy Policy
                 </a>
-                <a href="#" className="text-gray-600 hover:text-primary text-sm">
+                <a 
+                  href="#" 
+                  className="text-gray-600 text-sm transition"
+                  onMouseEnter={(e) => { e.currentTarget.style.color = '#1a2332' }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = '#6b7280' }}
+                >
                   Terms of Service
                 </a>
               </div>

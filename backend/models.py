@@ -131,3 +131,28 @@ class ConversationMessage(Base):
     
     # Relationships
     session = relationship("ConversationSession", back_populates="messages", foreign_keys=[session_id])
+
+
+class RAGDocument(Base):
+    """RAG (Retrieval-Augmented Generation) documents for knowledge base"""
+    __tablename__ = "rag_documents"
+    
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
+    title = Column(String(500), nullable=False)
+    source_type = Column(String(50), nullable=False, index=True)  # file, url, text
+    source_path = Column(String(1000), nullable=True)  # File path or URL
+    file_name = Column(String(500), nullable=True)  # Original file name
+    file_type = Column(String(100), nullable=True)  # MIME type or file extension
+    file_size = Column(Integer, nullable=True)  # File size in bytes
+    content_text = Column(String, nullable=True)  # Extracted text content
+    content_metadata = Column(JSON, nullable=True)  # Additional metadata (page count, dimensions, etc.)
+    processing_status = Column(String(50), default="pending", index=True)  # pending, processing, completed, failed
+    processing_error = Column(String(1000), nullable=True)  # Error message if processing failed
+    is_active = Column(Boolean, default=True, index=True)
+    uploaded_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True, index=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), index=True)
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    processed_at = Column(DateTime(timezone=True), nullable=True)
+    
+    # Relationships
+    uploader = relationship("User", foreign_keys=[uploaded_by])

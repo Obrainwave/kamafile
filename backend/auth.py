@@ -4,8 +4,8 @@ from uuid import UUID
 from jose import JWTError, jwt
 import bcrypt
 import hashlib
-from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import Depends, HTTPException, status, Security
+from fastapi.security import OAuth2PasswordBearer, HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from models import User
@@ -19,6 +19,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30 * 24 * 60  # 30 days
 
 # OAuth2 scheme
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/login")
+http_bearer = HTTPBearer(auto_error=False)
 
 
 def get_password_hash(password: str) -> str:
@@ -74,7 +75,11 @@ async def get_current_user(
     token: str = Depends(oauth2_scheme),
     db: AsyncSession = Depends(get_db)
 ) -> User:
-    """Get the current authenticated user from JWT token"""
+    """Get the current authenticated user from JWT token
+    
+    Note: OAuth2PasswordBearer with auto_error=True (default) will raise an exception
+    if no token is provided, so token will never be None.
+    """
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -99,14 +104,52 @@ async def get_current_user(
     if user is None:
         raise credentials_exception
     if not user.is_active:
-        raise HTTPException(status_code=400, detail="Inactive user")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Inactive user"
+        )
+    # Defensive check - ensure we never return None
+    if user is None:
+        raise credentials_exception
     return user
+
+
+async def get_optional_user(
+    credentials: Optional[HTTPAuthorizationCredentials] = Security(http_bearer),
+    db: AsyncSession = Depends(get_db)
+) -> Optional[User]:
+    """Get the current user if authenticated, otherwise return None (optional auth)"""
+    if credentials is None:
+        return None
+    try:
+        token = credentials.credentials
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id: str = payload.get("sub")
+        if user_id is None:
+            return None
+        try:
+            user_uuid = UUID(user_id)
+        except (ValueError, TypeError):
+            return None
+        result = await db.execute(select(User).where(User.id == user_uuid))
+        user = result.scalar_one_or_none()
+        if user is None or not user.is_active:
+            return None
+        return user
+    except (JWTError, Exception):
+        return None
 
 
 async def get_current_active_user(
     current_user: User = Depends(get_current_user)
 ) -> User:
     """Get current active user"""
+    if current_user is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     if not current_user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user

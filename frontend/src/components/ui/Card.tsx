@@ -8,9 +8,10 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 export default function Card({ children, hover = false, className = '', ...props }: CardProps) {
   return (
     <div
-      className={`bg-white rounded-xl shadow-sm transition ${
+      className={`bg-white rounded-xl shadow-sm transition w-full ${
         hover ? 'hover:shadow-md hover:-translate-y-1' : ''
       } ${className}`}
+      style={{ maxWidth: '100%', boxSizing: 'border-box' }}
       {...props}
     >
       {children}

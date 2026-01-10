@@ -20,9 +20,26 @@ export default function Container({
     full: 'max-w-full',
   }
 
+  // For max-width constraints, wrap children instead of constraining the container itself
+  // This ensures the container padding matches the header
+  if (maxWidth !== 'full') {
+    return (
+      <div
+        className={`container mx-auto px-4 sm:px-6 lg:px-8 w-full ${className}`}
+        style={{ maxWidth: '100%', boxSizing: 'border-box' }}
+        {...props}
+      >
+        <div className={`${maxWidths[maxWidth]} mx-auto`}>
+          {children}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div
-      className={`container mx-auto px-4 sm:px-6 lg:px-8 ${maxWidths[maxWidth]} ${className}`}
+      className={`container mx-auto px-4 sm:px-6 lg:px-8 w-full ${className}`}
+      style={{ maxWidth: '100%', boxSizing: 'border-box' }}
       {...props}
     >
       {children}

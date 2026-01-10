@@ -37,6 +37,29 @@ services:
     networks:
       - kamafile_network
 
+  qdrant:
+    build:
+      context: .
+      dockerfile: Dockerfile.qdrant
+    container_name: kamafile_qdrant
+    restart: unless-stopped
+    ports:
+      - "6333:6333"  # REST API
+      - "6334:6334"  # gRPC
+    volumes:
+      - qdrant_data:/qdrant/storage
+    environment:
+      - QDRANT__SERVICE__HTTP_PORT=6333
+      - QDRANT__SERVICE__GRPC_PORT=6334
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://localhost:6333/healthz | grep -q 'healthz check passed' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - kamafile_network
+
   backend:
     build: .
     container_name: kamafile_backend
@@ -56,11 +79,24 @@ services:
       - POSTGRES_PORT=5432
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - QDRANT_HOST=qdrant
+      - QDRANT_PORT=6333
       - SECRET_KEY=${SECRET_KEY:-your-secret-key-change-in-production-min-32-chars}
+      # LLM API Configuration - Choose one: DeepSeek OR OpenAI
+      # Option 1: DeepSeek (Recommended - cheaper and works well)
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
+      - DEEPSEEK_API_URL=${DEEPSEEK_API_URL:-https://api.deepseek.com/v1/chat/completions}
+      - LLM_MODEL=${LLM_MODEL:-deepseek-chat}
+      # Option 2: OpenAI (Alternative)
+      # - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      # - OPENAI_API_URL=${OPENAI_API_URL:-https://api.openai.com/v1/chat/completions}
+      # - LLM_MODEL=${LLM_MODEL:-gpt-4}
     depends_on:
       db:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      qdrant:
         condition: service_healthy
     networks:
       - kamafile_network
@@ -68,6 +104,7 @@ services:
 volumes:
   postgres_data:
   redis_data:
+  qdrant_data:
 
 networks:
   kamafile_network:

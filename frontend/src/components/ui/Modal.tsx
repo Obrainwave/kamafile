@@ -41,19 +41,27 @@ export default function Modal({
   return (
     <div
       className="fixed inset-0 z-50 overflow-y-auto"
-      onClick={onClose}
     >
-      <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-        <div
-          className="fixed inset-0 transition-opacity bg-black bg-opacity-50"
-          onClick={onClose}
-          style={{ zIndex: 1 }}
-        ></div>
-
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 transition-opacity bg-black bg-opacity-50"
+        onClick={onClose}
+        style={{ zIndex: 1 }}
+        aria-hidden="true"
+      />
+      
+      {/* Modal Container */}
+      <div 
+        className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0"
+        onClick={onClose}
+      >
         <div
           className={`relative inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle ${sizes[size]} w-full ${className}`}
           onClick={(e) => e.stopPropagation()}
-          style={{ zIndex: 2, margin: '0 auto' }}
+          onMouseDown={(e) => e.stopPropagation()}
+          style={{ zIndex: 2, margin: '0 auto', position: 'relative' }}
+          role="dialog"
+          aria-modal="true"
           {...props}
         >
           {title && (
@@ -61,7 +69,8 @@ export default function Modal({
               <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
               <button
                 onClick={onClose}
-                className="text-gray-400 hover:text-gray-500 transition"
+                className="text-gray-400 hover:text-gray-500 transition focus:outline-none focus:ring-2 focus:ring-gray-300 rounded"
+                aria-label="Close modal"
               >
                 <X className="w-5 h-5" />
               </button>

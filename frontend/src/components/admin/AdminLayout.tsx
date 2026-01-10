@@ -59,7 +59,7 @@ export default function AdminLayout() {
   }
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen w-full max-w-full overflow-x-hidden">
       {/* Sidebar */}
       <aside 
         className="hidden md:block fixed left-0 top-0 h-full w-60 text-white z-30"
@@ -156,7 +156,7 @@ export default function AdminLayout() {
       )}
 
       {/* Main Content */}
-      <div className="flex-1 md:ml-60">
+      <div className="flex-1 md:ml-60 w-full max-w-full overflow-x-hidden min-w-0">
         {/* Top Bar */}
         <header className="sticky top-0 z-20 bg-white border-b border-gray-200 shadow-sm">
           <div className="h-16 flex items-center justify-between px-4 md:px-6">
@@ -200,7 +200,7 @@ export default function AdminLayout() {
         </header>
 
         {/* Page Content */}
-        <main className="p-4 md:p-6">
+        <main className="p-4 md:p-6 overflow-x-hidden max-w-full">
           <Outlet />
         </main>
       </div>

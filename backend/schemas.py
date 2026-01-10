@@ -205,3 +205,40 @@ class UserProfileResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+# RAG Document schemas
+class RAGDocumentBase(BaseModel):
+    title: str
+    source_type: str  # file, url, text
+    source_path: Optional[str] = None
+    file_name: Optional[str] = None
+    file_type: Optional[str] = None
+    file_size: Optional[int] = None
+    is_active: bool = True
+
+
+class RAGDocumentCreate(BaseModel):
+    title: str
+    source_type: str  # file, url
+    url: Optional[str] = None  # For URL source type
+
+
+class RAGDocumentResponse(RAGDocumentBase):
+    id: UUID
+    content_text: Optional[str] = None
+    content_metadata: Optional[Dict[str, Any]] = None
+    processing_status: str
+    processing_error: Optional[str] = None
+    uploaded_by: Optional[UUID] = None
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+    processed_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
+class RAGDocumentUpdate(BaseModel):
+    title: Optional[str] = None
+    is_active: Optional[bool] = None

@@ -13,6 +13,7 @@ const AdminLayout = lazy(() => import('./components/admin/AdminLayout'))
 const AdminDashboard = lazy(() => import('./pages/admin/Dashboard'))
 const AdminUsers = lazy(() => import('./pages/admin/Users'))
 const AdminBanners = lazy(() => import('./pages/admin/Banners'))
+const AdminRAG = lazy(() => import('./pages/admin/RAG'))
 
 // Loading component
 const PageLoader = () => (
@@ -57,6 +58,7 @@ function App() {
             <Route index element={<AdminDashboard />} />
             <Route path="users" element={<AdminUsers />} />
             <Route path="content" element={<AdminBanners />} />
+            <Route path="rag" element={<AdminRAG />} />
           </Route>
         </Routes>
         <LazyChatBot />

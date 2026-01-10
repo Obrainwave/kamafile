@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
-import { Send, X, MessageCircle, Bot, User } from 'lucide-react'
+import { Send, X, MessageCircle, Bot, User, FileText } from 'lucide-react'
 import { onboardingAPI, QuickReply } from '../services/onboardingAPI'
+import { ragAPI, Citation } from '../services/ragAPI'
 import Spinner from './ui/Spinner'
 import Button from './ui/Button'
 
@@ -10,6 +11,7 @@ interface Message {
   sender: 'user' | 'bot'
   timestamp: Date
   quickReplies?: QuickReply[]
+  citations?: Citation[]
 }
 
 export default function ChatBot() {
@@ -98,17 +100,65 @@ export default function ChatBot() {
   const handleQuickReply = async (payload: string, title: string) => {
     if (!sessionId) return
 
-    // Add user message
+    // Add user message first
     const userMessage: Message = {
       id: Date.now().toString(),
       text: title,
       sender: 'user',
       timestamp: new Date(),
     }
-
     setMessages((prev) => [...prev, userMessage])
     setIsLoading(true)
 
+    // If quick reply contains tax keywords, treat it as a tax question and use RAG
+    // This prevents onboarding loop when user wants to ask tax questions
+    if (isTaxQuestion(title)) {
+      // Exit onboarding immediately and use RAG
+      setIsOnboarding(false)
+      
+      try {
+        // Get user context if available
+        const userStr = localStorage.getItem('user')
+        let userContext: Record<string, any> | undefined
+        if (userStr) {
+          try {
+            const user = JSON.parse(userStr)
+            userContext = {
+              user_type: user.user_type,
+            }
+          } catch {
+            // Ignore parsing errors
+          }
+        }
+
+        // Use RAG for tax questions
+        const ragResponse = await ragAPI.ask(title, userContext)
+
+        const botMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          text: ragResponse.answer,
+          sender: 'bot',
+          timestamp: new Date(),
+          citations: ragResponse.citations,
+        }
+
+        setMessages((prev) => [...prev, botMessage])
+      } catch (ragError: any) {
+        console.error('RAG query failed:', ragError)
+        const errorMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          text: "I'm having trouble accessing the tax knowledge base. Please try again or rephrase your question.",
+          sender: 'bot',
+          timestamp: new Date(),
+        }
+        setMessages((prev) => [...prev, errorMessage])
+      } finally {
+        setIsLoading(false)
+      }
+      return
+    }
+
+    // Continue with onboarding for non-tax quick replies
     try {
       const response = await onboardingAPI.processStep({
         session_id: sessionId,
@@ -117,7 +167,22 @@ export default function ChatBot() {
       })
 
       setCurrentStep(response.step || null)
-      setIsOnboarding(!response.completed && response.status === 'onboarding')
+      // Mark onboarding as complete if the response indicates completion
+      const stillOnboarding = !response.completed && response.status === 'onboarding'
+      setIsOnboarding(stillOnboarding)
+
+      // If onboarding is now complete, don't show quick replies anymore
+      if (!stillOnboarding) {
+        const botMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          text: response.message || "Great! I'm ready to help with your tax questions. Ask me anything!",
+          sender: 'bot',
+          timestamp: new Date(),
+          // No quick replies after onboarding - user can now ask free-form questions
+        }
+        setMessages((prev) => [...prev, botMessage])
+        return
+      }
 
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -142,6 +207,17 @@ export default function ChatBot() {
     }
   }
 
+  // Check if a question is a tax-related question
+  const isTaxQuestion = (question: string): boolean => {
+    const taxKeywords = ['tax', 'vat', 'paye', 'wht', 'cgt', 'cit', 'petroleum', 'stamp', 
+                         'duty', 'customs', 'firs', 'federal inland revenue', 'inland revenue',
+                         'section', 'act', 'law', 'regulation', 'compliance', 'filing', 
+                         'return', 'assessment', 'penalty', 'fine', 'taxable', 'exempt',
+                         'deduction', 'allowance', 'relief', 'taxable income', 'tax rate']
+    const lowerQuestion = question.toLowerCase()
+    return taxKeywords.some(keyword => lowerQuestion.includes(keyword))
+  }
+
   const handleSend = async () => {
     if (!inputValue.trim()) return
 
@@ -164,25 +240,115 @@ export default function ChatBot() {
     setIsLoading(true)
 
     try {
-      // Use currentStep if available, otherwise use empty string for active status
-      const response = await onboardingAPI.processStep({
-        session_id: sessionId,
-        step: currentStep || '',
-        response: userInput,
-      })
+      // PRIORITY 1: Always use RAG for tax-related questions (even during onboarding)
+      if (isTaxQuestion(userInput)) {
+        try {
+          // Get user context if available
+          const userStr = localStorage.getItem('user')
+          let userContext: Record<string, any> | undefined
+          if (userStr) {
+            try {
+              const user = JSON.parse(userStr)
+              userContext = {
+                user_type: user.user_type,
+              }
+            } catch {
+              // Ignore parsing errors
+            }
+          }
 
-      setCurrentStep(response.step || null)
-      setIsOnboarding(!response.completed && response.status === 'onboarding')
+          // Use RAG for tax questions
+          const ragResponse = await ragAPI.ask(userInput, userContext)
 
-      const botMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: response.message,
-        sender: 'bot',
-        timestamp: new Date(),
-        quickReplies: response.quick_replies || undefined,
+          const botMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            text: ragResponse.answer,
+            sender: 'bot',
+            timestamp: new Date(),
+            citations: ragResponse.citations,
+          }
+
+          setMessages((prev) => [...prev, botMessage])
+          
+          // Mark onboarding as complete if we were in onboarding - user asked a tax question
+          if (isOnboarding) {
+            setIsOnboarding(false)
+          }
+        } catch (ragError: any) {
+          console.error('RAG query failed:', ragError)
+          // If RAG fails, show error and optionally fall back to onboarding only for non-tax questions
+          const errorMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            text: "I'm having trouble accessing the tax knowledge base. Please try again or rephrase your question.",
+            sender: 'bot',
+            timestamp: new Date(),
+          }
+          setMessages((prev) => [...prev, errorMessage])
+        }
+      } 
+      // PRIORITY 2: If onboarding is complete, always use RAG (even for non-tax questions)
+      else if (!isOnboarding) {
+        try {
+          // Get user context if available
+          const userStr = localStorage.getItem('user')
+          let userContext: Record<string, any> | undefined
+          if (userStr) {
+            try {
+              const user = JSON.parse(userStr)
+              userContext = {
+                user_type: user.user_type,
+              }
+            } catch {
+              // Ignore parsing errors
+            }
+          }
+
+          // Use RAG even for general questions after onboarding
+          const ragResponse = await ragAPI.ask(userInput, userContext)
+
+          const botMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            text: ragResponse.answer,
+            sender: 'bot',
+            timestamp: new Date(),
+            citations: ragResponse.citations,
+          }
+
+          setMessages((prev) => [...prev, botMessage])
+        } catch (ragError: any) {
+          console.error('RAG query failed:', ragError)
+          // If RAG fails, show error message
+          const errorMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            text: "I'm having trouble accessing the tax knowledge base. Please try again or rephrase your question.",
+            sender: 'bot',
+            timestamp: new Date(),
+          }
+          setMessages((prev) => [...prev, errorMessage])
+        }
       }
+      // PRIORITY 3: Continue with onboarding only for non-tax questions during onboarding
+      else {
+        // Continue with onboarding for non-tax questions during onboarding
+        const response = await onboardingAPI.processStep({
+          session_id: sessionId,
+          step: currentStep || '',
+          response: userInput,
+        })
 
-      setMessages((prev) => [...prev, botMessage])
+        setCurrentStep(response.step || null)
+        setIsOnboarding(!response.completed && response.status === 'onboarding')
+
+        const botMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          text: response.message,
+          sender: 'bot',
+          timestamp: new Date(),
+          quickReplies: response.quick_replies || undefined,
+        }
+
+        setMessages((prev) => [...prev, botMessage])
+      }
     } catch (error) {
       console.error('Failed to process message:', error)
       const errorMessage: Message = {
@@ -288,6 +454,27 @@ export default function ChatBot() {
                     style={message.sender === 'user' ? { backgroundColor: '#1a2332' } : {}}
                   >
                     <p className="text-sm leading-relaxed whitespace-pre-line">{message.text}</p>
+                    
+                    {/* Citations */}
+                    {message.sender === 'bot' && message.citations && message.citations.length > 0 && (
+                      <div className="mt-3 pt-3 border-t border-gray-300">
+                        <div className="flex items-start gap-2 text-xs">
+                          <FileText className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-blue-600" />
+                          <div className="flex-1">
+                            <div className="font-semibold text-gray-700 mb-1.5">Legal Sources:</div>
+                            <div className="space-y-1">
+                              {message.citations.map((citation, index) => (
+                                <div key={index} className="text-gray-600 leading-relaxed">
+                                  <span className="font-medium">{index + 1}.</span> {citation.law_name}
+                                  {citation.section_number && <span className="text-gray-500">, Section {citation.section_number}</span>}
+                                  {citation.year && <span className="text-gray-500"> ({citation.year})</span>}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Quick Reply Buttons */}

@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Set
+from typing import Set, Optional
 from fastapi import Depends, HTTPException, status
 from models import User
 from auth import get_current_user
@@ -98,3 +98,6 @@ def require_admin_role():
             )
         return current_user
     return admin_checker
+
+
+# Optional user function moved to auth.py for better implementation

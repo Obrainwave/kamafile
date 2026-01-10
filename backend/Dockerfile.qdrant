@@ -1,0 +1,10 @@
+FROM qdrant/qdrant:v1.11.2
+
+# Install wget for healthcheck
+RUN apt-get update && \
+    apt-get install -y wget && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Keep original entrypoint
+# The Qdrant entrypoint will be inherited from base image

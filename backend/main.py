@@ -6,10 +6,10 @@ from database import init_db, engine
 from redis_client import check_redis_connection, close_redis
 from sqlalchemy import text
 from routers import auth
-from routers.admin import users, dashboard, banners
-from routers import onboarding, whatsapp
+from routers.admin import users, dashboard, banners, rag
+from routers import onboarding, whatsapp, rag as rag_router
 # Import models to ensure tables are created
-from models import User, AdminLog, Banner, ConversationSession, UserProfile, ConversationMessage  # noqa: F401
+from models import User, AdminLog, Banner, ConversationSession, UserProfile, ConversationMessage, RAGDocument  # noqa: F401
 import traceback
 import logging
 from dotenv import load_dotenv
@@ -196,5 +196,7 @@ app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(dashboard.router)
 app.include_router(banners.router)
+app.include_router(rag.router)  # Admin RAG management
+app.include_router(rag_router.router)  # Public RAG query endpoint
 app.include_router(onboarding.router)
 app.include_router(whatsapp.router)
