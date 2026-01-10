@@ -14,7 +14,8 @@ export default function AdminRAG() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [vectorStoreInfo, setVectorStoreInfo] = useState<VectorStoreInfo | null>(null)
-  const [loadingVectorInfo, setLoadingVectorInfo] = useState(false)
+  const [loadingVectorInfo, setLoadingVectorInfo] = useState(true) // Start as true for initial load
+  const [isPolling, setIsPolling] = useState(false) // Track if we're polling (updating in background)
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false)
   const [urlDialogOpen, setUrlDialogOpen] = useState(false)
   const [uploading, setUploading] = useState(false)
@@ -29,18 +30,24 @@ export default function AdminRAG() {
 
   useEffect(() => {
     loadDocuments()
-    loadVectorStoreInfo()
+    loadVectorStoreInfo(true) // Pass true for initial load
     // Poll for status updates every 5 seconds
     const interval = setInterval(() => {
       loadDocuments()
-      loadVectorStoreInfo() // Also refresh vector store info
+      loadVectorStoreInfo(false) // Pass false for polling (background update)
     }, 5000)
     return () => clearInterval(interval)
   }, [])
 
-  const loadVectorStoreInfo = async () => {
+  const loadVectorStoreInfo = async (isInitialLoad: boolean = false) => {
     try {
-      setLoadingVectorInfo(true)
+      // Only show loading spinner on initial load
+      if (isInitialLoad) {
+        setLoadingVectorInfo(true)
+      } else {
+        setIsPolling(true) // Use polling state instead of loading state
+      }
+      
       const info = await adminAPI.getVectorStoreInfo()
       console.log('Vector store info loaded (raw):', JSON.stringify(info, null, 2)) // Debug log
       
@@ -89,25 +96,29 @@ export default function AdminRAG() {
     } catch (err: any) {
       console.error('Failed to load vector store info:', err)
       console.error('Error details:', err.response?.data || err.message || err)
-      // Set default structure instead of null, so UI shows 0 instead of "-"
-      setVectorStoreInfo({
-        qdrant_host: 'localhost',
-        qdrant_port: 6333,
-        web_ui_url: 'http://localhost:6333/dashboard',
-        collection_info: {
-          name: 'tax_legal_documents',
-          points_count: 0,
-          vectors_count: 0,
-          indexed_vectors_count: 0,
-          status: 'error',
-          config: {
-            vector_size: 384,
-            distance: 'Cosine'
+      // Only set error structure if we don't have existing data or it's initial load
+      if (!vectorStoreInfo || isInitialLoad) {
+        setVectorStoreInfo({
+          qdrant_host: 'localhost',
+          qdrant_port: 6333,
+          web_ui_url: 'http://localhost:6333/dashboard',
+          collection_info: {
+            name: 'tax_legal_documents',
+            points_count: 0,
+            vectors_count: 0,
+            indexed_vectors_count: 0,
+            status: 'error',
+            config: {
+              vector_size: 384,
+              distance: 'Cosine'
+            }
           }
-        }
-      })
+        })
+      }
     } finally {
       setLoadingVectorInfo(false)
+      // Clear polling state after a brief delay for smooth transition
+      setTimeout(() => setIsPolling(false), 200)
     }
   }
 
@@ -425,6 +436,12 @@ export default function AdminRAG() {
           <div className="flex items-center gap-3">
             <Database className="w-5 h-5 text-primary" />
             <h2 className="text-lg font-semibold">Vector Database Statistics</h2>
+            {isPolling && (
+              <span className="flex items-center gap-1 text-xs text-gray-500 animate-pulse">
+                <Loader className="w-3 h-3 animate-spin" />
+                <span>Updating...</span>
+              </span>
+            )}
           </div>
           {vectorStoreInfo?.web_ui_url && (
             <a
@@ -439,49 +456,55 @@ export default function AdminRAG() {
           )}
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-gray-50 rounded-lg p-4">
+          <div className="bg-gray-50 rounded-lg p-4 min-h-[100px] flex flex-col justify-between">
             <div className="text-sm text-gray-600 mb-1">Total Chunks</div>
-            <div className="text-2xl font-bold text-gray-900">
+            <div className="text-2xl font-bold text-gray-900 h-8 flex items-center transition-opacity duration-200">
               {loadingVectorInfo ? (
                 <Spinner size="sm" />
               ) : (
-                String(vectorStoreInfo?.collection_info?.points_count ?? 
-                       vectorStoreInfo?.collection_info?.vectors_count ?? 
-                       0)
+                <span className={isPolling ? 'opacity-70' : 'opacity-100'}>
+                  {String(vectorStoreInfo?.collection_info?.points_count ?? 
+                         vectorStoreInfo?.collection_info?.vectors_count ?? 
+                         0)}
+                </span>
               )}
             </div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-4">
+          <div className="bg-gray-50 rounded-lg p-4 min-h-[100px] flex flex-col justify-between">
             <div className="text-sm text-gray-600 mb-1">Indexed Vectors</div>
-            <div className="text-2xl font-bold text-gray-900">
+            <div className="text-2xl font-bold text-gray-900 h-8 flex items-center transition-opacity duration-200">
               {loadingVectorInfo ? (
                 <Spinner size="sm" />
               ) : (
-                String(vectorStoreInfo?.collection_info?.indexed_vectors_count ?? 0)
+                <span className={isPolling ? 'opacity-70' : 'opacity-100'}>
+                  {String(vectorStoreInfo?.collection_info?.indexed_vectors_count ?? 0)}
+                </span>
               )}
             </div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-4">
+          <div className="bg-gray-50 rounded-lg p-4 min-h-[100px] flex flex-col justify-between">
             <div className="text-sm text-gray-600 mb-1">Vector Size</div>
-            <div className="text-2xl font-bold text-gray-900">
+            <div className="text-2xl font-bold text-gray-900 h-8 flex items-center transition-opacity duration-200">
               {loadingVectorInfo ? (
                 <Spinner size="sm" />
-              ) : vectorStoreInfo?.collection_info?.config?.vector_size ? (
-                `${vectorStoreInfo.collection_info.config.vector_size}D`
               ) : (
-                '384D'
+                <span className={isPolling ? 'opacity-70' : 'opacity-100'}>
+                  {vectorStoreInfo?.collection_info?.config?.vector_size
+                    ? `${vectorStoreInfo.collection_info.config.vector_size}D`
+                    : '384D'}
+                </span>
               )}
             </div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-4">
+          <div className="bg-gray-50 rounded-lg p-4 min-h-[100px] flex flex-col justify-between">
             <div className="text-sm text-gray-600 mb-1">Distance Metric</div>
-            <div className="text-2xl font-bold text-gray-900">
+            <div className="text-2xl font-bold text-gray-900 h-8 flex items-center transition-opacity duration-200">
               {loadingVectorInfo ? (
                 <Spinner size="sm" />
-              ) : vectorStoreInfo?.collection_info?.config?.distance ? (
-                vectorStoreInfo.collection_info.config.distance
               ) : (
-                'Cosine'
+                <span className={isPolling ? 'opacity-70' : 'opacity-100'}>
+                  {vectorStoreInfo?.collection_info?.config?.distance || 'Cosine'}
+                </span>
               )}
             </div>
           </div>
