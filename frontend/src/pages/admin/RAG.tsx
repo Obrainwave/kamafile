@@ -1487,7 +1487,7 @@ export default function AdminRAG() {
             />
           </div>
 
-          {/* Table */}
+          {/* Modal Table */}
           <div className="border border-gray-200 rounded-md overflow-hidden">
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
