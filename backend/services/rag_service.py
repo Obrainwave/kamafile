@@ -511,7 +511,8 @@ async def process_and_index_document(
     law_name: str,
     year: Optional[int] = None,
     authority: Optional[str] = None,
-    jurisdiction: str = "Nigeria"
+    jurisdiction: str = "Nigeria",
+    csv_metadata: Optional[Dict[str, Any]] = None  # NEW: CSV metadata parameter
 ) -> Dict[str, Any]:
     """
     Complete RAG document processing pipeline:
@@ -538,7 +539,8 @@ async def process_and_index_document(
             law_name=law_name,
             year=year,
             authority=authority,
-            jurisdiction=jurisdiction
+            jurisdiction=jurisdiction,
+            csv_metadata=csv_metadata  # NEW: Pass CSV metadata
         )
         
         if not chunks:

@@ -6,7 +6,8 @@ interface ModalProps extends HTMLAttributes<HTMLDivElement> {
   onClose: () => void
   title?: string
   children: ReactNode
-  size?: 'sm' | 'md' | 'lg' | 'xl'
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | 'full'
+  hideBackdrop?: boolean
 }
 
 export default function Modal({ 
@@ -16,6 +17,7 @@ export default function Modal({
   children, 
   size = 'md',
   className = '',
+  hideBackdrop = false,
   ...props 
 }: ModalProps) {
   useEffect(() => {
@@ -36,6 +38,10 @@ export default function Modal({
     md: 'max-w-lg',
     lg: 'max-w-2xl',
     xl: 'max-w-4xl',
+    '2xl': 'max-w-5xl',
+    '3xl': 'max-w-6xl',
+    '4xl': 'max-w-7xl',
+    'full': 'max-w-full mx-4',
   }
 
   return (
@@ -44,7 +50,7 @@ export default function Modal({
     >
       {/* Backdrop */}
       <div
-        className="fixed inset-0 transition-opacity bg-black bg-opacity-50"
+        className={`fixed inset-0 transition-opacity ${hideBackdrop ? 'bg-transparent' : 'bg-black bg-opacity-50'}`}
         onClick={onClose}
         style={{ zIndex: 1 }}
         aria-hidden="true"

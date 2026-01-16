@@ -224,6 +224,26 @@ class RAGDocumentCreate(BaseModel):
     url: Optional[str] = None  # For URL source type
 
 
+
+class DocumentMetadataResponse(BaseModel):
+    """Schema for document metadata catalog entry"""
+    id: UUID
+    doc_id: str
+    file_name: str
+    source_title: Optional[str] = None
+    issuing_body: Optional[str] = None
+    country: Optional[str] = None
+    doc_category: Optional[str] = None
+    effective_date: Optional[str] = None
+    publication_date: Optional[str] = None
+    jurisdiction_level: Optional[str] = None
+    tax_type: Optional[str] = None
+    status: Optional[str] = None
+    
+    class Config:
+        from_attributes = True
+
+
 class RAGDocumentResponse(RAGDocumentBase):
     id: UUID
     content_text: Optional[str] = None
@@ -234,6 +254,12 @@ class RAGDocumentResponse(RAGDocumentBase):
     created_at: datetime
     updated_at: Optional[datetime] = None
     processed_at: Optional[datetime] = None
+    
+    # Metadata integration
+    metadata_status: Optional[str] = "pending"
+    metadata_catalog_id: Optional[UUID] = None
+    metadata_catalog: Optional[DocumentMetadataResponse] = None
+
 
     class Config:
         from_attributes = True
@@ -242,3 +268,7 @@ class RAGDocumentResponse(RAGDocumentBase):
 class RAGDocumentUpdate(BaseModel):
     title: Optional[str] = None
     is_active: Optional[bool] = None
+
+
+class BulkDeleteRequest(BaseModel):
+    document_ids: List[UUID]

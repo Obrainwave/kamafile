@@ -64,7 +64,11 @@ def create_yaml_frontmatter(
     return f"---\n{yaml_str}---\n"
 
 
-def chunk_by_legal_sections(markdown_content: str, metadata: Dict[str, Any]) -> List[Dict[str, Any]]:
+def chunk_by_legal_sections(
+    markdown_content: str, 
+    metadata: Dict[str, Any],
+    csv_metadata: Optional[Dict[str, Any]] = None  # NEW: CSV metadata parameter
+) -> List[Dict[str, Any]]:
     """
     Chunk document by legal sections
     Each chunk = one complete legal section (## Section X – Title)
@@ -92,7 +96,7 @@ def chunk_by_legal_sections(markdown_content: str, metadata: Dict[str, Any]) -> 
         r'^(Chapter|CHAPTER)\s+(\d+[A-Za-z]?)$',
         r'^(Article|ARTICLE)\s+(\d+[A-Za-z]?)\s*[–:\-]\s*(.+?)$',
         r'^(Article|ARTICLE)\s+(\d+[A-Za-z]?)$',
-        r'^(\d+)\s*[\.\)]\s*(.+?)$',  # "1. Title" or "1) Title" (numbered sections)
+        r'^(\d+)\s*[\.)]\s*(.+?)$',  # "1. Title" or "1) Title" (numbered sections)
     ]
     
     lines = markdown_content.split('\n')
@@ -101,6 +105,28 @@ def chunk_by_legal_sections(markdown_content: str, metadata: Dict[str, Any]) -> 
     current_section_title = None
     current_section_number = None
     section_found = False
+    
+    # Helper function to build chunk metadata with CSV metadata injection
+    def build_chunk_metadata(base_metadata: Dict[str, Any]) -> Dict[str, Any]:
+        """Build chunk metadata with CSV metadata injected"""
+        chunk_meta = {**base_metadata}
+        
+        # NEW: Inject CSV metadata if available
+        if csv_metadata:
+            # Add indexed fields at top level for Qdrant filtering
+            indexed_fields = [
+                'doc_id', 'jurisdiction_level', 'tax_type',
+                'taxpayer_type', 'status', 'doc_category',
+                'authority_level', 'effective_date'
+            ]
+            for field in indexed_fields:
+                if field in csv_metadata and csv_metadata[field]:
+                    chunk_meta[field] = csv_metadata[field]
+            
+            # Add full CSV metadata as nested JSON blob
+            chunk_meta['csv_metadata_full'] = csv_metadata
+        
+        return chunk_meta
     
     for line in lines:
         line_stripped = line.strip()
@@ -128,16 +154,17 @@ def chunk_by_legal_sections(markdown_content: str, metadata: Dict[str, Any]) -> 
             if current_section and current_content:
                 section_text = '\n'.join(current_content).strip()
                 if section_text and len(section_text) > 10:  # Minimum chunk size
+                    base_meta = {
+                        **metadata,
+                        'section_type': current_section,
+                        'section_number': current_section_number,
+                        'section_title': current_section_title,
+                        'chunk_type': 'legal_section'
+                    }
                     chunks.append({
                         'chunk_id': str(uuid.uuid4()),
                         'text': section_text,
-                        'metadata': {
-                            **metadata,
-                            'section_type': current_section,
-                            'section_number': current_section_number,
-                            'section_title': current_section_title,
-                            'chunk_type': 'legal_section'
-                        }
+                        'metadata': build_chunk_metadata(base_meta)  # NEW: Use helper function
                     })
             
             # Start new section
@@ -578,7 +605,8 @@ def process_document_for_rag(
     law_name: str,
     year: Optional[int] = None,
     authority: Optional[str] = None,
-    jurisdiction: str = "Nigeria"
+    jurisdiction: str = "Nigeria",
+    csv_metadata: Optional[Dict[str, Any]] = None  # NEW: CSV metadata parameter
 ) -> tuple[str, List[Dict[str, Any]]]:
     """
     Complete pipeline: Convert text → Markdown → Chunks
@@ -599,6 +627,10 @@ def process_document_for_rag(
     metadata, markdown_body = extract_yaml_frontmatter(markdown_content)
     
     # Step 3: Chunk by legal sections
-    chunks = chunk_by_legal_sections(markdown_body, metadata)
+    chunks = chunk_by_legal_sections(
+        markdown_body, 
+        metadata,
+        csv_metadata=csv_metadata  # NEW: Pass CSV metadata
+    )
     
     return markdown_content, chunks

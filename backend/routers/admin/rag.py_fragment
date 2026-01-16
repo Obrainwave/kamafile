@@ -1,0 +1,44 @@
+
+@router.delete("/{document_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_rag_document(
+    document_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    admin_user: User = Depends(require_permission(Permission.CONTENT_WRITE))
+):
+    """
+    Delete a RAG document
+    - Deletes file from disk (if applicable)
+    - Deletes chunks from vector store
+    - Deletes record from database
+    """
+    # 1. Get document
+    result = await db.execute(select(RAGDocument).where(RAGDocument.id == document_id))
+    document = result.scalar_one_or_none()
+    
+    if not document:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Document not found"
+        )
+    
+    # 2. Delete file from disk if it exists
+    if document.source_path and document.source_type == "file":
+        try:
+            await delete_rag_file(document.source_path)
+        except Exception as e:
+            logger.warning(f"Failed to delete file {document.source_path}: {e}")
+            # Continue deletion of database record
+            
+    # 3. Delete from vector store
+    try:
+        vector_store = get_vector_store()
+        vector_store.delete_document(str(document_id))
+    except Exception as e:
+        logger.warning(f"Failed to delete vectors for {document_id}: {e}")
+        
+    # 4. Delete from database
+    await db.delete(document)
+    await db.commit()
+    
+    logger.info(f"Deleted RAG document {document_id} by {admin_user.email}")
+    return None

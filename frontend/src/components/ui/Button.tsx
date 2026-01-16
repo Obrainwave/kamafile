@@ -2,7 +2,7 @@ import { ButtonHTMLAttributes, ReactNode, ElementType } from 'react'
 import { Link } from 'react-router-dom'
 
 interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'component'> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost'
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'
   size?: 'sm' | 'md' | 'lg'
   children: ReactNode
   fullWidth?: boolean
@@ -34,6 +34,11 @@ export default function Button({
       hover: '#388e3c',
       text: '#ffffff',
     },
+    danger: {
+      bg: '#dc2626', // red-600
+      hover: '#b91c1c', // red-700
+      text: '#ffffff',
+    },
   }
   
   const sizes = {
@@ -54,6 +59,12 @@ export default function Button({
       return {
         backgroundColor: colors.secondary.bg,
         color: colors.secondary.text,
+      }
+    }
+    if (variant === 'danger') {
+      return {
+        backgroundColor: colors.danger.bg,
+        color: colors.danger.text,
       }
     }
     if (variant === 'outline') {
@@ -80,6 +91,9 @@ export default function Button({
     }
     if (variant === 'secondary') {
       return { backgroundColor: colors.secondary.hover }
+    }
+    if (variant === 'danger') {
+      return { backgroundColor: colors.danger.hover }
     }
     if (variant === 'outline') {
       return {

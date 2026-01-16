@@ -64,6 +64,21 @@ export interface BannerUpdate {
   is_active?: boolean
 }
 
+export interface DocumentMetadataCatalog {
+  id: string
+  doc_id: string
+  file_name: string
+  source_title?: string
+  issuing_body?: string
+  country?: string
+  doc_category?: string
+  effective_date?: string
+  publication_date?: string
+  jurisdiction_level?: string
+  tax_type?: string
+  status?: string
+}
+
 export interface RAGDocument {
   id: string
   title: string
@@ -78,6 +93,9 @@ export interface RAGDocument {
   processing_error?: string
   uploaded_by?: string
   is_active: boolean
+  metadata_status?: string  // NEW: 'matched' | 'pending' | 'manual'
+  metadata_catalog_id?: string  // NEW: Link to catalog entry
+  metadata_catalog?: DocumentMetadataCatalog // NEW: Nested catalog entry details
   created_at: string
   updated_at?: string
   processed_at?: string
@@ -212,6 +230,15 @@ export const adminAPI = {
     await api.delete(`/api/admin/rag/${documentId}`)
   },
 
+  bulkDeleteRAGDocuments: async (documentIds: string[]): Promise<{
+    message: string
+    deleted_count: number
+    errors: string[]
+  }> => {
+    const response = await api.post('/api/admin/rag/bulk-delete', { document_ids: documentIds })
+    return response.data
+  },
+
   reprocessRAGDocument: async (documentId: string): Promise<RAGDocument> => {
     const response = await api.post(`/api/admin/rag/${documentId}/reprocess`)
     return response.data
@@ -234,6 +261,39 @@ export const adminAPI = {
     if (filterStatus) params.filter_status = filterStatus
     if (filterSourceType) params.filter_source_type = filterSourceType
     const response = await api.post('/api/admin/rag/bulk-reprocess', null, { params })
+    return response.data
+  },
+
+  // CSV Metadata Catalog
+  uploadMetadataCatalog: async (file: File, mode: 'replace' | 'merge' = 'replace'): Promise<{
+    total_rows: number
+    inserted: number
+    updated: number
+    errors: any[]
+  }> => {
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('mode', mode)
+    const response = await api.post('/api/admin/rag/metadata-catalog/upload', formData)
+    return response.data
+  },
+
+  getMetadataCatalogStats: async (): Promise<{
+    total_entries: number
+    matched_documents: number
+    pending_documents: number
+  }> => {
+    const response = await api.get('/api/admin/rag/metadata-catalog/stats')
+    return response.data
+  },
+
+  getMetadataCatalog: async (params?: { skip?: number; limit?: number; search?: string }): Promise<any[]> => {
+    const response = await api.get('/api/admin/rag/metadata-catalog', { params })
+    return response.data
+  },
+
+  getPendingDocuments: async (): Promise<any[]> => {
+    const response = await api.get('/api/admin/rag/metadata-catalog/pending-documents')
     return response.data
   },
 }

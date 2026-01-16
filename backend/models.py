@@ -133,6 +133,51 @@ class ConversationMessage(Base):
     session = relationship("ConversationSession", back_populates="messages", foreign_keys=[session_id])
 
 
+class DocumentMetadataCatalog(Base):
+    """CSV metadata catalog for RAG documents"""
+    __tablename__ = "document_metadata_catalog"
+    
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
+    
+    # Core identification
+    doc_id = Column(String(100), unique=True, nullable=False, index=True)
+    file_name = Column(String(500), unique=True, nullable=False)
+    file_name_normalized = Column(String(500), nullable=False, index=True)  # For matching
+    source_title = Column(String(500), nullable=True)
+    source_file_type = Column(String(100), nullable=True)
+    
+    # Classification
+    issuing_body = Column(String(500), nullable=True)
+    country = Column(String(100), nullable=True)
+    jurisdiction_level = Column(String(100), nullable=True, index=True)
+    knowledge_domain = Column(String(200), nullable=True)
+    tax_type = Column(String(500), nullable=True)
+    taxpayer_type = Column(String(500), nullable=True)
+    doc_category = Column(String(200), nullable=True, index=True)
+    
+    # Temporal (all as text for flexibility)
+    effective_date = Column(String(200), nullable=True)
+    expiry_date = Column(String(200), nullable=True)
+    publication_date = Column(String(200), nullable=True)
+    version = Column(String(200), nullable=True)
+    
+    # Relationships
+    supersedes_doc_id = Column(String(500), nullable=True)
+    
+    # Context
+    lifecycle_stage = Column(String(200), nullable=True)
+    authority_level = Column(String(200), nullable=True)
+    intended_usage = Column(String(1000), nullable=True)
+    topic_tags = Column(String(1000), nullable=True)
+    status = Column(String(100), nullable=True, index=True)
+    language = Column(String(50), nullable=True)
+    notes = Column(String, nullable=True)  # TEXT field for long notes
+    
+    # Metadata
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), index=True)
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+
 class RAGDocument(Base):
     """RAG (Retrieval-Augmented Generation) documents for knowledge base"""
     __tablename__ = "rag_documents"
@@ -150,9 +195,15 @@ class RAGDocument(Base):
     processing_error = Column(String(1000), nullable=True)  # Error message if processing failed
     is_active = Column(Boolean, default=True, index=True)
     uploaded_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True, index=True)
+    
+    # CSV Metadata Integration
+    metadata_catalog_id = Column(UUID(as_uuid=True), ForeignKey("document_metadata_catalog.id"), nullable=True, index=True)
+    metadata_status = Column(String(50), default="matched", index=True)  # matched, pending, manual
+    
     created_at = Column(DateTime(timezone=True), server_default=func.now(), index=True)
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     processed_at = Column(DateTime(timezone=True), nullable=True)
     
     # Relationships
     uploader = relationship("User", foreign_keys=[uploaded_by])
+    metadata_catalog = relationship("DocumentMetadataCatalog", foreign_keys=[metadata_catalog_id])

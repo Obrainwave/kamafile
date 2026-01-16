@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Form, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete
+from sqlalchemy.orm import joinedload
 from typing import List, Optional
 from uuid import UUID
 from datetime import datetime
@@ -10,13 +11,14 @@ import os
 
 from database import get_db
 from models import RAGDocument, User
-from schemas import RAGDocumentCreate, RAGDocumentResponse, RAGDocumentUpdate
+from schemas import RAGDocumentCreate, RAGDocumentResponse, RAGDocumentUpdate, BulkDeleteRequest
 from services.permission_service import require_permission, Permission
 from services.rag_service import (
     save_uploaded_file,
     process_rag_document,
     delete_rag_file
 )
+from services.vector_store import get_vector_store
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +35,7 @@ async def get_rag_documents(
     admin_user: User = Depends(require_permission(Permission.CONTENT_READ))
 ):
     """Get all RAG documents"""
-    query = select(RAGDocument)
+    query = select(RAGDocument).options(joinedload(RAGDocument.metadata_catalog))
     
     if source_type:
         query = query.where(RAGDocument.source_type == source_type)
@@ -136,11 +138,221 @@ async def bulk_reprocess_rag_documents(
             "filter_source_type": filter_source_type
         }
         
+
     except Exception as e:
         logger.error(f"Error in bulk reprocess: {e}", exc_info=True)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error initiating bulk reprocess: {str(e)}"
+        )
+
+
+@router.post("/{document_id}/reprocess", response_model=RAGDocumentResponse)
+async def reprocess_rag_document(
+    document_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    admin_user: User = Depends(require_permission(Permission.CONTENT_WRITE))
+):
+    """Reprocess a specific RAG document"""
+    # 1. Get document
+    result = await db.execute(select(RAGDocument).where(RAGDocument.id == document_id))
+    document = result.scalar_one_or_none()
+    
+    if not document:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Document not found"
+        )
+    
+    try:
+        # 2. Delete old chunks from vector store
+        # Start fresh to avoid duplicates if chunks exist
+        try:
+            from services.vector_store import get_vector_store
+            from services.embedding_service import get_embedding_service
+            
+            # We need to ensure we initialize with correct vector size if possible, 
+            # though delete_document might not strictly need it depending on implementation.
+            # Safest is to try standard initialization.
+            embedding_service = get_embedding_service()
+            # Just use a dummy embed to get size, or rely on defaults if robust
+            test_embedding = embedding_service.embed_text("test")
+            vector_size = len(test_embedding)
+            
+            vector_store = get_vector_store(vector_size=vector_size)
+            vector_store.delete_document(str(document.id))
+            logger.info(f"Deleted old chunks for document {document.id} before reprocessing")
+        except Exception as e:
+            # Non-fatal, might just not exist yet
+            logger.warning(f"Error deleting old chunks for document {document.id}: {e}")
+            
+        # 3. Reset status
+        document.processing_status = "pending"
+        document.processing_error = None
+        # Don't clear content_text yet, let the processor handle it
+        
+        await db.commit()
+        await db.refresh(document)
+        
+        # 4. Trigger processing
+        if document.source_type == "url":
+            asyncio.create_task(process_url_async(document.id, document.source_path))
+        elif document.source_type == "file":
+            asyncio.create_task(process_document_async(document.id, document.source_path, document.file_type))
+        else:
+            document.processing_status = "failed"
+            document.processing_error = f"Unknown source_type '{document.source_type}'"
+            await db.commit()
+            raise HTTPException(status_code=400, detail=f"Unknown source_type '{document.source_type}'")
+            
+        return document
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error reprocessing document {document.id}: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error processing document: {str(e)}"
+        )
+
+
+
+# ============================================================================
+# CSV METADATA CATALOG ENDPOINTS (Moved up to avoid path conflict)
+# ============================================================================
+
+@router.post("/metadata-catalog/upload")
+async def upload_metadata_catalog(
+    file: UploadFile = File(...),
+    mode: str = Form("replace"),  # "replace" or "merge"
+    batch_size: int = Form(100),  # Rows per batch
+    db: AsyncSession = Depends(get_db),
+    admin_user: User = Depends(require_permission(Permission.CONTENT_WRITE))
+):
+    """
+    Upload CSV metadata catalog
+    
+    Modes:
+    - "replace": Delete all existing entries, insert new (default)
+    - "merge": Keep existing, add new, update duplicates by doc_id
+    
+    Processing:
+    - Automatically chunks large CSVs into batches
+    - Commits after each batch to avoid memory issues
+    - Max file size: 50MB
+    """
+    try:
+        # Validate mode
+        if mode not in ["replace", "merge"]:
+            raise HTTPException(status_code=400, detail="Mode must be 'replace' or 'merge'")
+        
+        # Validate file type
+        if not file.filename or not file.filename.endswith('.csv'):
+            raise HTTPException(status_code=400, detail="File must be a CSV file")
+        
+        # Read file content
+        csv_content = await file.read()
+        
+        # Validate file size (max 50MB)
+        if len(csv_content) > 50 * 1024 * 1024:
+            raise HTTPException(
+                status_code=400,
+                detail="CSV file too large. Maximum 50MB. Please split into multiple files."
+            )
+        
+        logger.info(f"Uploading CSV catalog: {file.filename}, mode={mode}, size={len(csv_content)} bytes")
+        
+        # Upload catalog
+        from services.csv_metadata_service import upload_metadata_catalog
+        result = await upload_metadata_catalog(csv_content, db, mode, batch_size)
+        
+        logger.info(f"CSV catalog uploaded: {result}")
+        
+        return result
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error uploading CSV catalog: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error uploading CSV catalog: {str(e)}"
+        )
+
+
+@router.get("/metadata-catalog/stats")
+async def get_metadata_catalog_stats(
+    db: AsyncSession = Depends(get_db),
+    admin_user: User = Depends(require_permission(Permission.CONTENT_READ))
+):
+    """
+    Get metadata catalog statistics
+    
+    Returns:
+    - total_entries: Number of catalog entries
+    - matched_documents: Number of documents with matched metadata
+    - pending_documents: Number of documents without metadata
+    """
+    try:
+        from services.csv_metadata_service import get_catalog_stats
+        stats = await get_catalog_stats(db)
+        return stats
+    except Exception as e:
+        logger.error(f"Error getting catalog stats: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error getting catalog stats: {str(e)}"
+        )
+
+
+@router.get("/metadata-catalog/pending-documents")
+async def get_pending_documents(
+    db: AsyncSession = Depends(get_db),
+    admin_user: User = Depends(require_permission(Permission.CONTENT_READ))
+):
+    """
+    Get documents with pending metadata status
+    
+    Returns list of documents that were uploaded but have no matching metadata in the catalog
+    """
+    try:
+        from services.csv_metadata_service import get_pending_documents
+        documents = await get_pending_documents(db)
+        return documents
+    except Exception as e:
+        logger.error(f"Error getting pending documents: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error getting pending documents: {str(e)}"
+        )
+
+
+@router.get("/metadata-catalog")
+async def get_metadata_catalog(
+    db: AsyncSession = Depends(get_db),
+    skip: int = Query(0, ge=0),
+    limit: int = Query(100, ge=1, le=1000),
+    search: Optional[str] = Query(None),
+    admin_user: User = Depends(require_permission(Permission.CONTENT_READ))
+):
+    """
+    Get metadata catalog entries
+    
+    Parameters:
+    - skip: Number of entries to skip (pagination)
+    - limit: Maximum number of entries to return
+    - search: Optional search query (searches doc_id, file_name, source_title)
+    """
+    try:
+        from services.csv_metadata_service import get_catalog_entries
+        entries = await get_catalog_entries(db, skip, limit, search)
+        return entries
+    except Exception as e:
+        logger.error(f"Error getting catalog entries: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error getting catalog entries: {str(e)}"
         )
 
 
@@ -151,7 +363,8 @@ async def get_rag_document(
     admin_user: User = Depends(require_permission(Permission.CONTENT_READ))
 ):
     """Get a specific RAG document"""
-    result = await db.execute(select(RAGDocument).where(RAGDocument.id == document_id))
+    result = await db.execute(select(RAGDocument).options(joinedload(RAGDocument.metadata_catalog)).where(RAGDocument.id == document_id))
+
     document = result.scalar_one_or_none()
     if not document:
         raise HTTPException(status_code=404, detail="RAG document not found")
@@ -268,6 +481,108 @@ async def update_rag_document(
     await db.commit()
     await db.refresh(document)
     return document
+
+
+@router.delete("/{document_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_rag_document(
+    document_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    admin_user: User = Depends(require_permission(Permission.CONTENT_WRITE))
+):
+    """
+    Delete a RAG document
+    - Deletes file from disk (if applicable)
+    - Deletes chunks from vector store
+    - Deletes record from database
+    """
+    # 1. Get document
+    result = await db.execute(select(RAGDocument).where(RAGDocument.id == document_id))
+    document = result.scalar_one_or_none()
+    
+    if not document:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Document not found"
+        )
+    
+    # 2. Delete file from disk if it exists
+    if document.source_path and document.source_type == "file":
+        try:
+            await delete_rag_file(document.source_path)
+        except Exception as e:
+            logger.warning(f"Failed to delete file {document.source_path}: {e}")
+            # Continue deletion of database record
+            
+    # 3. Delete from vector store
+    try:
+        vector_store = get_vector_store()
+        vector_store.delete_document(str(document_id))
+    except Exception as e:
+        logger.warning(f"Failed to delete vectors for {document_id}: {e}")
+        
+    # 4. Delete from database
+    await db.delete(document)
+    await db.commit()
+    
+    logger.info(f"Deleted RAG document {document_id} by {admin_user.email}")
+    return None
+
+
+@router.post("/bulk-delete", status_code=status.HTTP_200_OK)
+async def bulk_delete_rag_documents(
+    request: BulkDeleteRequest,
+    db: AsyncSession = Depends(get_db),
+    admin_user: User = Depends(require_permission(Permission.CONTENT_WRITE))
+):
+    """
+    Bulk delete RAG documents
+    """
+    document_ids = request.document_ids
+    if not document_ids:
+        return {"message": "No documents provided", "deleted_count": 0}
+
+    # Fetch documents to get paths for file deletion
+    result = await db.execute(select(RAGDocument).where(RAGDocument.id.in_(document_ids)))
+    documents = result.scalars().all()
+    
+    deleted_count = 0
+    errors = []
+    
+    try:
+        vector_store = get_vector_store()
+    except Exception as e:
+        logger.error(f"Failed to initialize vector store: {e}")
+        vector_store = None
+
+    for doc in documents:
+        try:
+            # 1. Delete file
+            if doc.source_path and doc.source_type == "file":
+                try:
+                    await delete_rag_file(doc.source_path)
+                except Exception as e:
+                    logger.warning(f"Failed to delete file {doc.source_path}: {e}")
+            
+            # 2. Delete vectors
+            if vector_store:
+                try:
+                    vector_store.delete_document(str(doc.id))
+                except Exception as e:
+                    logger.warning(f"Failed to delete vectors for {doc.id}: {e}")
+                
+            # 3. Delete from DB
+            await db.delete(doc)
+            deleted_count += 1
+        except Exception as e:
+            errors.append(f"Failed to delete {doc.id}: {str(e)}")
+            
+    await db.commit()
+    
+    return {
+        "message": f"Successfully deleted {deleted_count} documents", 
+        "deleted_count": deleted_count,
+        "errors": errors
+    }
 
 
 @router.get("/vector-store/info")
@@ -407,6 +722,26 @@ async def process_document_async(document_id: UUID, file_path: str, file_type: s
                     logger.info(f"Document {document_id} marked as failed due to extraction error")
                     return  # Exit early - don't try to chunk error messages
             
+            # NEW: Step 1.5: Look up CSV metadata by filename
+            csv_metadata = None
+            if document.file_name:
+                from services.csv_metadata_service import lookup_metadata_by_filename
+                csv_metadata = await lookup_metadata_by_filename(document.file_name, session)
+                
+                if csv_metadata:
+                    # Update document with catalog reference
+                    from uuid import UUID as UUIDType
+                    document.metadata_catalog_id = UUIDType(csv_metadata['id'])
+                    document.metadata_status = 'matched'
+                    logger.info(f"Found CSV metadata for {document.file_name}: doc_id={csv_metadata['doc_id']}")
+                else:
+                    # No match found
+                    document.metadata_status = 'pending'
+                    logger.warning(f"No CSV metadata found for {document.file_name}")
+                
+                await session.commit()
+                await session.refresh(document)
+            
             # Step 2: Delete old chunks from vector store before reprocessing (if any exist)
             # This ensures clean reprocessing with updated metadata (law_name, etc.)
             # This is important because metadata (law_name) may have changed
@@ -459,7 +794,8 @@ async def process_document_async(document_id: UUID, file_path: str, file_type: s
                 law_name=law_name,
                 year=year,
                 authority=authority,  # Extracted from metadata
-                jurisdiction="Nigeria"
+                jurisdiction="Nigeria",
+                csv_metadata=csv_metadata  # NEW: Pass CSV metadata
             )
             
             # Update document with results
@@ -693,3 +1029,11 @@ async def process_url_async(document_id: UUID, url: str):
         except Exception as update_error:
             import logging
             logging.error(f"Failed to update error status: {update_error}")
+
+
+
+# ============================================================================
+# END OF FILE
+# ============================================================================
+
+
