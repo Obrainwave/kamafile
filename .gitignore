@@ -53,3 +53,5 @@ wheels/
 .vscode/
 .idea/
 *.swp
+
+.cursor
