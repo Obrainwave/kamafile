@@ -1,1 +1,0 @@
-import{b as a}from"./api-DFHi_IMI.js";const o={startOnboarding:async s=>(await a.post("/api/onboarding/start",s)).data,processStep:async s=>(await a.post("/api/onboarding/step",s)).data,getStatus:async s=>(await a.get(`/api/onboarding/status/${s}`)).data};export{o};
