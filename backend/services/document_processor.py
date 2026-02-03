@@ -151,9 +151,45 @@ def chunk_by_legal_sections(
         if match:
             section_found = True
             # Save previous section if it exists
+            # Save previous section if it exists
             if current_section and current_content:
                 section_text = '\n'.join(current_content).strip()
                 if section_text and len(section_text) > 10:  # Minimum chunk size
+                    # --- PARENT-CHILD LOGIC ---
+                    # 1. The Full Section is the PARENT Context
+                    parent_text = section_text
+                    
+                    # 2. Split Parent into Children
+                    child_chunks_text = []
+                    
+                    # Simple splitter
+                    paras = re.split(r'\n\s*\n', parent_text)
+                    
+                    for para in paras:
+                        para = para.strip()
+                        if not para:
+                            continue
+                        
+                        if len(para) > 1000:
+                            sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s', para)
+                            
+                            current_chunk = ""
+                            for sent in sentences:
+                                if len(current_chunk) + len(sent) < 800:
+                                    current_chunk += sent + " "
+                                else:
+                                    if current_chunk:
+                                        child_chunks_text.append(current_chunk.strip())
+                                    current_chunk = sent + " "
+                            if current_chunk:
+                                child_chunks_text.append(current_chunk.strip())
+                        else:
+                            child_chunks_text.append(para)
+                    
+                    if len(parent_text) < 400:
+                        child_chunks_text = [parent_text]
+
+                    # Create Chunks
                     base_meta = {
                         **metadata,
                         'section_type': current_section,
@@ -161,11 +197,29 @@ def chunk_by_legal_sections(
                         'section_title': current_section_title,
                         'chunk_type': 'legal_section'
                     }
-                    chunks.append({
-                        'chunk_id': str(uuid.uuid4()),
-                        'text': section_text,
-                        'metadata': build_chunk_metadata(base_meta)  # NEW: Use helper function
-                    })
+
+                    for i, child_text in enumerate(child_chunks_text):
+                        chunk_meta = {
+                            **base_meta,
+                            "chunk_index": len(chunks),
+                            "child_index": i,
+                            "parent_section_title": current_section_title,
+                            "parent_text": parent_text,
+                            "is_child": True,
+                            "is_parent": False
+                        }
+                        
+                        # NEW: Add CSV metadata if available
+                        if csv_metadata:
+                            chunk_meta.update(csv_metadata)
+                            if 'law_name' in csv_metadata:
+                                chunk_meta['law_name'] = csv_metadata['law_name']
+
+                        chunks.append({
+                            'chunk_id': str(uuid.uuid4()),
+                            'text': child_text,
+                            'metadata': build_chunk_metadata(chunk_meta)
+                        })
             
             # Start new section
             if match_md:
@@ -222,17 +276,62 @@ def chunk_by_legal_sections(
     if current_section and current_content:
         section_text = '\n'.join(current_content).strip()
         if section_text and len(section_text) > 10:  # Minimum chunk size
-            chunks.append({
-                'chunk_id': str(uuid.uuid4()),
-                'text': section_text,
-                'metadata': {
-                    **metadata,
-                    'section_type': current_section,
-                    'section_number': current_section_number,
-                    'section_title': current_section_title,
-                    'chunk_type': 'legal_section'
+            # --- PARENT-CHILD LOGIC (Tail) ---
+            parent_text = section_text
+            
+            child_chunks_text = []
+            paras = re.split(r'\n\s*\n', parent_text)
+            
+            for para in paras:
+                para = para.strip()
+                if not para: continue
+                
+                if len(para) > 1000:
+                    sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s', para)
+                    current_chunk = ""
+                    for sent in sentences:
+                        if len(current_chunk) + len(sent) < 800:
+                            current_chunk += sent + " "
+                        else:
+                            if current_chunk: child_chunks_text.append(current_chunk.strip())
+                            current_chunk = sent + " "
+                    if current_chunk: child_chunks_text.append(current_chunk.strip())
+                else:
+                    child_chunks_text.append(para)
+            
+            if len(parent_text) < 400:
+                 child_chunks_text = [parent_text]
+
+            base_meta = {
+                **metadata,
+                'section_type': current_section,
+                'section_number': current_section_number,
+                'section_title': current_section_title,
+                'chunk_type': 'legal_section'
+            }
+
+            for i, child_text in enumerate(child_chunks_text):
+                chunk_meta = {
+                    **base_meta,
+                    "chunk_index": len(chunks),
+                    "child_index": i,
+                    "parent_section_title": current_section_title,
+                    "parent_text": parent_text,
+                    "is_child": True,
+                    "is_parent": False
                 }
-            })
+                
+                # NEW: Add CSV metadata if available
+                if csv_metadata:
+                    chunk_meta.update(csv_metadata)
+                    if 'law_name' in csv_metadata:
+                        chunk_meta['law_name'] = csv_metadata['law_name']
+
+                chunks.append({
+                    'chunk_id': str(uuid.uuid4()),
+                    'text': child_text,
+                    'metadata': build_chunk_metadata(chunk_meta)
+                })
     
     # If no sections found, use fallback chunking strategies
     if not section_found or not chunks:

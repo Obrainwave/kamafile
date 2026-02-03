@@ -1,0 +1,10 @@
+FROM python:3.12-slim
+
+WORKDIR /app
+COPY requirements.txt .
+
+# Try to resolve dependencies without installing (dry-run if pip supports it, else just install)
+# Pip dry-run for install is available in recent pip versions.
+# We upgrade pip first.
+RUN pip install --upgrade pip && \
+    pip install --dry-run -r requirements.txt

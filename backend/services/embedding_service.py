@@ -1,65 +1,146 @@
 """
 Embedding Service for generating vector embeddings
-Uses sentence-transformers for local embeddings (no API calls needed)
+Uses OpenAI API for dense embeddings
 """
-from typing import List, Optional
+from typing import List, Dict, Optional
 import logging
 import os
 
-# Lazy import to allow server to start even if sentence-transformers isn't installed yet
 logger = logging.getLogger(__name__)
 
+# OpenAI embeddings
+OPENAI_AVAILABLE = False
 try:
-    from sentence_transformers import SentenceTransformer
-    SENTENCE_TRANSFORMERS_AVAILABLE = True
+    from openai import OpenAI
+    OPENAI_AVAILABLE = True
 except ImportError:
-    SENTENCE_TRANSFORMERS_AVAILABLE = False
-    logger.warning("sentence-transformers not installed. Embedding service will not be available. Install with: pip install sentence-transformers")
+    logger.warning("openai not installed. Dense embeddings will not be available.")
 
-logger = logging.getLogger(__name__)
+# Sparse embeddings (fastembed)
+FASTEMBED_AVAILABLE = False
+try:
+    from fastembed import SparseTextEmbedding
+    FASTEMBED_AVAILABLE = True
+except ImportError:
+    logger.warning("fastembed not installed. Sparse embeddings will not be available.")
 
-# Use a model optimized for legal/semantic search
-# all-MiniLM-L6-v2 is fast and good for semantic search
-# For better quality, can use: all-mpnet-base-v2 or multi-qa-mpnet-base-dot-v1
-EMBEDDING_MODEL_NAME = os.getenv("EMBEDDING_MODEL", "all-MiniLM-L6-v2")
+# OpenAI embedding model - text-embedding-3-small has 1536 dimensions
+EMBEDDING_MODEL_NAME = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
+# SPLADE model for sparse retrieval (unchanged)
+SPARSE_MODEL_NAME = os.getenv("SPARSE_MODEL", "prithivida/Splade_PP_en_v1")
 
 
 class EmbeddingService:
-    """Service for generating text embeddings"""
+    """Service for generating dense (OpenAI) and sparse (SPLADE) embeddings"""
     
     def __init__(self):
-        """Initialize the embedding model"""
-        if not SENTENCE_TRANSFORMERS_AVAILABLE:
+        """Initialize the embedding models"""
+        if not OPENAI_AVAILABLE:
             raise ImportError(
-                "sentence-transformers is not installed. "
-                "Please install it with: pip install sentence-transformers"
+                "openai is not installed. "
+                "Please install it with: pip install openai"
+            )
+        
+        # Check for API key
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            raise ValueError(
+                "OPENAI_API_KEY environment variable is not set. "
+                "Please set it to use OpenAI embeddings."
             )
         
         try:
-            logger.info(f"Loading embedding model: {EMBEDDING_MODEL_NAME}")
-            self.model = SentenceTransformer(EMBEDDING_MODEL_NAME)
-            logger.info("Embedding model loaded successfully")
+            logger.info(f"Initializing OpenAI embedding client with model: {EMBEDDING_MODEL_NAME}")
+            self.client = OpenAI(api_key=api_key)
+            self.model_name = EMBEDDING_MODEL_NAME
+            logger.info("OpenAI embedding client initialized successfully")
         except Exception as e:
-            logger.error(f"Error loading embedding model: {e}")
+            logger.error(f"Error initializing OpenAI client: {e}")
             raise
+
+        # Initialize Sparse Model (SPLADE via fastembed - unchanged)
+        self.sparse_model = None
+        if FASTEMBED_AVAILABLE:
+            try:
+                logger.info(f"Loading sparse embedding model: {SPARSE_MODEL_NAME}")
+                self.sparse_model = SparseTextEmbedding(model_name=SPARSE_MODEL_NAME, threads=1)
+                logger.info("Sparse embedding model loaded successfully")
+            except Exception as e:
+                logger.error(f"Error loading sparse embedding model: {e}")
     
     def embed_text(self, text: str) -> List[float]:
-        """Generate embedding for a single text"""
+        """Generate dense embedding for a single text using OpenAI"""
         try:
-            embedding = self.model.encode(text, convert_to_numpy=True).tolist()
+            response = self.client.embeddings.create(
+                model=self.model_name,
+                input=text
+            )
+            embedding = response.data[0].embedding
             return embedding
         except Exception as e:
-            logger.error(f"Error generating embedding: {e}")
+            logger.error(f"Error generating OpenAI embedding: {e}")
             raise
     
     def embed_batch(self, texts: List[str]) -> List[List[float]]:
-        """Generate embeddings for multiple texts (more efficient)"""
+        """Generate dense embeddings for multiple texts using OpenAI"""
         try:
-            embeddings = self.model.encode(texts, convert_to_numpy=True).tolist()
+            # OpenAI supports batch embedding in a single request
+            response = self.client.embeddings.create(
+                model=self.model_name,
+                input=texts
+            )
+            # Sort by index to ensure order matches input
+            sorted_data = sorted(response.data, key=lambda x: x.index)
+            embeddings = [item.embedding for item in sorted_data]
             return embeddings
         except Exception as e:
-            logger.error(f"Error generating batch embeddings: {e}")
+            logger.error(f"Error generating OpenAI batch embeddings: {e}")
             raise
+
+    def embed_sparse(self, text: str) -> Dict[int, float]:
+        """Generate sparse embedding for a single text (SPLADE - unchanged)"""
+        if not self.sparse_model:
+            return {}
+        try:
+            embeddings = list(self.sparse_model.embed([text]))
+            if not embeddings:
+                return {}
+            sparse_vector = embeddings[0]
+            indices = sparse_vector.indices.tolist()
+            values = sparse_vector.values.tolist()
+            return dict(zip(indices, values))
+        except Exception as e:
+            logger.error(f"Error generating sparse embedding: {e}")
+            return {}
+
+    def embed_sparse_batch(self, texts: List[str]) -> List[Dict[int, float]]:
+        """Generate sparse embeddings for multiple texts (SPLADE - unchanged)"""
+        if not self.sparse_model:
+            return [{} for _ in texts]
+        try:
+            embeddings = list(self.sparse_model.embed(texts))
+            results = []
+            for sparse_vector in embeddings:
+                indices = sparse_vector.indices.tolist()
+                values = sparse_vector.values.tolist()
+                results.append(dict(zip(indices, values)))
+            return results
+        except Exception as e:
+            logger.error(f"Error generating sparse batch embeddings: {e}")
+            return [{} for _ in texts]
+
+    def get_embedding_dimension(self) -> int:
+        """Return the dimension of the embedding model"""
+        # text-embedding-3-small: 1536 dimensions
+        # text-embedding-3-large: 3072 dimensions
+        # text-embedding-ada-002: 1536 dimensions
+        if "3-small" in self.model_name or "ada-002" in self.model_name:
+            return 1536
+        elif "3-large" in self.model_name:
+            return 3072
+        else:
+            # Default to 1536 for unknown models
+            return 1536
 
 
 # Global embedding service instance

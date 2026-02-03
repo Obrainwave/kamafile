@@ -68,9 +68,25 @@ Format: Clear, structured, with citations. Always answer directly without asking
         
         return base_prompt
     
-    def _build_user_prompt(self, query: str, context: str) -> str:
+    def _build_user_prompt(self, query: str, context: str, response_style: str = "detailed") -> str:
         """Build user prompt with context"""
-        return f"""Context from legal documents:
+        if response_style == "concise":
+            return f"""Context from legal documents:
+
+{context}
+
+---
+
+Question: {query}
+
+Instructions:
+1. Give a BRIEF, DIRECT answer (2-3 sentences maximum).
+2. For definitions: state the meaning clearly in one sentence, cite the source.
+3. No bullet points or detailed explanations for simple questions.
+4. Format: "[Term] means [definition]. [Source: Law Name, Section X]"
+5. If the answer is not in the context, say so briefly."""
+        else:
+            return f"""Context from legal documents:
 
 {context}
 
@@ -89,7 +105,8 @@ Instructions:
         self,
         query: str,
         context: str,
-        intent: str = 'general'
+        intent: str = 'general',
+        response_style: str = 'detailed'
     ) -> Dict[str, Any]:
         """
         Generate answer with strict no-hallucination enforcement
@@ -98,6 +115,7 @@ Instructions:
             query: User question
             context: Retrieved document chunks
             intent: Classified intent
+            response_style: 'concise' for brief answers, 'detailed' for comprehensive
             
         Returns:
             Dictionary with 'answer' and 'confidence'
@@ -110,7 +128,10 @@ Instructions:
         
         try:
             system_prompt = self._build_system_prompt(intent)
-            user_prompt = self._build_user_prompt(query, context)
+            user_prompt = self._build_user_prompt(query, context, response_style)
+            
+            # Adjust max_tokens based on response style
+            max_tokens = 300 if response_style == "concise" else 1000
             
             messages = [
                 {"role": "system", "content": system_prompt},
@@ -121,7 +142,7 @@ Instructions:
                 "model": self.model,
                 "messages": messages,
                 "temperature": 0,  # CRITICAL: No creativity, deterministic
-                "max_tokens": 1000,
+                "max_tokens": max_tokens,
                 "top_p": 0.1  # Very focused sampling
             }
             

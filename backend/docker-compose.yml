@@ -82,15 +82,16 @@ services:
       - QDRANT_HOST=qdrant
       - QDRANT_PORT=6333
       - SECRET_KEY=${SECRET_KEY:-your-secret-key-change-in-production-min-32-chars}
-      # LLM API Configuration - Choose one: DeepSeek OR OpenAI
-      # Option 1: DeepSeek (Recommended - cheaper and works well)
+      # LLM API Configuration - Choose one: DeepSeek OR OpenAI for chat
+      # Option 1: DeepSeek (Recommended for chat - cheaper and works well)
       - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
       - DEEPSEEK_API_URL=${DEEPSEEK_API_URL:-https://api.deepseek.com/v1/chat/completions}
       - LLM_MODEL=${LLM_MODEL:-deepseek-chat}
-      # Option 2: OpenAI (Alternative)
-      # - OPENAI_API_KEY=${OPENAI_API_KEY:-}
-      # - OPENAI_API_URL=${OPENAI_API_URL:-https://api.openai.com/v1/chat/completions}
-      # - LLM_MODEL=${LLM_MODEL:-gpt-4}
+      # OpenAI API Key (REQUIRED for embeddings and reranking)
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      # Optional: Override OpenAI models
+      # - EMBEDDING_MODEL=${EMBEDDING_MODEL:-text-embedding-3-small}
+      # - RERANKER_MODEL=${RERANKER_MODEL:-gpt-4o-mini}
     depends_on:
       db:
         condition: service_healthy

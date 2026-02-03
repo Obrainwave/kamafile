@@ -518,7 +518,7 @@ async def process_and_index_document(
     Complete RAG document processing pipeline:
     1. Convert text to structured Markdown with YAML front-matter
     2. Chunk by legal sections
-    3. Generate embeddings
+    3. Generate Dense AND Sparse embeddings (for Hybrid Search)
     4. Store in vector database
     
     This is the production-grade processing that enforces structured format.
@@ -549,14 +549,20 @@ async def process_and_index_document(
         # Step 2: Generate embeddings for all chunks
         embedding_service = get_embedding_service()
         chunk_texts = [chunk['text'] for chunk in chunks]
+        
+        # Dense embeddings
         embeddings = embedding_service.embed_batch(chunk_texts)
+        
+        # Sparse embeddings (for Hybrid Search)
+        sparse_embeddings = embedding_service.embed_sparse_batch(chunk_texts)
         
         # Step 3: Store in vector database
         vector_store = get_vector_store(vector_size=vector_size)
         vector_store.add_chunks(
             chunks=chunks,
             embeddings=embeddings,
-            document_id=document_id
+            document_id=document_id,
+            sparse_embeddings=sparse_embeddings  # Pass sparse vectors
         )
         
         return {
