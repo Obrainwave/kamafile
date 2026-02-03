@@ -13,7 +13,6 @@ backend/.venv/
 coverage/
 
 # Production
-build/
 dist/
 
 # Misc
