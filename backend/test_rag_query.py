@@ -70,8 +70,10 @@ async def test_vector_store_info():
     
     try:
         es = get_embedding_service()
-        test_embedding = es.embed_text("test")
-        vs = get_vector_store(len(test_embedding))
+        # OLD: test_embedding = es.embed_text("test")
+        # OLD: vs = get_vector_store(len(test_embedding))
+        vector_size = es.get_embedding_dimension()
+        vs = get_vector_store(vector_size)
         info = vs.get_collection_info()
         
         print(f"✅ Collection: {info.get('name')}")
@@ -102,7 +104,7 @@ async def test_sample_search():
         test_query = "What is VAT rate in Nigeria?"
         print(f"Query: {test_query}")
         
-        query_embedding = es.embed_text(test_query)
+        query_embedding = await es.embed_text(test_query)
         print(f"✅ Generated embedding (dimension: {len(query_embedding)})")
         
         vs = get_vector_store(len(query_embedding))

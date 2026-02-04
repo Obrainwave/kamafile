@@ -51,14 +51,17 @@ class EmbeddingService:
         
         try:
             logger.info(f"Initializing OpenAI embedding client with model: {EMBEDDING_MODEL_NAME}")
-            self.client = OpenAI(api_key=api_key)
+            # Use AsyncOpenAI for non-blocking I/O
+            from openai import AsyncOpenAI
+            self.client = AsyncOpenAI(api_key=api_key)
             self.model_name = EMBEDDING_MODEL_NAME
             logger.info("OpenAI embedding client initialized successfully")
         except Exception as e:
             logger.error(f"Error initializing OpenAI client: {e}")
             raise
 
-        # Initialize Sparse Model (SPLADE via fastembed - unchanged)
+        # Initialize Sparse Model (SPLADE via fastembed)
+        # This model runs on CPU, so we'll need to run inference in an executor
         self.sparse_model = None
         if FASTEMBED_AVAILABLE:
             try:
@@ -68,10 +71,10 @@ class EmbeddingService:
             except Exception as e:
                 logger.error(f"Error loading sparse embedding model: {e}")
     
-    def embed_text(self, text: str) -> List[float]:
-        """Generate dense embedding for a single text using OpenAI"""
+    async def embed_text(self, text: str) -> List[float]:
+        """Generate dense embedding for a single text using OpenAI (Async)"""
         try:
-            response = self.client.embeddings.create(
+            response = await self.client.embeddings.create(
                 model=self.model_name,
                 input=text
             )
@@ -81,11 +84,11 @@ class EmbeddingService:
             logger.error(f"Error generating OpenAI embedding: {e}")
             raise
     
-    def embed_batch(self, texts: List[str]) -> List[List[float]]:
-        """Generate dense embeddings for multiple texts using OpenAI"""
+    async def embed_batch(self, texts: List[str]) -> List[List[float]]:
+        """Generate dense embeddings for multiple texts using OpenAI (Async)"""
         try:
             # OpenAI supports batch embedding in a single request
-            response = self.client.embeddings.create(
+            response = await self.client.embeddings.create(
                 model=self.model_name,
                 input=texts
             )
@@ -97,37 +100,51 @@ class EmbeddingService:
             logger.error(f"Error generating OpenAI batch embeddings: {e}")
             raise
 
-    def embed_sparse(self, text: str) -> Dict[int, float]:
-        """Generate sparse embedding for a single text (SPLADE - unchanged)"""
+    async def embed_sparse(self, text: str) -> Dict[int, float]:
+        """Generate sparse embedding for a single text (SPLADE) - Runs in Executor"""
         if not self.sparse_model:
             return {}
-        try:
-            embeddings = list(self.sparse_model.embed([text]))
-            if not embeddings:
-                return {}
-            sparse_vector = embeddings[0]
-            indices = sparse_vector.indices.tolist()
-            values = sparse_vector.values.tolist()
-            return dict(zip(indices, values))
-        except Exception as e:
-            logger.error(f"Error generating sparse embedding: {e}")
-            return {}
-
-    def embed_sparse_batch(self, texts: List[str]) -> List[Dict[int, float]]:
-        """Generate sparse embeddings for multiple texts (SPLADE - unchanged)"""
-        if not self.sparse_model:
-            return [{} for _ in texts]
-        try:
-            embeddings = list(self.sparse_model.embed(texts))
-            results = []
-            for sparse_vector in embeddings:
+        
+        import asyncio
+        loop = asyncio.get_running_loop()
+        
+        def _run_sync():
+            try:
+                embeddings = list(self.sparse_model.embed([text]))
+                if not embeddings:
+                    return {}
+                sparse_vector = embeddings[0]
                 indices = sparse_vector.indices.tolist()
                 values = sparse_vector.values.tolist()
-                results.append(dict(zip(indices, values)))
-            return results
-        except Exception as e:
-            logger.error(f"Error generating sparse batch embeddings: {e}")
+                return dict(zip(indices, values))
+            except Exception as e:
+                logger.error(f"Error generating sparse embedding: {e}")
+                return {}
+                
+        return await loop.run_in_executor(None, _run_sync)
+
+    async def embed_sparse_batch(self, texts: List[str]) -> List[Dict[int, float]]:
+        """Generate sparse embeddings for multiple texts (SPLADE) - Runs in Executor"""
+        if not self.sparse_model:
             return [{} for _ in texts]
+        
+        import asyncio
+        loop = asyncio.get_running_loop()
+        
+        def _run_sync():
+            try:
+                embeddings = list(self.sparse_model.embed(texts))
+                results = []
+                for sparse_vector in embeddings:
+                    indices = sparse_vector.indices.tolist()
+                    values = sparse_vector.values.tolist()
+                    results.append(dict(zip(indices, values)))
+                return results
+            except Exception as e:
+                logger.error(f"Error generating sparse batch embeddings: {e}")
+                return [{} for _ in texts]
+
+        return await loop.run_in_executor(None, _run_sync)
 
     def get_embedding_dimension(self) -> int:
         """Return the dimension of the embedding model"""

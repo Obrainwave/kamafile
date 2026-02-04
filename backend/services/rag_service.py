@@ -105,16 +105,16 @@ async def fetch_url_content(url: str) -> Dict[str, Any]:
         raise
 
 
-async def extract_text_from_file(file_path: str, file_type: str) -> Dict[str, Any]:
-    """Extract text content from various file types"""
+def _extract_text_from_file_sync(file_path: str, file_type: str) -> Dict[str, Any]:
+    """Extract text content from various file types (Synchronous, blocking)"""
     try:
         content_text = ""
         content_metadata = {}
         
         # Text files
         if file_type.startswith('text/'):
-            async with aiofiles.open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
-                content_text = await f.read()
+            with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                content_text = f.read()
         
         # PDF files
         elif file_type == 'application/pdf':
@@ -142,8 +142,8 @@ async def extract_text_from_file(file_path: str, file_type: str) -> Dict[str, An
             
             # CRITICAL: First verify file is not corrupted/binary by checking first bytes
             try:
-                async with aiofiles.open(file_path, 'rb') as f:
-                    first_bytes = await f.read(4)
+                with open(file_path, 'rb') as f:
+                    first_bytes = f.read(4)
                     # Check for ZIP signature (DOCX is a ZIP archive)
                     if len(first_bytes) >= 4 and first_bytes[:2] == b'PK':
                         if len(first_bytes) >= 4 and (first_bytes[2] == 3 and first_bytes[3] == 4) or (first_bytes[2] == 5 and first_bytes[3] == 6):
@@ -311,8 +311,8 @@ async def extract_text_from_file(file_path: str, file_type: str) -> Dict[str, An
             else:
                 # Try to read as text, but check for binary content
                 try:
-                    async with aiofiles.open(file_path, 'rb') as f:
-                        raw_content = await f.read()
+                    with open(file_path, 'rb') as f:
+                        raw_content = f.read()
                     # Check if content contains null bytes (indicates binary)
                     if b'\x00' in raw_content[:1024]:  # Check first 1KB
                         content_text = f"[Binary file detected: {Path(file_path).name}]"
@@ -486,6 +486,13 @@ async def extract_text_from_file(file_path: str, file_type: str) -> Dict[str, An
         raise
 
 
+async def extract_text_from_file(file_path: str, file_type: str) -> Dict[str, Any]:
+    """Extract text content from various file types (Async Wrapper)"""
+    import asyncio
+    loop = asyncio.get_running_loop()
+    return await loop.run_in_executor(None, _extract_text_from_file_sync, file_path, file_type)
+
+
 async def process_rag_document(file_path: Optional[str] = None, url: Optional[str] = None, 
                                file_type: Optional[str] = None) -> Dict[str, Any]:
     """Process a RAG document (file or URL) and extract content"""
@@ -530,8 +537,7 @@ async def process_and_index_document(
         
         # Get embedding dimension
         embedding_service = get_embedding_service()
-        test_embedding = embedding_service.embed_text("test")
-        vector_size = len(test_embedding)
+        vector_size = embedding_service.get_embedding_dimension()
         
         # Step 1: Convert to Markdown and chunk
         markdown_content, chunks = process_document_for_rag(
@@ -551,10 +557,10 @@ async def process_and_index_document(
         chunk_texts = [chunk['text'] for chunk in chunks]
         
         # Dense embeddings
-        embeddings = embedding_service.embed_batch(chunk_texts)
+        embeddings = await embedding_service.embed_batch(chunk_texts)
         
         # Sparse embeddings (for Hybrid Search)
-        sparse_embeddings = embedding_service.embed_sparse_batch(chunk_texts)
+        sparse_embeddings = await embedding_service.embed_sparse_batch(chunk_texts)
         
         # Step 3: Store in vector database
         vector_store = get_vector_store(vector_size=vector_size)

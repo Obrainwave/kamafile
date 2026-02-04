@@ -64,8 +64,7 @@ class RAGQueryService:
         """Lazy-load vector store"""
         if self._vector_store is None:
             # Get embedding dimension for vector store initialization
-            test_embedding = self.embedding_service.embed_text("test")
-            vector_size = len(test_embedding)
+            vector_size = self.embedding_service.get_embedding_dimension()
             self._vector_store = get_vector_store(vector_size=vector_size)
         return self._vector_store
     
@@ -133,9 +132,9 @@ class RAGQueryService:
             seen_ids = set()
             
             for q in search_queries:
-                query_embedding = self.embedding_service.embed_text(q)
+                query_embedding = await self.embedding_service.embed_text(q)
                 # Generate sparse embedding for Hybrid Search
-                sparse_embedding = self.embedding_service.embed_sparse(q)
+                sparse_embedding = await self.embedding_service.embed_sparse(q)
                 
                 chunks = self.vector_store.search(
                     query_embedding=query_embedding,
@@ -155,8 +154,8 @@ class RAGQueryService:
             if not candidate_chunks:
                 # Fallback: try original query
                 logger.info("No results from optimized queries, trying original query fallback")
-                query_embedding = self.embedding_service.embed_text(query)
-                sparse_embedding = self.embedding_service.embed_sparse(query)
+                query_embedding = await self.embedding_service.embed_text(query)
+                sparse_embedding = await self.embedding_service.embed_sparse(query)
                 
                 candidate_chunks = self.vector_store.search(
                     query_embedding=query_embedding,

@@ -91,8 +91,8 @@ async def bulk_reprocess_rag_documents(
         from services.embedding_service import get_embedding_service
         
         embedding_service = get_embedding_service()
-        test_embedding = embedding_service.embed_text("test")
-        vector_size = len(test_embedding)
+        embedding_service = get_embedding_service()
+        vector_size = embedding_service.get_embedding_dimension()
         vector_store = get_vector_store(vector_size=vector_size)
         
         queued_count = 0
@@ -176,8 +176,8 @@ async def reprocess_rag_document(
             # Safest is to try standard initialization.
             embedding_service = get_embedding_service()
             # Just use a dummy embed to get size, or rely on defaults if robust
-            test_embedding = embedding_service.embed_text("test")
-            vector_size = len(test_embedding)
+            # Just use a dummy embed to get size, or rely on defaults if robust
+            vector_size = embedding_service.get_embedding_dimension()
             
             vector_store = get_vector_store(vector_size=vector_size)
             vector_store.delete_document(str(document.id))
@@ -596,8 +596,8 @@ async def get_vector_store_info(
         
         # Get embedding dimension
         embedding_service = get_embedding_service()
-        test_embedding = embedding_service.embed_text("test")
-        vector_size = len(test_embedding)
+        embedding_service = get_embedding_service()
+        vector_size = embedding_service.get_embedding_dimension()
         
         vector_store = get_vector_store(vector_size=vector_size)
         collection_info = vector_store.get_collection_info()
@@ -750,8 +750,8 @@ async def process_document_async(document_id: UUID, file_path: str, file_type: s
                 from services.embedding_service import get_embedding_service
                 
                 embedding_service = get_embedding_service()
-                test_embedding = embedding_service.embed_text("test")
-                vector_size = len(test_embedding)
+                embedding_service = get_embedding_service()
+                vector_size = embedding_service.get_embedding_dimension()
                 vector_store = get_vector_store(vector_size=vector_size)
                 vector_store.delete_document(str(document.id))
                 logger.info(f"Deleted old chunks for document {document_id} before reprocessing")
