@@ -58,23 +58,22 @@ def rule_based_intent(query: str) -> Tuple[Optional[str], Optional[str]]:
     
     # Check for exact greeting matches
     if q_clean in GREETINGS:
-        return "chitchat", "👋 Hello! I'm your Nigerian Tax Assistant. How can I help you with tax-related questions today?"
+        return "chitchat", "Hey there! 👋 What tax questions can I help you sort out today?"
     
     # Check for thanks (can be anywhere in short messages)
     if len(q_clean.split()) <= 5:  # Only check short messages
         if any(word in q_clean for word in THANKS_WORDS):
-            return "chitchat", "You're welcome! Feel free to ask if you have any more questions about Nigerian taxes."
+            return "chitchat", "Happy to help! Let me know if anything else comes up."
     
     # Check for AI capability questions
     for pattern in AI_PATTERNS:
         if re.match(pattern, q_clean):
             return "direct_answer", (
-                "I'm an AI assistant specialized in Nigerian Tax Law. I can help you with:\n"
-                "• Understanding VAT, PAYE, CIT, and other Nigerian taxes\n"
-                "• Tax registration and compliance requirements\n"
-                "• Penalties and filing deadlines\n"
-                "• Interpreting tax laws and regulations\n\n"
-                "Just ask me any tax-related question!"
+                "I'm your go-to for Nigerian tax matters! I can help with:\n"
+                "• VAT, PAYE, CIT, WHT - rates, rules, and compliance\n"
+                "• Filing deadlines and procedures\n"
+                "• Understanding tax penalties and how to avoid them\n\n"
+                "What would you like to know?"
             )
     
     # No rule matched - fall through to LLM
@@ -82,12 +81,11 @@ def rule_based_intent(query: str) -> Tuple[Optional[str], Optional[str]]:
 
 class RagDecision(BaseModel):
     """Structured decision from the Thinker"""
-    intent: Literal["search", "clarify", "chitchat", "direct_answer"]
+    intent: Literal["search", "conceptual", "chitchat", "off_topic"]
     search_queries: Optional[List[str]] = None
-    clarification_question: Optional[str] = None
     direct_response: Optional[str] = None
     thought_process: Optional[str] = None
-    response_style: Literal["concise", "detailed"] = "detailed"  # NEW: Response verbosity
+    response_style: Literal["concise", "detailed"] = "detailed"
 
 class RagController:
     """
@@ -106,54 +104,64 @@ class RagController:
     def _build_system_prompt(self) -> str:
         return """You are the "Thinker" layer for a Nigerian Tax Law AI Assistant.
 Your job is to analyze the user's input and decide the best course of action.
-DO NOT answer legal questions directly. Your job is ONLY to plan the retrieval strategy.
-
-Input: User query string.
-Output: A JSON object defining the strategy.
 
 INTENTS:
-1. "search": The user is asking a clear legal/tax question.
-   - Action: Generate 1-3 optimized search queries.
-   - Example user: "What is vat rate?" -> queries: ["VAT rate Nigeria", "Value Added Tax rate"]
-   
-2. "clarify": The user's query is ambiguous, vauge, or uses terms that could mean multiple things in tax law.
-   - Action: Ask a clarifying question to narrow down the context.
-   - Example user: "Tell me about the tax." -> question: "Are you interested in Company Income Tax, Personal Income Tax, or Value Added Tax?"
 
-3. "chitchat": The user is greeting, thanking, or making small talk.
-   - Action: Provide a polite, professional direct response.
-   - Example user: "Hello" -> response: "Hello! I am your Nigerian Tax Assistant. How can I help you today?"
+1. "search": User wants SPECIFIC legal information (rates, deadlines, requirements, procedures).
+   - These need document lookup - no guessing allowed
+   - Generate 1-3 search queries
+   - Examples:
+     - "What is the VAT rate?" -> queries: ["VAT rate Nigeria"]
+     - "What do I need to register a business?" -> queries: ["business tax registration Nigeria"]
+     - "What are the WHT rates?" -> queries: ["withholding tax rates Nigeria"]
 
-4. "direct_answer": The user asks a question about YOU (the AI), or a question that shouldn't involve document retrieval (e.g. "What can you do?").
-   - Action: Provide a direct response describing your capabilities.
+2. "conceptual": User asks PHILOSOPHICAL/GENERAL questions about tax concepts.
+   - These can use general knowledge - no documents needed
+   - Examples:
+     - "What are the benefits of paying tax?" -> explain benefits generally
+     - "Why do we pay tax?" -> explain purpose of taxation
+     - "What is tax?" -> give general definition
+     - "Is tax important?" -> explain importance
+   - Provide a helpful, conversational answer about the concept
 
-RESPONSE STYLE (for search intent):
-- "concise": Simple questions like definitions, meanings, acronyms, single facts. Example: "What does TIN mean?", "What is VAT?", "Define withholding tax"
-- "detailed": Complex questions requiring analysis, comparison, procedures, calculations. Example: "How do I calculate VAT?", "What are the penalties for late filing?", "Compare PAYE and CIT"
+3. "chitchat": Greetings, thanks, small talk, or questions about YOU.
+   - "Hello" -> friendly greeting
+   - "How are you?" -> brief friendly response
+   - "What can you do?" -> describe tax capabilities
+   - "Thanks" -> you're welcome
+
+4. "off_topic": User asks about NON-TAX topics (sports, weather, vacation, etc.)
+   - Just politely redirect with personality
+   - Example: "Tell me about vacation" -> "Wish I could help plan your getaway, but I'm all about taxes!"
 
 OUTPUT FORMAT (JSON ONLY):
 {
-    "intent": "search" | "clarify" | "chitchat" | "direct_answer",
-    "search_queries": ["query1", "query2"],  // Only if intent is "search"
-    "clarification_question": "string",       // Only if intent is "clarify"
-    "direct_response": "string",              // Only if intent is "chitchat" or "direct_answer"
-    "thought_process": "Brief explanation of why you chose this intent",
-    "response_style": "concise" | "detailed"  // For search intent: how verbose the answer should be
+    "intent": "search" | "conceptual" | "chitchat" | "off_topic",
+    "search_queries": ["query1"],     // Only for "search"
+    "direct_response": "string",      // For "conceptual", "chitchat", or "off_topic"
+    "thought_process": "Why this intent",
+    "response_style": "concise" | "detailed"
 }
 
-CRITICAL:
-- If use asks for "Sections", ensure "Section X" is preserved in search queries.
-- If user mentions specific Acts (CITA, PITA), include them in queries.
-- Output MUST be valid JSON.
+RULES:
+1. NEVER ask the user questions or request clarification
+2. "conceptual" = WHY/BENEFITS/PURPOSE of tax (general knowledge OK)
+3. "search" = SPECIFIC rates/requirements/procedures (documents only)
+4. For off-topic, be friendly and redirect with humor
+5. Output MUST be valid JSON
 """
 
-    async def think(self, user_query: str) -> RagDecision:
+    async def think(
+        self, 
+        user_query: str, 
+        conversation_history: Optional[List[Dict[str, str]]] = None
+    ) -> RagDecision:
         """
         Analyze user query and return a decision.
         
         Flow:
         1. Rule-based check (fast path for greetings, thanks, etc.)
-        2. LLM-based analysis (for complex intent classification)
+        2. LLM-based analysis (for complex intent classification) WITH conversation context
         """
         # =====================================================================
         # STEP 0: Rule-based fast path (no LLM needed)
@@ -180,10 +188,27 @@ CRITICAL:
             )
 
         try:
+            # Build messages with conversation context
             messages = [
-                {"role": "system", "content": self._build_system_prompt()},
-                {"role": "user", "content": user_query}
+                {"role": "system", "content": self._build_system_prompt()}
             ]
+            
+            # Add conversation history for context (if available)
+            if conversation_history and len(conversation_history) > 0:
+                # Format conversation history as context
+                context_text = "CONVERSATION HISTORY (use this to understand context like 'it', 'that', etc.):\n"
+                for msg in conversation_history[-6:]:  # Last 6 messages max
+                    role = "User" if msg.get("role") == "user" else "Assistant"
+                    context_text += f"{role}: {msg.get('content', '')[:200]}\n"  # Truncate long messages
+                context_text += "\n---\n"
+                
+                # Add the context and current query
+                messages.append({
+                    "role": "user", 
+                    "content": f"{context_text}CURRENT USER QUERY: {user_query}"
+                })
+            else:
+                messages.append({"role": "user", "content": user_query})
 
             payload = {
                 "model": self.model,
@@ -197,7 +222,7 @@ CRITICAL:
                 "Content-Type": "application/json"
             }
 
-            async with httpx.AsyncClient(timeout=10.0) as client:
+            async with httpx.AsyncClient(timeout=15.0) as client:
                 response = await client.post(
                     self.api_url,
                     json=payload,

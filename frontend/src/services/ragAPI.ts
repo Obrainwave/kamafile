@@ -9,6 +9,11 @@ export interface Citation {
   score?: number
 }
 
+export interface ConversationMessage {
+  role: 'user' | 'assistant'
+  content: string
+}
+
 export interface RAGQueryRequest {
   question: string
   user_context?: {
@@ -16,6 +21,7 @@ export interface RAGQueryRequest {
     state?: string
     [key: string]: any
   }
+  conversation_history?: ConversationMessage[]
 }
 
 export interface RAGQueryResponse {
@@ -29,10 +35,15 @@ export interface RAGQueryResponse {
 }
 
 export const ragAPI = {
-  ask: async (question: string, userContext?: Record<string, any>): Promise<RAGQueryResponse> => {
+  ask: async (
+    question: string, 
+    userContext?: Record<string, any>,
+    conversationHistory?: ConversationMessage[]
+  ): Promise<RAGQueryResponse> => {
     const response = await api.post<RAGQueryResponse>('/api/rag/ask', {
       question,
       user_context: userContext,
+      conversation_history: conversationHistory,
     })
     return response.data
   },

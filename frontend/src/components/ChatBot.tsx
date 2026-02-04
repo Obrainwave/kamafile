@@ -103,6 +103,14 @@ export default function ChatBot() {
     }
   }, [isLoading]);
 
+  // Build conversation history for RAG context (last 6 messages)
+  const getConversationHistory = () => {
+    return messages.slice(-6).map((msg) => ({
+      role: msg.sender === "user" ? ("user" as const) : ("assistant" as const),
+      content: msg.text,
+    }));
+  };
+
   // Listen for custom event to open chat from other components
   useEffect(() => {
     const handleOpenChat = () => {
@@ -187,7 +195,11 @@ export default function ChatBot() {
 
         // Use RAG for tax questions
         animateLoadingSteps();
-        const ragResponse = await ragAPI.ask(title, userContext);
+        const ragResponse = await ragAPI.ask(
+          title,
+          userContext,
+          getConversationHistory(),
+        );
 
         const botMessage: Message = {
           id: (Date.now() + 1).toString(),
@@ -346,7 +358,11 @@ export default function ChatBot() {
 
           // Use RAG for tax questions
           animateLoadingSteps();
-          const ragResponse = await ragAPI.ask(userInput, userContext);
+          const ragResponse = await ragAPI.ask(
+            userInput,
+            userContext,
+            getConversationHistory(),
+          );
 
           const botMessage: Message = {
             id: (Date.now() + 1).toString(),
@@ -395,7 +411,11 @@ export default function ChatBot() {
 
           // Use RAG even for general questions after onboarding
           animateLoadingSteps();
-          const ragResponse = await ragAPI.ask(userInput, userContext);
+          const ragResponse = await ragAPI.ask(
+            userInput,
+            userContext,
+            getConversationHistory(),
+          );
 
           const botMessage: Message = {
             id: (Date.now() + 1).toString(),
@@ -442,7 +462,11 @@ export default function ChatBot() {
 
           // Use RAG for all typed messages (greetings, questions, etc.)
           animateLoadingSteps();
-          const ragResponse = await ragAPI.ask(userInput, userContext);
+          const ragResponse = await ragAPI.ask(
+            userInput,
+            userContext,
+            getConversationHistory(),
+          );
 
           const botMessage: Message = {
             id: (Date.now() + 1).toString(),

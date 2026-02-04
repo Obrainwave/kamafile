@@ -91,38 +91,29 @@ class RAGQueryService:
     async def process_query(
         self,
         query: str,
-        user_context: Optional[Dict[str, Any]] = None
+        user_context: Optional[Dict[str, Any]] = None,
+        conversation_history: Optional[List[Dict[str, str]]] = None
     ) -> Dict[str, Any]:
         """
         Process a user query through the RAG pipeline
         
         Steps:
-        1. "Think" (RagController): Analyze intent and plan
+        1. "Think" (RagController): Analyze intent and plan (with conversation context)
         2. Execute Plan:
            - Search: Hybrid Search (Top 25) -> Rerank (Top 5) -> Generate
            - Clarify: Return clarification question
            - Chitchat: Return direct response
         """
         try:
-            # Step 1: The "Thinker" Layer
-            decision = await self.rag_controller.think(query)
+            # Step 1: The "Thinker" Layer (now with conversation context)
+            decision = await self.rag_controller.think(query, conversation_history)
             logger.info(f"Thinker decision: {decision.intent}")
             
-            # Handle Non-Search Intents
-            if decision.intent == 'clarify':
-                return {
-                    'answer': decision.clarification_question,
-                    'citations': [],
-                    'confidence': 'high',
-                    'intent': 'clarify',
-                    'retrieved_chunks': 0,
-                    'chunk_scores': []
-                }
-            
-            elif decision.intent in ['chitchat', 'direct_answer']:
+            # Handle Non-Search Intents (conceptual, chitchat, off_topic)
+            if decision.intent in ['conceptual', 'chitchat', 'off_topic']:
                 return {
                     'answer': decision.direct_response,
-                    'citations': [],
+                    'citations': [],  # Never show citations for these intents
                     'confidence': 'high',
                     'intent': decision.intent,
                     'retrieved_chunks': 0,
@@ -217,8 +208,62 @@ class RAGQueryService:
                 response_style=decision.response_style  # Pass concise/detailed from Thinker
             )
             
-            # Step 6: Extract citations
-            citations = self._extract_citations(top_chunks)
+            # Step 6: Extract citations - but ONLY if answer appears to use documents
+            # Check if the answer is a general knowledge response (basic definitions)
+            # OR an off-topic redirect that doesn't use the documents
+            # OR an opinion/philosophical response
+            answer_text = answer_result['answer'].lower()
+            no_citation_indicators = [
+                # General knowledge definitions
+                'tax is a mandatory',
+                'tax is a compulsory',
+                'tax is a levy',
+                'generally speaking',
+                'in general terms',
+                'by definition',
+                'think of it as',
+                "my records currently focus on",
+                "my current records",
+                # Off-topic redirects (football, etc.)
+                "i'm your tax person",
+                "not your sports",
+                "tax-deductible",
+                "i can help with tax",
+                "tax questions can i",
+                "i don't have information on",
+                "outside my expertise",
+                "not something i can help with",
+                "my expertise is in tax",
+                # Opinion/philosophical responses
+                "my take is",
+                "my take on",
+                "in my view",
+                "i believe",
+                "i think",
+                "civic duty",
+                "social contract",
+                "fundamental question",
+                "it's the fuel for",
+                "bedrock of",
+                "that's a great question",
+                "that's an interesting",
+                # Missing information responses
+                "don't have the information",
+                "don't have that specific information",
+                "no information",
+                "not in my records",
+                "records don't cover",
+                "unable to find",
+                "don't have details",
+            ]
+            
+            # If answer seems to be general knowledge, off-topic, or opinion, don't show misleading citations
+            skip_citations = any(indicator in answer_text for indicator in no_citation_indicators)
+            
+            if skip_citations:
+                citations = []  # Don't show citations for general knowledge answers
+            else:
+                citations = self._extract_citations(top_chunks)
             
             return {
                 'answer': answer_result['answer'],

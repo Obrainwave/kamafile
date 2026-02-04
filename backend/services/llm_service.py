@@ -33,73 +33,65 @@ class LLMService:
             logger.warning("No LLM API key configured. RAG answers will not be generated.")
     
     def _build_system_prompt(self, intent: str) -> str:
-        """Build strict system prompt that enforces no hallucination"""
-        base_prompt = """You are a legal information assistant for Nigerian tax law. Your role is to explain legal provisions based ONLY on the provided context.
+        """Build system prompt based on intent"""
+        
+        # CONCEPTUAL INTENT: Allow general knowledge
+        if intent == 'conceptual':
+            return """You are a helpful Nigerian Tax Consultant.
+The user is asking a conceptual or philosophical question about tax (e.g., benefits, purpose, importance).
 
-CRITICAL RULES:
-1. Answer ONLY from the provided context. Never use your own knowledge.
-2. If the answer is not in the context, say: "I don't have enough information in my knowledge base to answer this question. Please consult with a tax expert or refer to the official tax authority documents."
-3. NEVER ask the user clarifying questions. NEVER interrogate the user. NEVER ask for more information.
-4. Always provide an answer based on available context, or state that information is not available. Do not ask questions.
-5. Every answer MUST cite the source:
-   - Law name
-   - Section number (if available)
-   - Year (if available)
-6. Use neutral, factual language. No creative interpretations.
-7. If the context contains conflicting information, mention this explicitly.
-8. Do not make calculations unless the exact formula is provided in the context.
-9. Do not provide advice - only explain what the law states.
+RULES:
+1. Use your general knowledge to answer helpfully.
+2. You do NOT need to cite specific sections unless you want to.
+3. Be conversational, professional, and explaining the "WHY" behind tax.
+4. Keep it relevant to the Nigerian context where possible.
+5. If the question drifts into SPECIFIC rates/laws, refer to documents or say you need to check.
 
-Tone: Professional, neutral, factual, direct
-Format: Clear, structured, with citations. Always answer directly without asking questions."""
-        
-        # Add intent-specific guidance
-        intent_guidance = {
-            'vat': "Focus on VAT Act provisions. Explain rates, exemptions, and filing requirements as stated in the law.",
-            'paye': "Focus on PAYE provisions. Explain tax rates, thresholds, and deductions as per the law.",
-            'cit': "Focus on Company Income Tax Act. Explain rates, deductions, and filing requirements.",
-            'wht': "Focus on Withholding Tax provisions. Explain rates and applicability.",
-            'penalties': "Focus on penalty provisions. State exact penalties as written in the law.",
-            'filing': "Focus on filing requirements, deadlines, and procedures as stated in the law.",
-        }
-        
-        if intent in intent_guidance:
-            base_prompt += f"\n\n{intent_guidance[intent]}"
-        
-        return base_prompt
+Tone: Friendly, educational, professional."""
+
+        # STRICT SEARCH INTENT (and others): Documents ONLY
+        return """You are a Nigerian tax information assistant. You provide information ONLY from the documents given to you.
+
+STRICT RULES - NO EXCEPTIONS:
+1. Answer ONLY using information from the provided documents
+2. If the documents don't contain the answer, say simply: "I currently don't have the information to guide you on this." or "I don't have that specific information in my records yet."
+3. Do NOT explain what your documents *do* contain (e.g., "The documents discuss X, Y...") - it sounds robotic.
+4. NEVER guess, assume, or use external knowledge
+5. NEVER give advice like "you should..." or "you'll need to..."
+6. State ONLY what the documents explicitly say
+
+EXAMPLES:
+- BAD: "To start a business, you'll need a TIN..." (guessing)
+- BAD: "I don't have that info. My records only cover Withholding Tax..." (too robotic)
+- GOOD: "I currently don't have the information to guide you on business registration."
+- GOOD: "My records don't cover VAT rates at the moment."
+
+TONE: Helpful, simple, direct.
+FORMAT: Brief statements."""
     
     def _build_user_prompt(self, query: str, context: str, response_style: str = "detailed") -> str:
         """Build user prompt with context"""
         if response_style == "concise":
-            return f"""Context from legal documents:
-
+            return f"""Documents available:
 {context}
 
 ---
 
-Question: {query}
+User question: {query}
 
-Instructions:
-1. Give a BRIEF, DIRECT answer (2-3 sentences maximum).
-2. For definitions: state the meaning clearly in one sentence, cite the source.
-3. No bullet points or detailed explanations for simple questions.
-4. Format: "[Term] means [definition]. [Source: Law Name, Section X]"
-5. If the answer is not in the context, say so briefly."""
+Answer in 1-2 sentences using ONLY information from the documents above. If the documents don't have the answer, say "I don't have that specific information in my records." """
         else:
-            return f"""Context from legal documents:
-
+            return f"""Documents available:
 {context}
 
 ---
 
-Question: {query}
+User question: {query}
 
-Instructions:
-1. Answer the question using ONLY the information from the context above.
-2. Cite the source using the format: [Law Name (Year), Section X – Title]
-3. If the answer is not in the context, state that you don't have enough information.
-4. Be precise and factual.
-5. DO NOT ask the user any questions. DO NOT ask for clarification. Just answer based on available context or state that information is not available."""
+Answer using ONLY the documents above:
+- State what the documents say
+- If the documents don't cover this topic, say "I don't have that information in my current records"
+- Don't guess or add information not in the documents"""
     
     async def generate_answer(
         self,
@@ -131,7 +123,7 @@ Instructions:
             user_prompt = self._build_user_prompt(query, context, response_style)
             
             # Adjust max_tokens based on response style
-            max_tokens = 300 if response_style == "concise" else 1000
+            max_tokens = 200 if response_style == "concise" else 400
             
             messages = [
                 {"role": "system", "content": system_prompt},

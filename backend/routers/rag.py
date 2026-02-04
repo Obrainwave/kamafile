@@ -18,10 +18,21 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/rag", tags=["rag"])
 
 
+class ConversationMessage(BaseModel):
+    """Single message in conversation history"""
+    role: str = Field(..., description="'user' or 'assistant'")
+    content: str = Field(..., description="Message content")
+
+
 class RAGQueryRequest(BaseModel):
     """Request model for RAG queries"""
     question: str = Field(..., min_length=1, max_length=1000, description="User's tax question")
     user_context: Optional[Dict[str, Any]] = Field(None, description="Optional user context (user_type, state, etc.)")
+    conversation_history: Optional[List[ConversationMessage]] = Field(
+        None, 
+        description="Previous messages for context (last 5-10 recommended)",
+        max_length=10
+    )
 
 
 class Citation(BaseModel):
@@ -83,9 +94,18 @@ async def ask_question(
         rag_service = get_rag_query_service()
         
         # Process query
+        # Convert conversation history to list of dicts for the service
+        conversation_history = None
+        if request.conversation_history:
+            conversation_history = [
+                {"role": msg.role, "content": msg.content}
+                for msg in request.conversation_history
+            ]
+        
         result = await rag_service.process_query(
             query=request.question,
-            user_context=request.user_context
+            user_context=request.user_context,
+            conversation_history=conversation_history
         )
         
         # Log the result
