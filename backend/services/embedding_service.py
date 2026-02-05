@@ -5,6 +5,7 @@ Uses OpenAI API for dense embeddings
 from typing import List, Dict, Optional
 import logging
 import os
+import threading
 
 logger = logging.getLogger(__name__)
 
@@ -124,27 +125,42 @@ class EmbeddingService:
         return await loop.run_in_executor(None, _run_sync)
 
     async def embed_sparse_batch(self, texts: List[str]) -> List[Dict[int, float]]:
-        """Generate sparse embeddings for multiple texts (SPLADE) - Runs in Executor"""
+        """Generate sparse embeddings for multiple texts (SPLADE) - Runs in Executor
+        
+        Note: FastEmbed on CPU is slow and can hang with large batches.
+        We process in small batches of 10 to avoid memory issues.
+        """
         if not self.sparse_model:
             return [{} for _ in texts]
         
         import asyncio
         loop = asyncio.get_running_loop()
         
-        def _run_sync():
-            try:
-                embeddings = list(self.sparse_model.embed(texts))
-                results = []
-                for sparse_vector in embeddings:
-                    indices = sparse_vector.indices.tolist()
-                    values = sparse_vector.values.tolist()
-                    results.append(dict(zip(indices, values)))
-                return results
-            except Exception as e:
-                logger.error(f"Error generating sparse batch embeddings: {e}")
-                return [{} for _ in texts]
-
-        return await loop.run_in_executor(None, _run_sync)
+        # Process in small batches to avoid hanging
+        BATCH_SIZE = 10
+        all_results = []
+        
+        for i in range(0, len(texts), BATCH_SIZE):
+            batch = texts[i:i + BATCH_SIZE]
+            print(f">>> Sparse embedding batch {i//BATCH_SIZE + 1}/{(len(texts)-1)//BATCH_SIZE + 1} ({len(batch)} texts)", flush=True)
+            
+            def _run_sync_batch(batch_texts=batch):
+                try:
+                    embeddings = list(self.sparse_model.embed(batch_texts))
+                    results = []
+                    for sparse_vector in embeddings:
+                        indices = sparse_vector.indices.tolist()
+                        values = sparse_vector.values.tolist()
+                        results.append(dict(zip(indices, values)))
+                    return results
+                except Exception as e:
+                    logger.error(f"Error generating sparse batch embeddings: {e}")
+                    return [{} for _ in batch_texts]
+            
+            batch_results = await loop.run_in_executor(None, _run_sync_batch)
+            all_results.extend(batch_results)
+        
+        return all_results
 
     def get_embedding_dimension(self) -> int:
         """Return the dimension of the embedding model"""
@@ -162,11 +178,13 @@ class EmbeddingService:
 
 # Global embedding service instance
 _embedding_service: Optional[EmbeddingService] = None
+_service_lock = threading.Lock()
 
 
 def get_embedding_service() -> EmbeddingService:
-    """Get or create embedding service instance"""
+    """Get or create embedding service instance (thread-safe)"""
     global _embedding_service
-    if _embedding_service is None:
-        _embedding_service = EmbeddingService()
+    with _service_lock:
+        if _embedding_service is None:
+            _embedding_service = EmbeddingService()
     return _embedding_service

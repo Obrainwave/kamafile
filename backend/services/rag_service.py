@@ -557,12 +557,17 @@ async def process_and_index_document(
         chunk_texts = [chunk['text'] for chunk in chunks]
         
         # Dense embeddings
+        print(f">>> STARTING DENSE EMBEDDINGS (OpenAI) for {len(chunk_texts)} chunks...", flush=True)
         embeddings = await embedding_service.embed_batch(chunk_texts)
+        print(f">>> DENSE EMBEDDINGS DONE: {len(embeddings)} vectors", flush=True)
         
         # Sparse embeddings (for Hybrid Search)
+        print(f">>> STARTING SPARSE EMBEDDINGS (FastEmbed) for {len(chunk_texts)} chunks...", flush=True)
         sparse_embeddings = await embedding_service.embed_sparse_batch(chunk_texts)
+        print(f">>> SPARSE EMBEDDINGS DONE: {len(sparse_embeddings)} vectors", flush=True)
         
         # Step 3: Store in vector database
+        print(f">>> STORING {len(chunks)} CHUNKS IN VECTOR DB...", flush=True)
         vector_store = get_vector_store(vector_size=vector_size)
         vector_store.add_chunks(
             chunks=chunks,
@@ -570,6 +575,7 @@ async def process_and_index_document(
             document_id=document_id,
             sparse_embeddings=sparse_embeddings  # Pass sparse vectors
         )
+        print(f">>> VECTOR STORE DONE!", flush=True)
         
         return {
             "markdown_content": markdown_content,

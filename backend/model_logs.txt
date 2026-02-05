@@ -1,0 +1,78 @@
+﻿
+2026-02-05 
+10:59:25,810 - service
+s.embedding_service - 
+INFO - OpenAI 
+embedding client 
+initialized 
+successfully
+2026-02-05 
+10:59:25,810 - service
+s.embedding_service - 
+INFO - Loading sparse 
+embedding model: prith
+ivida/Splade_PP_en_v1
+2026-02-05 
+10:59:30,224 - service
+s.embedding_service - 
+INFO - Sparse 
+embedding model 
+loaded successfully
+2026-02-05 
+10:59:30,282 - 
+services.vector_store 
+- INFO - Vector store 
+initialized (Qdrant 
+at qdrant:6333)
+2026-02-05 
+11:05:43,309 - service
+s.embedding_service - 
+INFO - OpenAI 
+embedding client 
+initialized 
+successfully
+2026-02-05 
+11:05:43,309 - service
+s.embedding_service - 
+INFO - Loading sparse 
+embedding model: prith
+ivida/Splade_PP_en_v1
+2026-02-05 
+11:05:50,970 - service
+s.embedding_service - 
+INFO - Sparse 
+embedding model 
+loaded successfully
+2026-02-05 
+11:05:51,082 - 
+services.vector_store 
+- INFO - Vector store 
+initialized (Qdrant 
+at qdrant:6333)
+2026-02-05 
+11:13:24,907 - service
+s.embedding_service - 
+INFO - OpenAI 
+embedding client 
+initialized 
+successfully
+2026-02-05 
+11:13:24,912 - service
+s.embedding_service - 
+INFO - Loading sparse 
+embedding model: prith
+ivida/Splade_PP_en_v1
+2026-02-05 
+11:13:31,726 - service
+s.embedding_service - 
+INFO - Sparse 
+embedding model 
+loaded successfully
+2026-02-05 
+11:13:31,871 - 
+services.vector_store 
+- INFO - Vector store 
+initialized (Qdrant 
+at qdrant:6333)
+
+

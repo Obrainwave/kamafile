@@ -1,0 +1,240 @@
+﻿2026-02-05 11:28:37,091 INFO sqlalchemy.engine.Engine select pg_catalog.version()
+docker : 2026-02-05 
+11:28:37,091 - sqlalch
+emy.engine.Engine - 
+INFO - select 
+pg_catalog.version()
+At line:1 char:1
++ docker logs 
+kamafile_backend 2>&1 
+| Select-Object 
+-First 50 | Out-Fil 
+...
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: (2026-02-05   
+  11:2...talog.ver    
+sion():String) []    
+, RemoteException
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+2026-02-05 11:28:37,098 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-02-05 
+11:28:37,098 - sqlalch
+emy.engine.Engine - 
+INFO - [raw sql] ()
+2026-02-05 11:28:37,114 INFO sqlalchemy.engine.Engine select current_schema()
+2026-02-05 
+11:28:37,114 - sqlalch
+emy.engine.Engine - 
+INFO - select 
+current_schema()
+2026-02-05 11:28:37,120 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-02-05 
+11:28:37,120 - sqlalch
+emy.engine.Engine - 
+INFO - [raw sql] ()
+2026-02-05 
+11:28:37,148 - sqlalch
+emy.engine.Engine - 
+INFO - show standard_c
+onforming_strings
+2026-02-05 
+11:28:37,148 - sqlalch
+emy.engine.Engine - 
+INFO - [raw sql] ()
+2026-02-05 11:28:37,148 INFO sqlalchemy.engine.Engine show standard_conforming_strings
+2026-02-05 11:28:37,148 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-02-05 11:28:37,151 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-02-05 
+11:28:37,151 - sqlalch
+emy.engine.Engine - 
+INFO - BEGIN 
+(implicit)
+2026-02-05 11:28:37,186 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-02-05 
+11:28:37,186 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT pg_catal
+og.pg_class.relname 
+FROM 
+pg_catalog.pg_class 
+JOIN pg_catalog.pg_nam
+espace ON pg_catalog.p
+g_namespace.oid = pg_c
+atalog.pg_class.relnam
+espace 
+WHERE pg_catalog.pg_cl
+ass.relname = 
+$1::VARCHAR AND pg_cat
+alog.pg_class.relkind 
+= ANY 
+(ARRAY[$2::VARCHAR, 
+$3::VARCHAR, 
+$4::VARCHAR, 
+$5::VARCHAR, 
+$6::VARCHAR]) AND pg_c
+atalog.pg_table_is_vis
+ible(pg_catalog.pg_cla
+ss.oid) AND pg_catalog
+.pg_namespace.nspname 
+!= $7::VARCHAR
+2026-02-05 
+11:28:37,186 - sqlalch
+emy.engine.Engine - 
+INFO - [generated in 
+0.00086s] ('users', 
+'r', 'p', 'f', 'v', 
+'m', 'pg_catalog')
+2026-02-05 11:28:37,186 INFO sqlalchemy.engine.Engine [generated in 0.00086s] ('users', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-02-05 11:28:37,252 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-02-05 
+11:28:37,252 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT pg_catal
+og.pg_class.relname 
+FROM 
+pg_catalog.pg_class 
+JOIN pg_catalog.pg_nam
+espace ON pg_catalog.p
+g_namespace.oid = pg_c
+atalog.pg_class.relnam
+espace 
+WHERE pg_catalog.pg_cl
+ass.relname = 
+$1::VARCHAR AND pg_cat
+alog.pg_class.relkind 
+= ANY 
+(ARRAY[$2::VARCHAR, 
+$3::VARCHAR, 
+$4::VARCHAR, 
+$5::VARCHAR, 
+$6::VARCHAR]) AND pg_c
+atalog.pg_table_is_vis
+ible(pg_catalog.pg_cla
+ss.oid) AND pg_catalog
+.pg_namespace.nspname 
+!= $7::VARCHAR
+2026-02-05 11:28:37,252 INFO sqlalchemy.engine.Engine [cached since 0.06694s ago] ('admin_logs', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-02-05 
+11:28:37,252 - sqlalch
+emy.engine.Engine - 
+INFO - [cached since 
+0.06694s ago] 
+('admin_logs', 'r', 
+'p', 'f', 'v', 'm', 
+'pg_catalog')
+2026-02-05 
+11:28:37,265 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT pg_catal
+og.pg_class.relname 
+FROM 
+pg_catalog.pg_class 
+JOIN pg_catalog.pg_nam
+espace ON pg_catalog.p
+g_namespace.oid = pg_c
+atalog.pg_class.relnam
+espace 
+WHERE pg_catalog.pg_cl
+ass.relname = 
+$1::VARCHAR AND pg_cat
+alog.pg_class.relkind 
+= ANY 
+(ARRAY[$2::VARCHAR, 
+$3::VARCHAR, 
+$4::VARCHAR, 
+$5::VARCHAR, 
+$6::VARCHAR]) AND pg_c
+atalog.pg_table_is_vis
+ible(pg_catalog.pg_cla
+ss.oid) AND pg_catalog
+.pg_namespace.nspname 
+!= $7::VARCHAR
+2026-02-05 11:28:37,265 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-02-05 11:28:37,265 INFO sqlalchemy.engine.Engine [cached since 0.07955s ago] ('banners', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-02-05 
+11:28:37,265 - sqlalch
+emy.engine.Engine - 
+INFO - [cached since 
+0.07955s ago] 
+('banners', 'r', 'p', 
+'f', 'v', 'm', 
+'pg_catalog')
+2026-02-05 11:28:37,267 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
+2026-02-05 
+11:28:37,267 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT pg_catal
+og.pg_class.relname 
+FROM 
+pg_catalog.pg_class 
+JOIN pg_catalog.pg_nam
+espace ON pg_catalog.p
+g_namespace.oid = pg_c
+atalog.pg_class.relnam
+espace 
+WHERE pg_catalog.pg_cl
+ass.relname = 
+$1::VARCHAR AND pg_cat
+alog.pg_class.relkind 
+= ANY 
+(ARRAY[$2::VARCHAR, 
+$3::VARCHAR, 
+$4::VARCHAR, 
+$5::VARCHAR, 
+$6::VARCHAR]) AND pg_c
+atalog.pg_table_is_vis
+ible(pg_catalog.pg_cla
+ss.oid) AND pg_catalog
+.pg_namespace.nspname 
+!= $7::VARCHAR
+2026-02-05 11:28:37,267 INFO sqlalchemy.engine.Engine [cached since 0.08212s ago] ('conversation_sessions', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-02-05 
+11:28:37,267 - sqlalch
+emy.engine.Engine - 
+INFO - [cached since 
+0.08212s ago] ('conver
+sation_sessions', 
+'r', 'p', 'f', 'v', 
+'m', 'pg_catalog')
+2026-02-05 
+11:28:37,270 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT pg_catal
+og.pg_class.relname 
+FROM 
+pg_catalog.pg_class 
+JOIN pg_catalog.pg_nam
+espace ON pg_catalog.p
+g_namespace.oid = pg_c
+atalog.pg_class.relnam
+espace 
+WHERE pg_catalog.pg_cl
+ass.relname = 
+$1::VARCHAR AND pg_cat
+alog.pg_class.relkind 
+= ANY 
+(ARRAY[$2::VARCHAR, 
+$3::VARCHAR, 
+$4::VARCHAR, 
+$5::VARCHAR, 
+$6::VARCHAR]) AND pg_c
+atalog.pg_table_is_vis
+ible(pg_catalog.pg_cla
+ss.oid) AND pg_catalog
+.pg_namespace.nspname 
+!= $7::VARCHAR
+2026-02-05 11:28:37,270 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 

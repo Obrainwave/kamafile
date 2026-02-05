@@ -18,6 +18,10 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
+# Pre-download the sparse embedding model during build time
+# This ensures the model is already cached when the container starts (avoids ~400MB download at runtime)
+RUN python3 -c "from fastembed import SparseTextEmbedding; SparseTextEmbedding(model_name='prithivida/Splade_PP_en_v1')"
+
 # Copy application code
 COPY . .
 

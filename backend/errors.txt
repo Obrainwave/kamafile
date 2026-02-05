@@ -1,0 +1,3317 @@
+﻿
+2026-02-05 
+11:28:44,005 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at, document_me
+tadata_catalog_1.id 
+AS id_1, document_meta
+data_catalog_1.doc_id,
+ document_metadata_cat
+alog_1.file_name AS 
+file_name_1, document_
+metadata_catalog_1.fil
+e_name_normalized, doc
+ument_metadata_catalog
+_1.source_title, docum
+ent_metadata_catalog_1
+.source_file_type, doc
+ument_metadata_catalog
+_1.issuing_body, docum
+ent_metadata_catalog_1
+.country, document_met
+adata_catalog_1.jurisd
+iction_level, document
+_metadata_catalog_1.kn
+owledge_domain, docume
+nt_metadata_catalog_1.
+tax_type, document_met
+adata_catalog_1.taxpay
+er_type, document_meta
+data_catalog_1.doc_cat
+egory, document_metada
+ta_catalog_1.effective
+_date, document_metada
+ta_catalog_1.expiry_da
+te, document_metadata_
+catalog_1.publication_
+date, document_metadat
+a_catalog_1.version, d
+ocument_metadata_catal
+og_1.supersedes_doc_id
+, document_metadata_ca
+talog_1.lifecycle_stag
+e, document_metadata_c
+atalog_1.authority_lev
+el, document_metadata_
+catalog_1.intended_usa
+ge, document_metadata_
+catalog_1.topic_tags, 
+document_metadata_cata
+log_1.status, document
+_metadata_catalog_1.la
+nguage, document_metad
+ata_catalog_1.notes, d
+ocument_metadata_catal
+og_1.created_at AS 
+created_at_1, document
+_metadata_catalog_1.up
+dated_at AS 
+updated_at_1 
+2026-02-05 
+11:28:44,005 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at, document_me
+tadata_catalog_1.id 
+AS id_1, document_meta
+data_catalog_1.doc_id,
+ document_metadata_cat
+alog_1.file_name AS 
+file_name_1, document_
+metadata_catalog_1.fil
+e_name_normalized, doc
+ument_metadata_catalog
+_1.source_title, docum
+ent_metadata_catalog_1
+.source_file_type, doc
+ument_metadata_catalog
+_1.issuing_body, docum
+ent_metadata_catalog_1
+.country, document_met
+adata_catalog_1.jurisd
+iction_level, document
+_metadata_catalog_1.kn
+owledge_domain, docume
+nt_metadata_catalog_1.
+tax_type, document_met
+adata_catalog_1.taxpay
+er_type, document_meta
+data_catalog_1.doc_cat
+egory, document_metada
+ta_catalog_1.effective
+_date, document_metada
+ta_catalog_1.expiry_da
+te, document_metadata_
+catalog_1.publication_
+date, document_metadat
+a_catalog_1.version, d
+ocument_metadata_catal
+og_1.supersedes_doc_id
+, document_metadata_ca
+talog_1.lifecycle_stag
+e, document_metadata_c
+atalog_1.authority_lev
+el, document_metadata_
+catalog_1.intended_usa
+ge, document_metadata_
+catalog_1.topic_tags, 
+document_metadata_cata
+log_1.status, document
+_metadata_catalog_1.la
+nguage, document_metad
+ata_catalog_1.notes, d
+ocument_metadata_catal
+og_1.created_at AS 
+created_at_1, document
+_metadata_catalog_1.up
+dated_at AS 
+updated_at_1 
+2026-02-05 
+11:28:44,026 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:28:44,026 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:28:44,049 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:28:44,049 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:28:46,861 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at, document_me
+tadata_catalog_1.id 
+AS id_1, document_meta
+data_catalog_1.doc_id,
+ document_metadata_cat
+alog_1.file_name AS 
+file_name_1, document_
+metadata_catalog_1.fil
+e_name_normalized, doc
+ument_metadata_catalog
+_1.source_title, docum
+ent_metadata_catalog_1
+.source_file_type, doc
+ument_metadata_catalog
+_1.issuing_body, docum
+ent_metadata_catalog_1
+.country, document_met
+adata_catalog_1.jurisd
+iction_level, document
+_metadata_catalog_1.kn
+owledge_domain, docume
+nt_metadata_catalog_1.
+tax_type, document_met
+adata_catalog_1.taxpay
+er_type, document_meta
+data_catalog_1.doc_cat
+egory, document_metada
+ta_catalog_1.effective
+_date, document_metada
+ta_catalog_1.expiry_da
+te, document_metadata_
+catalog_1.publication_
+date, document_metadat
+a_catalog_1.version, d
+ocument_metadata_catal
+og_1.supersedes_doc_id
+, document_metadata_ca
+talog_1.lifecycle_stag
+e, document_metadata_c
+atalog_1.authority_lev
+el, document_metadata_
+catalog_1.intended_usa
+ge, document_metadata_
+catalog_1.topic_tags, 
+document_metadata_cata
+log_1.status, document
+_metadata_catalog_1.la
+nguage, document_metad
+ata_catalog_1.notes, d
+ocument_metadata_catal
+og_1.created_at AS 
+created_at_1, document
+_metadata_catalog_1.up
+dated_at AS 
+updated_at_1 
+2026-02-05 
+11:28:46,861 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at, document_me
+tadata_catalog_1.id 
+AS id_1, document_meta
+data_catalog_1.doc_id,
+ document_metadata_cat
+alog_1.file_name AS 
+file_name_1, document_
+metadata_catalog_1.fil
+e_name_normalized, doc
+ument_metadata_catalog
+_1.source_title, docum
+ent_metadata_catalog_1
+.source_file_type, doc
+ument_metadata_catalog
+_1.issuing_body, docum
+ent_metadata_catalog_1
+.country, document_met
+adata_catalog_1.jurisd
+iction_level, document
+_metadata_catalog_1.kn
+owledge_domain, docume
+nt_metadata_catalog_1.
+tax_type, document_met
+adata_catalog_1.taxpay
+er_type, document_meta
+data_catalog_1.doc_cat
+egory, document_metada
+ta_catalog_1.effective
+_date, document_metada
+ta_catalog_1.expiry_da
+te, document_metadata_
+catalog_1.publication_
+date, document_metadat
+a_catalog_1.version, d
+ocument_metadata_catal
+og_1.supersedes_doc_id
+, document_metadata_ca
+talog_1.lifecycle_stag
+e, document_metadata_c
+atalog_1.authority_lev
+el, document_metadata_
+catalog_1.intended_usa
+ge, document_metadata_
+catalog_1.topic_tags, 
+document_metadata_cata
+log_1.status, document
+_metadata_catalog_1.la
+nguage, document_metad
+ata_catalog_1.notes, d
+ocument_metadata_catal
+og_1.created_at AS 
+created_at_1, document
+_metadata_catalog_1.up
+dated_at AS 
+updated_at_1 
+2026-02-05 
+11:28:46,879 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:28:46,879 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:28:46,913 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:28:46,913 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:28:52,132 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at, document_me
+tadata_catalog_1.id 
+AS id_1, document_meta
+data_catalog_1.doc_id,
+ document_metadata_cat
+alog_1.file_name AS 
+file_name_1, document_
+metadata_catalog_1.fil
+e_name_normalized, doc
+ument_metadata_catalog
+_1.source_title, docum
+ent_metadata_catalog_1
+.source_file_type, doc
+ument_metadata_catalog
+_1.issuing_body, docum
+ent_metadata_catalog_1
+.country, document_met
+adata_catalog_1.jurisd
+iction_level, document
+_metadata_catalog_1.kn
+owledge_domain, docume
+nt_metadata_catalog_1.
+tax_type, document_met
+adata_catalog_1.taxpay
+er_type, document_meta
+data_catalog_1.doc_cat
+egory, document_metada
+ta_catalog_1.effective
+_date, document_metada
+ta_catalog_1.expiry_da
+te, document_metadata_
+catalog_1.publication_
+date, document_metadat
+a_catalog_1.version, d
+ocument_metadata_catal
+og_1.supersedes_doc_id
+, document_metadata_ca
+talog_1.lifecycle_stag
+e, document_metadata_c
+atalog_1.authority_lev
+el, document_metadata_
+catalog_1.intended_usa
+ge, document_metadata_
+catalog_1.topic_tags, 
+document_metadata_cata
+log_1.status, document
+_metadata_catalog_1.la
+nguage, document_metad
+ata_catalog_1.notes, d
+ocument_metadata_catal
+og_1.created_at AS 
+created_at_1, document
+_metadata_catalog_1.up
+dated_at AS 
+updated_at_1 
+2026-02-05 
+11:28:52,132 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at, document_me
+tadata_catalog_1.id 
+AS id_1, document_meta
+data_catalog_1.doc_id,
+ document_metadata_cat
+alog_1.file_name AS 
+file_name_1, document_
+metadata_catalog_1.fil
+e_name_normalized, doc
+ument_metadata_catalog
+_1.source_title, docum
+ent_metadata_catalog_1
+.source_file_type, doc
+ument_metadata_catalog
+_1.issuing_body, docum
+ent_metadata_catalog_1
+.country, document_met
+adata_catalog_1.jurisd
+iction_level, document
+_metadata_catalog_1.kn
+owledge_domain, docume
+nt_metadata_catalog_1.
+tax_type, document_met
+adata_catalog_1.taxpay
+er_type, document_meta
+data_catalog_1.doc_cat
+egory, document_metada
+ta_catalog_1.effective
+_date, document_metada
+ta_catalog_1.expiry_da
+te, document_metadata_
+catalog_1.publication_
+date, document_metadat
+a_catalog_1.version, d
+ocument_metadata_catal
+og_1.supersedes_doc_id
+, document_metadata_ca
+talog_1.lifecycle_stag
+e, document_metadata_c
+atalog_1.authority_lev
+el, document_metadata_
+catalog_1.intended_usa
+ge, document_metadata_
+catalog_1.topic_tags, 
+document_metadata_cata
+log_1.status, document
+_metadata_catalog_1.la
+nguage, document_metad
+ata_catalog_1.notes, d
+ocument_metadata_catal
+og_1.created_at AS 
+created_at_1, document
+_metadata_catalog_1.up
+dated_at AS 
+updated_at_1 
+2026-02-05 
+11:28:52,197 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:28:52,197 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:28:52,248 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:28:52,248 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:28:57,233 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at, document_me
+tadata_catalog_1.id 
+AS id_1, document_meta
+data_catalog_1.doc_id,
+ document_metadata_cat
+alog_1.file_name AS 
+file_name_1, document_
+metadata_catalog_1.fil
+e_name_normalized, doc
+ument_metadata_catalog
+_1.source_title, docum
+ent_metadata_catalog_1
+.source_file_type, doc
+ument_metadata_catalog
+_1.issuing_body, docum
+ent_metadata_catalog_1
+.country, document_met
+adata_catalog_1.jurisd
+iction_level, document
+_metadata_catalog_1.kn
+owledge_domain, docume
+nt_metadata_catalog_1.
+tax_type, document_met
+adata_catalog_1.taxpay
+er_type, document_meta
+data_catalog_1.doc_cat
+egory, document_metada
+ta_catalog_1.effective
+_date, document_metada
+ta_catalog_1.expiry_da
+te, document_metadata_
+catalog_1.publication_
+date, document_metadat
+a_catalog_1.version, d
+ocument_metadata_catal
+og_1.supersedes_doc_id
+, document_metadata_ca
+talog_1.lifecycle_stag
+e, document_metadata_c
+atalog_1.authority_lev
+el, document_metadata_
+catalog_1.intended_usa
+ge, document_metadata_
+catalog_1.topic_tags, 
+document_metadata_cata
+log_1.status, document
+_metadata_catalog_1.la
+nguage, document_metad
+ata_catalog_1.notes, d
+ocument_metadata_catal
+og_1.created_at AS 
+created_at_1, document
+_metadata_catalog_1.up
+dated_at AS 
+updated_at_1 
+2026-02-05 
+11:28:57,233 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at, document_me
+tadata_catalog_1.id 
+AS id_1, document_meta
+data_catalog_1.doc_id,
+ document_metadata_cat
+alog_1.file_name AS 
+file_name_1, document_
+metadata_catalog_1.fil
+e_name_normalized, doc
+ument_metadata_catalog
+_1.source_title, docum
+ent_metadata_catalog_1
+.source_file_type, doc
+ument_metadata_catalog
+_1.issuing_body, docum
+ent_metadata_catalog_1
+.country, document_met
+adata_catalog_1.jurisd
+iction_level, document
+_metadata_catalog_1.kn
+owledge_domain, docume
+nt_metadata_catalog_1.
+tax_type, document_met
+adata_catalog_1.taxpay
+er_type, document_meta
+data_catalog_1.doc_cat
+egory, document_metada
+ta_catalog_1.effective
+_date, document_metada
+ta_catalog_1.expiry_da
+te, document_metadata_
+catalog_1.publication_
+date, document_metadat
+a_catalog_1.version, d
+ocument_metadata_catal
+og_1.supersedes_doc_id
+, document_metadata_ca
+talog_1.lifecycle_stag
+e, document_metadata_c
+atalog_1.authority_lev
+el, document_metadata_
+catalog_1.intended_usa
+ge, document_metadata_
+catalog_1.topic_tags, 
+document_metadata_cata
+log_1.status, document
+_metadata_catalog_1.la
+nguage, document_metad
+ata_catalog_1.notes, d
+ocument_metadata_catal
+og_1.created_at AS 
+created_at_1, document
+_metadata_catalog_1.up
+dated_at AS 
+updated_at_1 
+2026-02-05 
+11:28:57,267 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:28:57,383 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:28:57,267 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:28:57,383 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:28:58,448 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:28:58,448 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:28:58,942 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at, document_me
+tadata_catalog_1.id 
+AS id_1, document_meta
+data_catalog_1.doc_id,
+ document_metadata_cat
+alog_1.file_name AS 
+file_name_1, document_
+metadata_catalog_1.fil
+e_name_normalized, doc
+ument_metadata_catalog
+_1.source_title, docum
+ent_metadata_catalog_1
+.source_file_type, doc
+ument_metadata_catalog
+_1.issuing_body, docum
+ent_metadata_catalog_1
+.country, document_met
+adata_catalog_1.jurisd
+iction_level, document
+_metadata_catalog_1.kn
+owledge_domain, docume
+nt_metadata_catalog_1.
+tax_type, document_met
+adata_catalog_1.taxpay
+er_type, document_meta
+data_catalog_1.doc_cat
+egory, document_metada
+ta_catalog_1.effective
+_date, document_metada
+ta_catalog_1.expiry_da
+te, document_metadata_
+catalog_1.publication_
+date, document_metadat
+a_catalog_1.version, d
+ocument_metadata_catal
+og_1.supersedes_doc_id
+, document_metadata_ca
+talog_1.lifecycle_stag
+e, document_metadata_c
+atalog_1.authority_lev
+el, document_metadata_
+catalog_1.intended_usa
+ge, document_metadata_
+catalog_1.topic_tags, 
+document_metadata_cata
+log_1.status, document
+_metadata_catalog_1.la
+nguage, document_metad
+ata_catalog_1.notes, d
+ocument_metadata_catal
+og_1.created_at AS 
+created_at_1, document
+_metadata_catalog_1.up
+dated_at AS 
+updated_at_1 
+2026-02-05 
+11:28:58,942 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at, document_me
+tadata_catalog_1.id 
+AS id_1, document_meta
+data_catalog_1.doc_id,
+ document_metadata_cat
+alog_1.file_name AS 
+file_name_1, document_
+metadata_catalog_1.fil
+e_name_normalized, doc
+ument_metadata_catalog
+_1.source_title, docum
+ent_metadata_catalog_1
+.source_file_type, doc
+ument_metadata_catalog
+_1.issuing_body, docum
+ent_metadata_catalog_1
+.country, document_met
+adata_catalog_1.jurisd
+iction_level, document
+_metadata_catalog_1.kn
+owledge_domain, docume
+nt_metadata_catalog_1.
+tax_type, document_met
+adata_catalog_1.taxpay
+er_type, document_meta
+data_catalog_1.doc_cat
+egory, document_metada
+ta_catalog_1.effective
+_date, document_metada
+ta_catalog_1.expiry_da
+te, document_metadata_
+catalog_1.publication_
+date, document_metadat
+a_catalog_1.version, d
+ocument_metadata_catal
+og_1.supersedes_doc_id
+, document_metadata_ca
+talog_1.lifecycle_stag
+e, document_metadata_c
+atalog_1.authority_lev
+el, document_metadata_
+catalog_1.intended_usa
+ge, document_metadata_
+catalog_1.topic_tags, 
+document_metadata_cata
+log_1.status, document
+_metadata_catalog_1.la
+nguage, document_metad
+ata_catalog_1.notes, d
+ocument_metadata_catal
+og_1.created_at AS 
+created_at_1, document
+_metadata_catalog_1.up
+dated_at AS 
+updated_at_1 
+2026-02-05 
+11:29:03,053 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:29:03,072 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at, document_me
+tadata_catalog_1.id 
+AS id_1, document_meta
+data_catalog_1.doc_id,
+ document_metadata_cat
+alog_1.file_name AS 
+file_name_1, document_
+metadata_catalog_1.fil
+e_name_normalized, doc
+ument_metadata_catalog
+_1.source_title, docum
+ent_metadata_catalog_1
+.source_file_type, doc
+ument_metadata_catalog
+_1.issuing_body, docum
+ent_metadata_catalog_1
+.country, document_met
+adata_catalog_1.jurisd
+iction_level, document
+_metadata_catalog_1.kn
+owledge_domain, docume
+nt_metadata_catalog_1.
+tax_type, document_met
+adata_catalog_1.taxpay
+er_type, document_meta
+data_catalog_1.doc_cat
+egory, document_metada
+ta_catalog_1.effective
+_date, document_metada
+ta_catalog_1.expiry_da
+te, document_metadata_
+catalog_1.publication_
+date, document_metadat
+a_catalog_1.version, d
+ocument_metadata_catal
+og_1.supersedes_doc_id
+, document_metadata_ca
+talog_1.lifecycle_stag
+e, document_metadata_c
+atalog_1.authority_lev
+el, document_metadata_
+catalog_1.intended_usa
+ge, document_metadata_
+catalog_1.topic_tags, 
+document_metadata_cata
+log_1.status, document
+_metadata_catalog_1.la
+nguage, document_metad
+ata_catalog_1.notes, d
+ocument_metadata_catal
+og_1.created_at AS 
+created_at_1, document
+_metadata_catalog_1.up
+dated_at AS 
+updated_at_1 
+2026-02-05 
+11:29:03,087 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:29:03,053 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:29:03,072 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at, document_me
+tadata_catalog_1.id 
+AS id_1, document_meta
+data_catalog_1.doc_id,
+ document_metadata_cat
+alog_1.file_name AS 
+file_name_1, document_
+metadata_catalog_1.fil
+e_name_normalized, doc
+ument_metadata_catalog
+_1.source_title, docum
+ent_metadata_catalog_1
+.source_file_type, doc
+ument_metadata_catalog
+_1.issuing_body, docum
+ent_metadata_catalog_1
+.country, document_met
+adata_catalog_1.jurisd
+iction_level, document
+_metadata_catalog_1.kn
+owledge_domain, docume
+nt_metadata_catalog_1.
+tax_type, document_met
+adata_catalog_1.taxpay
+er_type, document_meta
+data_catalog_1.doc_cat
+egory, document_metada
+ta_catalog_1.effective
+_date, document_metada
+ta_catalog_1.expiry_da
+te, document_metadata_
+catalog_1.publication_
+date, document_metadat
+a_catalog_1.version, d
+ocument_metadata_catal
+og_1.supersedes_doc_id
+, document_metadata_ca
+talog_1.lifecycle_stag
+e, document_metadata_c
+atalog_1.authority_lev
+el, document_metadata_
+catalog_1.intended_usa
+ge, document_metadata_
+catalog_1.topic_tags, 
+document_metadata_cata
+log_1.status, document
+_metadata_catalog_1.la
+nguage, document_metad
+ata_catalog_1.notes, d
+ocument_metadata_catal
+og_1.created_at AS 
+created_at_1, document
+_metadata_catalog_1.up
+dated_at AS 
+updated_at_1 
+2026-02-05 
+11:29:03,087 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:29:07,274 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at, document_me
+tadata_catalog_1.id 
+AS id_1, document_meta
+data_catalog_1.doc_id,
+ document_metadata_cat
+alog_1.file_name AS 
+file_name_1, document_
+metadata_catalog_1.fil
+e_name_normalized, doc
+ument_metadata_catalog
+_1.source_title, docum
+ent_metadata_catalog_1
+.source_file_type, doc
+ument_metadata_catalog
+_1.issuing_body, docum
+ent_metadata_catalog_1
+.country, document_met
+adata_catalog_1.jurisd
+iction_level, document
+_metadata_catalog_1.kn
+owledge_domain, docume
+nt_metadata_catalog_1.
+tax_type, document_met
+adata_catalog_1.taxpay
+er_type, document_meta
+data_catalog_1.doc_cat
+egory, document_metada
+ta_catalog_1.effective
+_date, document_metada
+ta_catalog_1.expiry_da
+te, document_metadata_
+catalog_1.publication_
+date, document_metadat
+a_catalog_1.version, d
+ocument_metadata_catal
+og_1.supersedes_doc_id
+, document_metadata_ca
+talog_1.lifecycle_stag
+e, document_metadata_c
+atalog_1.authority_lev
+el, document_metadata_
+catalog_1.intended_usa
+ge, document_metadata_
+catalog_1.topic_tags, 
+document_metadata_cata
+log_1.status, document
+_metadata_catalog_1.la
+nguage, document_metad
+ata_catalog_1.notes, d
+ocument_metadata_catal
+og_1.created_at AS 
+created_at_1, document
+_metadata_catalog_1.up
+dated_at AS 
+updated_at_1 
+2026-02-05 
+11:29:07,274 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at, document_me
+tadata_catalog_1.id 
+AS id_1, document_meta
+data_catalog_1.doc_id,
+ document_metadata_cat
+alog_1.file_name AS 
+file_name_1, document_
+metadata_catalog_1.fil
+e_name_normalized, doc
+ument_metadata_catalog
+_1.source_title, docum
+ent_metadata_catalog_1
+.source_file_type, doc
+ument_metadata_catalog
+_1.issuing_body, docum
+ent_metadata_catalog_1
+.country, document_met
+adata_catalog_1.jurisd
+iction_level, document
+_metadata_catalog_1.kn
+owledge_domain, docume
+nt_metadata_catalog_1.
+tax_type, document_met
+adata_catalog_1.taxpay
+er_type, document_meta
+data_catalog_1.doc_cat
+egory, document_metada
+ta_catalog_1.effective
+_date, document_metada
+ta_catalog_1.expiry_da
+te, document_metadata_
+catalog_1.publication_
+date, document_metadat
+a_catalog_1.version, d
+ocument_metadata_catal
+og_1.supersedes_doc_id
+, document_metadata_ca
+talog_1.lifecycle_stag
+e, document_metadata_c
+atalog_1.authority_lev
+el, document_metadata_
+catalog_1.intended_usa
+ge, document_metadata_
+catalog_1.topic_tags, 
+document_metadata_cata
+log_1.status, document
+_metadata_catalog_1.la
+nguage, document_metad
+ata_catalog_1.notes, d
+ocument_metadata_catal
+og_1.created_at AS 
+created_at_1, document
+_metadata_catalog_1.up
+dated_at AS 
+updated_at_1 
+2026-02-05 
+11:29:07,403 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:29:07,452 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:29:07,403 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:29:07,452 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:29:12,082 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at, document_me
+tadata_catalog_1.id 
+AS id_1, document_meta
+data_catalog_1.doc_id,
+ document_metadata_cat
+alog_1.file_name AS 
+file_name_1, document_
+metadata_catalog_1.fil
+e_name_normalized, doc
+ument_metadata_catalog
+_1.source_title, docum
+ent_metadata_catalog_1
+.source_file_type, doc
+ument_metadata_catalog
+_1.issuing_body, docum
+ent_metadata_catalog_1
+.country, document_met
+adata_catalog_1.jurisd
+iction_level, document
+_metadata_catalog_1.kn
+owledge_domain, docume
+nt_metadata_catalog_1.
+tax_type, document_met
+adata_catalog_1.taxpay
+er_type, document_meta
+data_catalog_1.doc_cat
+egory, document_metada
+ta_catalog_1.effective
+_date, document_metada
+ta_catalog_1.expiry_da
+te, document_metadata_
+catalog_1.publication_
+date, document_metadat
+a_catalog_1.version, d
+ocument_metadata_catal
+og_1.supersedes_doc_id
+, document_metadata_ca
+talog_1.lifecycle_stag
+e, document_metadata_c
+atalog_1.authority_lev
+el, document_metadata_
+catalog_1.intended_usa
+ge, document_metadata_
+catalog_1.topic_tags, 
+document_metadata_cata
+log_1.status, document
+_metadata_catalog_1.la
+nguage, document_metad
+ata_catalog_1.notes, d
+ocument_metadata_catal
+og_1.created_at AS 
+created_at_1, document
+_metadata_catalog_1.up
+dated_at AS 
+updated_at_1 
+2026-02-05 
+11:29:12,082 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at, document_me
+tadata_catalog_1.id 
+AS id_1, document_meta
+data_catalog_1.doc_id,
+ document_metadata_cat
+alog_1.file_name AS 
+file_name_1, document_
+metadata_catalog_1.fil
+e_name_normalized, doc
+ument_metadata_catalog
+_1.source_title, docum
+ent_metadata_catalog_1
+.source_file_type, doc
+ument_metadata_catalog
+_1.issuing_body, docum
+ent_metadata_catalog_1
+.country, document_met
+adata_catalog_1.jurisd
+iction_level, document
+_metadata_catalog_1.kn
+owledge_domain, docume
+nt_metadata_catalog_1.
+tax_type, document_met
+adata_catalog_1.taxpay
+er_type, document_meta
+data_catalog_1.doc_cat
+egory, document_metada
+ta_catalog_1.effective
+_date, document_metada
+ta_catalog_1.expiry_da
+te, document_metadata_
+catalog_1.publication_
+date, document_metadat
+a_catalog_1.version, d
+ocument_metadata_catal
+og_1.supersedes_doc_id
+, document_metadata_ca
+talog_1.lifecycle_stag
+e, document_metadata_c
+atalog_1.authority_lev
+el, document_metadata_
+catalog_1.intended_usa
+ge, document_metadata_
+catalog_1.topic_tags, 
+document_metadata_cata
+log_1.status, document
+_metadata_catalog_1.la
+nguage, document_metad
+ata_catalog_1.notes, d
+ocument_metadata_catal
+og_1.created_at AS 
+created_at_1, document
+_metadata_catalog_1.up
+dated_at AS 
+updated_at_1 
+2026-02-05 
+11:29:12,139 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:29:12,185 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:29:14,422 INFO sqla
+lchemy.engine.Engine 
+INSERT INTO 
+rag_documents (id, 
+title, source_type, 
+source_path, 
+file_name, file_type, 
+file_size, 
+content_text, 
+processing_status, 
+processing_error, 
+is_active, 
+uploaded_by, 
+metadata_catalog_id, 
+metadata_status, 
+updated_at, 
+processed_at) VALUES 
+($1::UUID, 
+$2::VARCHAR, 
+$3::VARCHAR, 
+$4::VARCHAR, 
+$5::VARCHAR, 
+$6::VARCHAR, 
+$7::INTEGER, 
+$8::VARCHAR, 
+$9::VARCHAR, 
+$10::VARCHAR, 
+$11::BOOLEAN, 
+$12::UUID, $13::UUID, 
+$14::VARCHAR, 
+$15::TIMESTAMP WITH 
+TIME ZONE, 
+$16::TIMESTAMP WITH 
+TIME ZONE) RETURNING r
+ag_documents.created_a
+t
+2026-02-05 
+11:29:14,775 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:29:15,505 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:29:15,552 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at, document_me
+tadata_catalog_1.id 
+AS id_1, document_meta
+data_catalog_1.doc_id,
+ document_metadata_cat
+alog_1.file_name AS 
+file_name_1, document_
+metadata_catalog_1.fil
+e_name_normalized, doc
+ument_metadata_catalog
+_1.source_title, docum
+ent_metadata_catalog_1
+.source_file_type, doc
+ument_metadata_catalog
+_1.issuing_body, docum
+ent_metadata_catalog_1
+.country, document_met
+adata_catalog_1.jurisd
+iction_level, document
+_metadata_catalog_1.kn
+owledge_domain, docume
+nt_metadata_catalog_1.
+tax_type, document_met
+adata_catalog_1.taxpay
+er_type, document_meta
+data_catalog_1.doc_cat
+egory, document_metada
+ta_catalog_1.effective
+_date, document_metada
+ta_catalog_1.expiry_da
+te, document_metadata_
+catalog_1.publication_
+date, document_metadat
+a_catalog_1.version, d
+ocument_metadata_catal
+og_1.supersedes_doc_id
+, document_metadata_ca
+talog_1.lifecycle_stag
+e, document_metadata_c
+atalog_1.authority_lev
+el, document_metadata_
+catalog_1.intended_usa
+ge, document_metadata_
+catalog_1.topic_tags, 
+document_metadata_cata
+log_1.status, document
+_metadata_catalog_1.la
+nguage, document_metad
+ata_catalog_1.notes, d
+ocument_metadata_catal
+og_1.created_at AS 
+created_at_1, document
+_metadata_catalog_1.up
+dated_at AS 
+updated_at_1 
+2026-02-05 
+11:29:12,139 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:29:12,185 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:29:14,422 - sqlalch
+emy.engine.Engine - 
+INFO - INSERT INTO 
+rag_documents (id, 
+title, source_type, 
+source_path, 
+file_name, file_type, 
+file_size, 
+content_text, 
+processing_status, 
+processing_error, 
+is_active, 
+uploaded_by, 
+metadata_catalog_id, 
+metadata_status, 
+updated_at, 
+processed_at) VALUES 
+($1::UUID, 
+$2::VARCHAR, 
+$3::VARCHAR, 
+$4::VARCHAR, 
+$5::VARCHAR, 
+$6::VARCHAR, 
+$7::INTEGER, 
+$8::VARCHAR, 
+$9::VARCHAR, 
+$10::VARCHAR, 
+$11::BOOLEAN, 
+$12::UUID, $13::UUID, 
+$14::VARCHAR, 
+$15::TIMESTAMP WITH 
+TIME ZONE, 
+$16::TIMESTAMP WITH 
+TIME ZONE) RETURNING r
+ag_documents.created_a
+t
+2026-02-05 
+11:29:14,775 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:29:15,505 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:29:15,552 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at, document_me
+tadata_catalog_1.id 
+AS id_1, document_meta
+data_catalog_1.doc_id,
+ document_metadata_cat
+alog_1.file_name AS 
+file_name_1, document_
+metadata_catalog_1.fil
+e_name_normalized, doc
+ument_metadata_catalog
+_1.source_title, docum
+ent_metadata_catalog_1
+.source_file_type, doc
+ument_metadata_catalog
+_1.issuing_body, docum
+ent_metadata_catalog_1
+.country, document_met
+adata_catalog_1.jurisd
+iction_level, document
+_metadata_catalog_1.kn
+owledge_domain, docume
+nt_metadata_catalog_1.
+tax_type, document_met
+adata_catalog_1.taxpay
+er_type, document_meta
+data_catalog_1.doc_cat
+egory, document_metada
+ta_catalog_1.effective
+_date, document_metada
+ta_catalog_1.expiry_da
+te, document_metadata_
+catalog_1.publication_
+date, document_metadat
+a_catalog_1.version, d
+ocument_metadata_catal
+og_1.supersedes_doc_id
+, document_metadata_ca
+talog_1.lifecycle_stag
+e, document_metadata_c
+atalog_1.authority_lev
+el, document_metadata_
+catalog_1.intended_usa
+ge, document_metadata_
+catalog_1.topic_tags, 
+document_metadata_cata
+log_1.status, document
+_metadata_catalog_1.la
+nguage, document_metad
+ata_catalog_1.notes, d
+ocument_metadata_catal
+og_1.created_at AS 
+created_at_1, document
+_metadata_catalog_1.up
+dated_at AS 
+updated_at_1 
+2026-02-05 
+11:29:15,947 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:29:15,947 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:29:17,617 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at, document_me
+tadata_catalog_1.id 
+AS id_1, document_meta
+data_catalog_1.doc_id,
+ document_metadata_cat
+alog_1.file_name AS 
+file_name_1, document_
+metadata_catalog_1.fil
+e_name_normalized, doc
+ument_metadata_catalog
+_1.source_title, docum
+ent_metadata_catalog_1
+.source_file_type, doc
+ument_metadata_catalog
+_1.issuing_body, docum
+ent_metadata_catalog_1
+.country, document_met
+adata_catalog_1.jurisd
+iction_level, document
+_metadata_catalog_1.kn
+owledge_domain, docume
+nt_metadata_catalog_1.
+tax_type, document_met
+adata_catalog_1.taxpay
+er_type, document_meta
+data_catalog_1.doc_cat
+egory, document_metada
+ta_catalog_1.effective
+_date, document_metada
+ta_catalog_1.expiry_da
+te, document_metadata_
+catalog_1.publication_
+date, document_metadat
+a_catalog_1.version, d
+ocument_metadata_catal
+og_1.supersedes_doc_id
+, document_metadata_ca
+talog_1.lifecycle_stag
+e, document_metadata_c
+atalog_1.authority_lev
+el, document_metadata_
+catalog_1.intended_usa
+ge, document_metadata_
+catalog_1.topic_tags, 
+document_metadata_cata
+log_1.status, document
+_metadata_catalog_1.la
+nguage, document_metad
+ata_catalog_1.notes, d
+ocument_metadata_catal
+og_1.created_at AS 
+created_at_1, document
+_metadata_catalog_1.up
+dated_at AS 
+updated_at_1 
+2026-02-05 
+11:29:17,617 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at, document_me
+tadata_catalog_1.id 
+AS id_1, document_meta
+data_catalog_1.doc_id,
+ document_metadata_cat
+alog_1.file_name AS 
+file_name_1, document_
+metadata_catalog_1.fil
+e_name_normalized, doc
+ument_metadata_catalog
+_1.source_title, docum
+ent_metadata_catalog_1
+.source_file_type, doc
+ument_metadata_catalog
+_1.issuing_body, docum
+ent_metadata_catalog_1
+.country, document_met
+adata_catalog_1.jurisd
+iction_level, document
+_metadata_catalog_1.kn
+owledge_domain, docume
+nt_metadata_catalog_1.
+tax_type, document_met
+adata_catalog_1.taxpay
+er_type, document_meta
+data_catalog_1.doc_cat
+egory, document_metada
+ta_catalog_1.effective
+_date, document_metada
+ta_catalog_1.expiry_da
+te, document_metadata_
+catalog_1.publication_
+date, document_metadat
+a_catalog_1.version, d
+ocument_metadata_catal
+og_1.supersedes_doc_id
+, document_metadata_ca
+talog_1.lifecycle_stag
+e, document_metadata_c
+atalog_1.authority_lev
+el, document_metadata_
+catalog_1.intended_usa
+ge, document_metadata_
+catalog_1.topic_tags, 
+document_metadata_cata
+log_1.status, document
+_metadata_catalog_1.la
+nguage, document_metad
+ata_catalog_1.notes, d
+ocument_metadata_catal
+og_1.created_at AS 
+created_at_1, document
+_metadata_catalog_1.up
+dated_at AS 
+updated_at_1 
+2026-02-05 
+11:29:17,632 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:29:17,632 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:29:17,669 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:29:17,669 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:29:23,187 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at, document_me
+tadata_catalog_1.id 
+AS id_1, document_meta
+data_catalog_1.doc_id,
+ document_metadata_cat
+alog_1.file_name AS 
+file_name_1, document_
+metadata_catalog_1.fil
+e_name_normalized, doc
+ument_metadata_catalog
+_1.source_title, docum
+ent_metadata_catalog_1
+.source_file_type, doc
+ument_metadata_catalog
+_1.issuing_body, docum
+ent_metadata_catalog_1
+.country, document_met
+adata_catalog_1.jurisd
+iction_level, document
+_metadata_catalog_1.kn
+owledge_domain, docume
+nt_metadata_catalog_1.
+tax_type, document_met
+adata_catalog_1.taxpay
+er_type, document_meta
+data_catalog_1.doc_cat
+egory, document_metada
+ta_catalog_1.effective
+_date, document_metada
+ta_catalog_1.expiry_da
+te, document_metadata_
+catalog_1.publication_
+date, document_metadat
+a_catalog_1.version, d
+ocument_metadata_catal
+og_1.supersedes_doc_id
+, document_metadata_ca
+talog_1.lifecycle_stag
+e, document_metadata_c
+atalog_1.authority_lev
+el, document_metadata_
+catalog_1.intended_usa
+ge, document_metadata_
+catalog_1.topic_tags, 
+document_metadata_cata
+log_1.status, document
+_metadata_catalog_1.la
+nguage, document_metad
+ata_catalog_1.notes, d
+ocument_metadata_catal
+og_1.created_at AS 
+created_at_1, document
+_metadata_catalog_1.up
+dated_at AS 
+updated_at_1 
+2026-02-05 
+11:29:23,187 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at, document_me
+tadata_catalog_1.id 
+AS id_1, document_meta
+data_catalog_1.doc_id,
+ document_metadata_cat
+alog_1.file_name AS 
+file_name_1, document_
+metadata_catalog_1.fil
+e_name_normalized, doc
+ument_metadata_catalog
+_1.source_title, docum
+ent_metadata_catalog_1
+.source_file_type, doc
+ument_metadata_catalog
+_1.issuing_body, docum
+ent_metadata_catalog_1
+.country, document_met
+adata_catalog_1.jurisd
+iction_level, document
+_metadata_catalog_1.kn
+owledge_domain, docume
+nt_metadata_catalog_1.
+tax_type, document_met
+adata_catalog_1.taxpay
+er_type, document_meta
+data_catalog_1.doc_cat
+egory, document_metada
+ta_catalog_1.effective
+_date, document_metada
+ta_catalog_1.expiry_da
+te, document_metadata_
+catalog_1.publication_
+date, document_metadat
+a_catalog_1.version, d
+ocument_metadata_catal
+og_1.supersedes_doc_id
+, document_metadata_ca
+talog_1.lifecycle_stag
+e, document_metadata_c
+atalog_1.authority_lev
+el, document_metadata_
+catalog_1.intended_usa
+ge, document_metadata_
+catalog_1.topic_tags, 
+document_metadata_cata
+log_1.status, document
+_metadata_catalog_1.la
+nguage, document_metad
+ata_catalog_1.notes, d
+ocument_metadata_catal
+og_1.created_at AS 
+created_at_1, document
+_metadata_catalog_1.up
+dated_at AS 
+updated_at_1 
+2026-02-05 
+11:29:23,382 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:29:23,382 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:29:23,476 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:29:23,476 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:29:28,271 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:29:28,271 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:29:28,294 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at, document_me
+tadata_catalog_1.id 
+AS id_1, document_meta
+data_catalog_1.doc_id,
+ document_metadata_cat
+alog_1.file_name AS 
+file_name_1, document_
+metadata_catalog_1.fil
+e_name_normalized, doc
+ument_metadata_catalog
+_1.source_title, docum
+ent_metadata_catalog_1
+.source_file_type, doc
+ument_metadata_catalog
+_1.issuing_body, docum
+ent_metadata_catalog_1
+.country, document_met
+adata_catalog_1.jurisd
+iction_level, document
+_metadata_catalog_1.kn
+owledge_domain, docume
+nt_metadata_catalog_1.
+tax_type, document_met
+adata_catalog_1.taxpay
+er_type, document_meta
+data_catalog_1.doc_cat
+egory, document_metada
+ta_catalog_1.effective
+_date, document_metada
+ta_catalog_1.expiry_da
+te, document_metadata_
+catalog_1.publication_
+date, document_metadat
+a_catalog_1.version, d
+ocument_metadata_catal
+og_1.supersedes_doc_id
+, document_metadata_ca
+talog_1.lifecycle_stag
+e, document_metadata_c
+atalog_1.authority_lev
+el, document_metadata_
+catalog_1.intended_usa
+ge, document_metadata_
+catalog_1.topic_tags, 
+document_metadata_cata
+log_1.status, document
+_metadata_catalog_1.la
+nguage, document_metad
+ata_catalog_1.notes, d
+ocument_metadata_catal
+og_1.created_at AS 
+created_at_1, document
+_metadata_catalog_1.up
+dated_at AS 
+updated_at_1 
+2026-02-05 
+11:29:28,294 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at, document_me
+tadata_catalog_1.id 
+AS id_1, document_meta
+data_catalog_1.doc_id,
+ document_metadata_cat
+alog_1.file_name AS 
+file_name_1, document_
+metadata_catalog_1.fil
+e_name_normalized, doc
+ument_metadata_catalog
+_1.source_title, docum
+ent_metadata_catalog_1
+.source_file_type, doc
+ument_metadata_catalog
+_1.issuing_body, docum
+ent_metadata_catalog_1
+.country, document_met
+adata_catalog_1.jurisd
+iction_level, document
+_metadata_catalog_1.kn
+owledge_domain, docume
+nt_metadata_catalog_1.
+tax_type, document_met
+adata_catalog_1.taxpay
+er_type, document_meta
+data_catalog_1.doc_cat
+egory, document_metada
+ta_catalog_1.effective
+_date, document_metada
+ta_catalog_1.expiry_da
+te, document_metadata_
+catalog_1.publication_
+date, document_metadat
+a_catalog_1.version, d
+ocument_metadata_catal
+og_1.supersedes_doc_id
+, document_metadata_ca
+talog_1.lifecycle_stag
+e, document_metadata_c
+atalog_1.authority_lev
+el, document_metadata_
+catalog_1.intended_usa
+ge, document_metadata_
+catalog_1.topic_tags, 
+document_metadata_cata
+log_1.status, document
+_metadata_catalog_1.la
+nguage, document_metad
+ata_catalog_1.notes, d
+ocument_metadata_catal
+og_1.created_at AS 
+created_at_1, document
+_metadata_catalog_1.up
+dated_at AS 
+updated_at_1 
+2026-02-05 
+11:29:28,318 INFO sqla
+lchemy.engine.Engine 
+SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+2026-02-05 
+11:29:28,318 - sqlalch
+emy.engine.Engine - 
+INFO - SELECT 
+rag_documents.id, 
+rag_documents.title, r
+ag_documents.source_ty
+pe, rag_documents.sour
+ce_path, rag_documents
+.file_name, rag_docume
+nts.file_type, rag_doc
+uments.file_size, rag_
+documents.content_text
+, rag_documents.conten
+t_metadata, rag_docume
+nts.processing_status,
+ rag_documents.process
+ing_error, rag_documen
+ts.is_active, rag_docu
+ments.uploaded_by, rag
+_documents.metadata_ca
+talog_id, rag_document
+s.metadata_status, rag
+_documents.created_at,
+ rag_documents.updated
+_at, rag_documents.pro
+cessed_at 
+
+

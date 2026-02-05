@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Form, Query
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Form, Query, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete
 from sqlalchemy.orm import joinedload
@@ -51,6 +51,7 @@ async def get_rag_documents(
 
 @router.post("/bulk-reprocess")
 async def bulk_reprocess_rag_documents(
+    background_tasks: BackgroundTasks,
     filter_status: Optional[str] = Query(None, description="Filter by processing status (completed, failed, pending, processing)"),
     filter_source_type: Optional[str] = Query(None, description="Filter by source type (file, url)"),
     db: AsyncSession = Depends(get_db),
@@ -91,7 +92,7 @@ async def bulk_reprocess_rag_documents(
         from services.embedding_service import get_embedding_service
         
         embedding_service = get_embedding_service()
-        embedding_service = get_embedding_service()
+        # embedding_service = get_embedding_service() # Removed duplicate
         vector_size = embedding_service.get_embedding_dimension()
         vector_store = get_vector_store(vector_size=vector_size)
         
@@ -114,9 +115,9 @@ async def bulk_reprocess_rag_documents(
                 
                 # Queue reprocessing (async, don't wait)
                 if document.source_type == "url":
-                    asyncio.create_task(process_url_async(document.id, document.source_path))
+                    background_tasks.add_task(process_url_async, document.id, document.source_path)
                 elif document.source_type == "file":
-                    asyncio.create_task(process_document_async(document.id, document.source_path, document.file_type))
+                    background_tasks.add_task(process_document_async, document.id, document.source_path, document.file_type)
                 else:
                     errors.append(f"Document {document.id}: Unknown source_type '{document.source_type}'")
                     
@@ -149,6 +150,7 @@ async def bulk_reprocess_rag_documents(
 
 @router.post("/{document_id}/reprocess", response_model=RAGDocumentResponse)
 async def reprocess_rag_document(
+    background_tasks: BackgroundTasks,
     document_id: UUID,
     db: AsyncSession = Depends(get_db),
     admin_user: User = Depends(require_permission(Permission.CONTENT_WRITE))
@@ -176,7 +178,6 @@ async def reprocess_rag_document(
             # Safest is to try standard initialization.
             embedding_service = get_embedding_service()
             # Just use a dummy embed to get size, or rely on defaults if robust
-            # Just use a dummy embed to get size, or rely on defaults if robust
             vector_size = embedding_service.get_embedding_dimension()
             
             vector_store = get_vector_store(vector_size=vector_size)
@@ -196,9 +197,9 @@ async def reprocess_rag_document(
         
         # 4. Trigger processing
         if document.source_type == "url":
-            asyncio.create_task(process_url_async(document.id, document.source_path))
+            background_tasks.add_task(process_url_async, document.id, document.source_path)
         elif document.source_type == "file":
-            asyncio.create_task(process_document_async(document.id, document.source_path, document.file_type))
+            background_tasks.add_task(process_document_async, document.id, document.source_path, document.file_type)
         else:
             document.processing_status = "failed"
             document.processing_error = f"Unknown source_type '{document.source_type}'"
@@ -373,6 +374,7 @@ async def get_rag_document(
 
 @router.post("/upload", response_model=RAGDocumentResponse, status_code=status.HTTP_201_CREATED)
 async def upload_rag_file(
+    background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
     title: str = Form(...),
     db: AsyncSession = Depends(get_db),
@@ -414,8 +416,8 @@ async def upload_rag_file(
         await db.refresh(document)
         logger.info(f"Document record created: {document.id}")
         
-        # Process file asynchronously (don't wait)
-        asyncio.create_task(process_document_async(document.id, file_info["file_path"], file_info["file_type"]))
+        # Process file asynchronously (safely handled by FastAPI background tasks)
+        background_tasks.add_task(process_document_async, document.id, file_info["file_path"], file_info["file_type"])
         
         return document
     
@@ -428,6 +430,7 @@ async def upload_rag_file(
 
 @router.post("/url", response_model=RAGDocumentResponse, status_code=status.HTTP_201_CREATED)
 async def add_rag_url(
+    background_tasks: BackgroundTasks,
     document_data: RAGDocumentCreate,
     db: AsyncSession = Depends(get_db),
     admin_user: User = Depends(require_permission(Permission.CONTENT_WRITE))
@@ -453,7 +456,7 @@ async def add_rag_url(
         await db.refresh(document)
         
         # Process URL asynchronously
-        asyncio.create_task(process_url_async(document.id, document_data.url))
+        background_tasks.add_task(process_url_async, document.id, document_data.url)
         
         return document
     
@@ -667,243 +670,172 @@ async def get_vector_store_info(
 
 async def process_document_async(document_id: UUID, file_path: str, file_type: str):
     """Asynchronously process a file document"""
+    print(f">>> TASK START: {document_id}", flush=True)
+    logger.info(f"🚀 [Task Start] Processing document {document_id} (File: {file_path})")
     try:
         # Get fresh session
         from database import AsyncSessionLocal
         async with AsyncSessionLocal() as session:
+            # Re-fetch document to ensure it exists and get fresh state
             result = await session.execute(select(RAGDocument).where(RAGDocument.id == document_id))
             document = result.scalar_one_or_none()
             
             if not document:
+                logger.error(f"❌ Document {document_id} not found in database task")
                 return
             
-            # Update status
+            # Update status to processing
             document.processing_status = "processing"
+            document.processing_error = None
             await session.commit()
             await session.refresh(document)
+            print(f">>> STATUS SET TO PROCESSING: {document_id}", flush=True)
             
-            # Step 1: Extract text from file
-            from services.rag_service import extract_text_from_file
-            text_result = await extract_text_from_file(file_path, file_type)
-            text_content = text_result.get("content_text", "")
-            
-            # CRITICAL: Check if text extraction failed (error messages start with "[")
-            # If so, skip chunking and mark as failed
-            if text_content and text_content.strip().startswith("["):
-                # Check if it's an error message (common patterns)
-                error_indicators = [
-                    "[Binary file content detected",
-                    "[Error",
-                    "[Unable to decode",
-                    "[No text content found",
-                    "[PDF processing requires",
-                    "[Word document processing requires",
-                    "[Image OCR requires",
-                    "[Binary file detected",
-                    "[Invalid UTF-8 content",
-                    "[Text extraction failed",
-                    "[Binary content could not"
-                ]
-                is_error_message = any(text_content.startswith(indicator) for indicator in error_indicators)
+            try:
+                # Step 1: Extract text from file
+                logger.info(f"📄 [Step 1] Extracting text for {document_id}...")
+                from services.rag_service import extract_text_from_file
+                text_result = await extract_text_from_file(file_path, file_type)
+                text_content = text_result.get("content_text", "")
+                logger.info(f"✅ Text extracted for {document_id}: {len(text_content)} chars")
                 
-                if is_error_message:
-                    logger.warning(f"Text extraction failed for document {document_id}: {text_content[:100]}")
-                    document.processing_status = "failed"
-                    document.processing_error = text_content[:500]  # Store full error message
-                    document.content_text = text_content[:50000] if text_content else ""
-                    document.content_metadata = {
-                        **text_result.get("content_metadata", {}),
-                        "extraction_failed": True,
-                        "chunks_count": 0
-                    }
-                    document.processed_at = datetime.utcnow()
+                # CRITICAL: Check if text extraction failed
+                if text_content and text_content.strip().startswith("["):
+                    error_indicators = [
+                        "[Binary file content detected", "[Error", "[Unable to decode",
+                        "[No text content found", "[PDF processing requires",
+                        "[Word document processing requires", "[Image OCR requires",
+                        "[Binary file detected", "[Invalid UTF-8 content",
+                        "[Text extraction failed", "[Binary content could not"
+                    ]
+                    is_error_message = any(text_content.startswith(indicator) for indicator in error_indicators)
+                    
+                    if is_error_message:
+                        logger.warning(f"⚠️ Text extraction failed for {document_id}: {text_content[:100]}")
+                        document.processing_status = "failed"
+                        document.processing_error = text_content[:500]
+                        document.content_text = text_content[:50000] if text_content else ""
+                        document.content_metadata = {
+                            **text_result.get("content_metadata", {}),
+                            "extraction_failed": True,
+                            "chunks_count": 0
+                        }
+                        document.processed_at = datetime.utcnow()
+                        await session.commit()
+                        logger.info(f"🛑 Processing stopped for {document_id} due to extraction error")
+                        return
+
+                # Step 1.5: Look up CSV metadata
+                logger.info(f"🔍 [Step 1.5] Looking up CSV metadata for {document_id}...")
+                csv_metadata = None
+                if document.file_name:
+                    from services.csv_metadata_service import lookup_metadata_by_filename
+                    csv_metadata = await lookup_metadata_by_filename(document.file_name, session)
+                    
+                    if csv_metadata:
+                        from uuid import UUID as UUIDType
+                        document.metadata_catalog_id = UUIDType(csv_metadata['id'])
+                        document.metadata_status = 'matched'
+                    else:
+                        document.metadata_status = 'pending'
+                    
                     await session.commit()
                     await session.refresh(document)
-                    logger.info(f"Document {document_id} marked as failed due to extraction error")
-                    return  # Exit early - don't try to chunk error messages
-            
-            # NEW: Step 1.5: Look up CSV metadata by filename
-            csv_metadata = None
-            if document.file_name:
-                from services.csv_metadata_service import lookup_metadata_by_filename
-                csv_metadata = await lookup_metadata_by_filename(document.file_name, session)
+                    print(f">>> CSV MATCHING DONE: {document_id}, matched={csv_metadata is not None}", flush=True)
+
+                # Step 2: Delete old chunks
+                print(f">>> STEP 2 START - about to get embedding service: {document_id}", flush=True)
+                logger.info(f"🗑️ [Step 2] Cleaning old vectors for {document_id}...")
+                try:
+                    from services.vector_store import get_vector_store
+                    from services.embedding_service import get_embedding_service
+                    
+                    print(f">>> CALLING get_embedding_service()...", flush=True)
+                    embedding_service = get_embedding_service()
+                    print(f">>> GOT embedding_service: {document_id}", flush=True)
+                    vector_size = embedding_service.get_embedding_dimension()
+                    vector_store = get_vector_store(vector_size=vector_size)
+                    vector_store.delete_document(str(document.id))
+                except Exception as e:
+                    logger.warning(f"⚠️ Error cleaning vectors for {document_id}: {e}")
+
+                # Step 3: Process and Index
+                logger.info(f"🧠 [Step 3] Processing and Indexing {document_id}...")
                 
-                if csv_metadata:
-                    # Update document with catalog reference
-                    from uuid import UUID as UUIDType
-                    document.metadata_catalog_id = UUIDType(csv_metadata['id'])
-                    document.metadata_status = 'matched'
-                    logger.info(f"Found CSV metadata for {document.file_name}: doc_id={csv_metadata['doc_id']}")
-                else:
-                    # No match found
-                    document.metadata_status = 'pending'
-                    logger.warning(f"No CSV metadata found for {document.file_name}")
+                # Metadata extraction
+                from services.metadata_extractor import extract_metadata_from_document
+                metadata = extract_metadata_from_document(
+                    title=document.title,
+                    file_name=document.file_name,
+                    text_content=text_content[:5000] if text_content else None
+                )
+                law_name = metadata["law_name"]
+                year = metadata.get("year")
+                authority = metadata.get("authority", "Federal Inland Revenue Service")
+
+                if not text_content or len(text_content.strip()) < 10:
+                    logger.warning(f"⚠️ Insufficient content for {document_id}")
+                    document.processing_status = "failed"
+                    document.processing_error = f"Insufficient text content: {len(text_content) if text_content else 0} chars"
+                    await session.commit()
+                    return
+
+                from services.rag_service import process_and_index_document
+                index_result = await process_and_index_document(
+                    text_content=text_content,
+                    document_id=str(document.id),
+                    law_name=law_name,
+                    year=year,
+                    authority=authority,
+                    jurisdiction="Nigeria",
+                    csv_metadata=csv_metadata
+                )
                 
-                await session.commit()
-                await session.refresh(document)
-            
-            # Step 2: Delete old chunks from vector store before reprocessing (if any exist)
-            # This ensures clean reprocessing with updated metadata (law_name, etc.)
-            # This is important because metadata (law_name) may have changed
-            try:
-                from services.vector_store import get_vector_store
-                from services.embedding_service import get_embedding_service
-                
-                embedding_service = get_embedding_service()
-                embedding_service = get_embedding_service()
-                vector_size = embedding_service.get_embedding_dimension()
-                vector_store = get_vector_store(vector_size=vector_size)
-                vector_store.delete_document(str(document.id))
-                logger.info(f"Deleted old chunks for document {document_id} before reprocessing")
-            except Exception as e:
-                logger.warning(f"Error deleting old chunks for document {document_id} (might not exist yet): {e}")
-                # Continue - document might not have been processed before
-            
-            # Step 3: Process and index using new pipeline
-            # Extract metadata (law_name, year, authority) from document title, filename, and content
-            from services.metadata_extractor import extract_metadata_from_document
-            metadata = extract_metadata_from_document(
-                title=document.title,
-                file_name=document.file_name,
-                text_content=text_content[:5000] if text_content else None  # Use first 5k chars for extraction
-            )
-            law_name = metadata["law_name"]
-            year = metadata.get("year")
-            authority = metadata.get("authority", "Federal Inland Revenue Service")
-            
-            # Validate text_content is not empty or too short
-            if not text_content or len(text_content.strip()) < 10:
-                logger.warning(f"Document {document_id} has insufficient text content ({len(text_content) if text_content else 0} chars). Marking as failed.")
-                document.processing_status = "failed"
-                document.processing_error = f"Insufficient text content extracted: {len(text_content) if text_content else 0} characters"
-                document.content_text = text_content[:50000] if text_content else ""
+                logger.info(f"✅ Indexing complete for {document_id}")
+
+                # Update document with results
+                document.content_text = text_content[:50000]
                 document.content_metadata = {
                     **text_result.get("content_metadata", {}),
-                    "extraction_failed": True,
-                    "chunks_count": 0
+                    "markdown_processed": True,
+                    "chunks_count": index_result.get("chunks_count", 0)
                 }
+                document.processing_status = "completed"
                 document.processed_at = datetime.utcnow()
-                await session.commit()
-                await session.refresh(document)
-                return  # Exit early
-            
-            from services.rag_service import process_and_index_document
-            index_result = await process_and_index_document(
-                text_content=text_content,
-                document_id=str(document.id),
-                law_name=law_name,
-                year=year,
-                authority=authority,  # Extracted from metadata
-                jurisdiction="Nigeria",
-                csv_metadata=csv_metadata  # NEW: Pass CSV metadata
-            )
-            
-            # Update document with results
-            # CRITICAL: Ensure content_text is valid UTF-8 text (not binary) before storing in database
-            safe_content_text = text_content
-            
-            # First check: if it's bytes, decode it
-            if isinstance(safe_content_text, bytes):
-                try:
-                    safe_content_text = safe_content_text.decode('utf-8', errors='ignore')
-                except:
-                    safe_content_text = "[Unable to decode content as text]"
-            
-            # Second check: detect binary content (ZIP signatures, null bytes, etc.)
-            if safe_content_text and isinstance(safe_content_text, str):
-                # CRITICAL: Remove ALL null bytes FIRST (PostgreSQL cannot store them - causes UTF8 encoding error)
-                null_count = safe_content_text.count('\x00')
-                if null_count > 0:
-                    logger.warning(f"Found {null_count} null bytes in content_text, removing ALL...")
-                    safe_content_text = safe_content_text.replace('\x00', '')
+                document.processing_error = None
                 
-                # Check for ZIP file signature (DOCX files are ZIP archives: PK\x03\x04)
-                # Check first 4 bytes: should be 0x50 0x4B 0x03 0x04 (PK\x03\x04)
-                if len(safe_content_text) >= 4 and safe_content_text.startswith('PK'):
-                    # Check bytes 2 and 3 (indices 2 and 3)
-                    byte2 = ord(safe_content_text[2]) if len(safe_content_text) > 2 else 0
-                    byte3 = ord(safe_content_text[3]) if len(safe_content_text) > 3 else 0
-                    # ZIP signature: 0x03 0x04 or 0x05 0x06
-                    if (byte2 == 3 and byte3 == 4) or (byte2 == 5 and byte3 == 6):
-                        logger.error(f"BINARY ZIP CONTENT DETECTED after null byte removal! First 50: {repr(safe_content_text[:50])}")
-                        safe_content_text = f"[Binary file content detected. DOCX text extraction failed. File: {document.file_name}]"
-                    # Also check string form of ZIP signature
-                    elif '\x03\x04' in safe_content_text[:100] or '\x05\x06' in safe_content_text[:100]:
-                        logger.error(f"ZIP signature found in content! Rejecting.")
-                        safe_content_text = f"[Binary file content detected. DOCX text extraction failed. File: {document.file_name}]"
-            
-            # CRITICAL: Final validation before database storage - PostgreSQL requires valid UTF-8 with NO null bytes
-            if safe_content_text and isinstance(safe_content_text, str):
-                # Final check: ensure absolutely no null bytes (PostgreSQL will reject them)
-                if '\x00' in safe_content_text:
-                    logger.error("CRITICAL: Null bytes still present in final validation! Removing ALL...")
-                    safe_content_text = safe_content_text.replace('\x00', '')
-                    # If still contains binary-looking content, reject entirely
-                    if safe_content_text.startswith('PK') and len(safe_content_text) >= 4:
-                        logger.error("ZIP signature still present after final cleanup. Rejecting entirely.")
-                        safe_content_text = f"[Binary file content detected. DOCX text extraction failed. File: {document.file_name}]"
-            
-            document.content_text = safe_content_text[:50000] if safe_content_text else ""  # Store first 50k chars for reference
-            document.content_metadata = {
-                **text_result.get("content_metadata", {}),
-                "markdown_processed": True,
-                "chunks_count": index_result.get("chunks_count", 0)
-            }
-            document.processing_status = "completed"
-            document.processed_at = datetime.utcnow()
-            document.processing_error = None
-            
-            # Commit with error handling for UTF-8 encoding issues (PostgreSQL rejects null bytes)
-            try:
+                # Try commit
+                try:
+                    await session.commit()
+                    logger.info(f"🎉 [Success] Document {document_id} processing completed successfully")
+                except Exception as commit_error:
+                    logger.error(f"❌ Db commit error for {document_id}: {commit_error}")
+                    # Try to sanitize and retry if UTF8 error
+                    if "UTF8" in str(commit_error) or "0x00" in str(commit_error):
+                         document.content_text = "[Content cleaned due to encoding error]"
+                         await session.commit()
+
+            except Exception as task_error:
+                logger.error(f"💥 [Error] Task failed for {document_id}: {task_error}", exc_info=True)
+                document.processing_status = "failed"
+                document.processing_error = str(task_error)[:1000]
                 await session.commit()
-                await session.refresh(document)
-            except Exception as db_error:
-                error_str = str(db_error)
-                # Check if it's a UTF-8 encoding error (PostgreSQL rejects null bytes in VARCHAR/TEXT)
-                if "UTF8" in error_str or "encoding" in error_str.lower() or "0x00" in error_str or "CharacterNotInRepertoire" in error_str:
-                    logger.error(f"CRITICAL: Database UTF-8 encoding error: {db_error}. Binary content with null bytes still present.")
-                    # CRITICAL: Remove ALL null bytes and retry
-                    if document.content_text and '\x00' in document.content_text:
-                        logger.error("Found null bytes in content_text during commit. Removing ALL null bytes...")
-                        document.content_text = document.content_text.replace('\x00', '')
-                        # If still contains ZIP signature, replace entirely
-                        if document.content_text.startswith('PK') and len(document.content_text) >= 4:
-                            byte2 = ord(document.content_text[2]) if len(document.content_text) > 2 else 0
-                            byte3 = ord(document.content_text[3]) if len(document.content_text) > 3 else 0
-                            if (byte2 == 3 and byte3 == 4) or (byte2 == 5 and byte3 == 6):
-                                logger.error("ZIP signature still present after null byte removal. Replacing with error message.")
-                                document.content_text = f"[Binary file content detected. DOCX text extraction failed. File: {document.file_name}]"
-                    
-                    # Update status and retry
-                    document.processing_status = "failed"
-                    document.processing_error = "Binary content detected. Text extraction may have failed. Please ensure python-docx is installed and the file is not corrupted."
-                    
-                    # Retry commit with cleaned content
-                    try:
-                        await session.commit()
-                        await session.refresh(document)
-                    except Exception as retry_error:
-                        logger.error(f"CRITICAL: Commit still failed after cleaning: {retry_error}. Using minimal error message.")
-                        # Last resort: set minimal error message without any binary content
-                        document.content_text = "[Binary content could not be stored. Text extraction failed.]"
-                        await session.commit()
-                        await session.refresh(document)
-                else:
-                    raise
+                # Stop propagation here as we've handled it
+                
     except Exception as e:
-        # Update with error
+        logger.critical(f"☠️ [Critical] Fatal error in process_document_async wrapper for {document_id}: {e}", exc_info=True)
+        # Last resort update
         try:
             from database import AsyncSessionLocal
             async with AsyncSessionLocal() as session:
                 result = await session.execute(select(RAGDocument).where(RAGDocument.id == document_id))
-                document = result.scalar_one_or_none()
-                if document:
-                    document.processing_status = "failed"
-                    document.processing_error = str(e)[:1000]
+                doc = result.scalar_one_or_none()
+                if doc:
+                    doc.processing_status = "failed"
+                    doc.processing_error = f"Fatal System Error: {str(e)[:500]}"
                     await session.commit()
-        except Exception as update_error:
-            import logging
-            logging.error(f"Failed to update error status: {update_error}")
+        except:
+            logger.error("Could not update document status in fatal error handler")
 
 
 async def process_url_async(document_id: UUID, url: str):

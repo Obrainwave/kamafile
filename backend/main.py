@@ -38,6 +38,26 @@ logging.getLogger("h11").setLevel(logging.ERROR)
 async def lifespan(app: FastAPI):
     # Startup: Initialize database
     await init_db()
+    
+    # Pre-initialize embedding service in background thread
+    # This loads the FastEmbed model early so it doesn't block during document processing
+    import threading
+    import logging
+    logger = logging.getLogger(__name__)
+    
+    def _init_embedding_service():
+        try:
+            logger.info("🚀 Pre-initializing embedding service (loading models)...")
+            from services.embedding_service import get_embedding_service
+            service = get_embedding_service()
+            logger.info("✅ Embedding service initialized successfully")
+        except Exception as e:
+            logger.error(f"⚠️ Failed to pre-initialize embedding service: {e}")
+    
+    # Start initialization in background thread (non-blocking)
+    init_thread = threading.Thread(target=_init_embedding_service, daemon=True)
+    init_thread.start()
+    
     yield
     # Shutdown: Close connections
     await engine.dispose()

@@ -1,0 +1,10 @@
+﻿2026-02-05 12:28:04,379 INFO sqlalchemy.engine.Engine SELECT rag_documents.id, rag_documents.title, rag_documents.source_type, rag_documents.source_path, rag_documents.file_name, rag_documents.file_type, rag_documents.file_size, rag_documents.content_text, rag_documents.content_metadata, rag_documents.processing_status, rag_documents.processing_error, rag_documents.is_active, rag_documents.uploaded_by, rag_documents.metadata_catalog_id, rag_documents.metadata_status, rag_documents.created_at, rag_documents.updated_at, rag_documents.processed_at 
+FROM rag_documents 
+WHERE rag_documents.metadata_status = $1::VARCHAR
+2026-02-05 12:28:04,379 INFO sqlalchemy.engine.Engine [cached since 591.4s ago] ('matched',)
+2026-02-05 12:28:04,450 INFO sqlalchemy.engine.Engine SELECT rag_documents.id, rag_documents.title, rag_documents.source_type, rag_documents.source_path, rag_documents.file_name, rag_documents.file_type, rag_documents.file_size, rag_documents.content_text, rag_documents.content_metadata, rag_documents.processing_status, rag_documents.processing_error, rag_documents.is_active, rag_documents.uploaded_by, rag_documents.metadata_catalog_id, rag_documents.metadata_status, rag_documents.created_at, rag_documents.updated_at, rag_documents.processed_at 
+FROM rag_documents 
+WHERE rag_documents.metadata_status = $1::VARCHAR
+2026-02-05 12:28:04,460 INFO sqlalchemy.engine.Engine [cached since 591.5s ago] ('pending',)
+2026-02-05 12:28:04,461 INFO sqlalchemy.engine.Engine COMMIT
+2026-02-05 12:28:04,464 INFO sqlalchemy.engine.Engine COMMIT
